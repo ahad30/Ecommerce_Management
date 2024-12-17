@@ -1,13 +1,13 @@
 import { RouterProvider } from "react-router-dom";
 import "./App.css";
-import { Toaster } from "react-hot-toast";
 import { routes } from "./Routes/routes";
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <>
       <RouterProvider router={routes} />
-      <Toaster />
+      <Toaster expand={true} richColors/>
     </>
   );
 }
