@@ -7,8 +7,8 @@ const initialState = {
   isViewModalOpen: false,
   isCustomerModalOpen: false,
   isProductModalOpen: false,
-  isCalculatorModalOpen: false
-//   isHomeCategorySidebarOpen: false,
+  isCalculatorModalOpen: false,
+  isHomeCategorySidebarOpen: false
 };
 
 const ModalSlice = createSlice({
@@ -37,9 +37,9 @@ const ModalSlice = createSlice({
       state.isCalculatorModalOpen = !state.isCalculatorModalOpen;
     },
 
-    // setIsHomeCategorySidebarOpen: (state) => {
-    //   state.isHomeCategorySidebarOpen = !state.isHomeCategorySidebarOpen;
-    // },
+    setIsHomeCategorySidebarOpen: (state) => {
+      state.isHomeCategorySidebarOpen = !state.isHomeCategorySidebarOpen;
+    },
   },
 });
 
@@ -50,8 +50,8 @@ export const {
   setIsViewModalOpen,
   setIsCustomerModalOpen,
   setIsProductModalOpen,
-  setIsCalculatorModalOpen
-//   setIsHomeCategorySidebarOpen,
+  setIsCalculatorModalOpen,
+  setIsHomeCategorySidebarOpen,
 } = ModalSlice.actions;
 
 export default ModalSlice.reducer;
