@@ -6,6 +6,7 @@ import {
   MobileNav,
 } from "@material-tailwind/react";
 import React from "react";
+import { IoMdCart } from "react-icons/io";
 import { NavLink } from "react-router-dom";
 
 const BottomHeader = () => {
@@ -18,11 +19,11 @@ const BottomHeader = () => {
   }, []);
 
   const navList = (
-    <ul className="flex   flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-8">
+    <ul className="flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-4">
       <Typography
         as="li"
         color="blue-gray"
-        className={`p-1 text-sm`}
+        className={`p-1 text-sm underline lg:no-underline`}
       >
         <NavLink
           style={({ isActive, isTransitioning }) => {
@@ -42,7 +43,7 @@ const BottomHeader = () => {
         as="li"
    
         color="blue-gray"
-        className={`px-2 text-sm`}
+        className={`px-2 text-sm underline lg:no-underline`}
       >
         <NavLink
           style={({ isActive, isTransitioning }) => {
@@ -63,7 +64,7 @@ const BottomHeader = () => {
        
         as="li"
         color="blue-gray"
-        className={`px-2 text-sm`}
+        className={`px-2 text-sm underline lg:no-underline`}
       >
         <NavLink
           style={({ isActive, isTransitioning }) => {
@@ -84,7 +85,7 @@ const BottomHeader = () => {
        
         as="li"
         color="blue-gray"
-        className={`px-2 text-sm`}
+        className={`px-2 text-sm underline lg:no-underline`}
       >
         <NavLink
           style={({ isActive, isTransitioning }) => {
@@ -113,15 +114,11 @@ const BottomHeader = () => {
      
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center justify-center">
-            <div className="mr-2 hidden lg:block">{navList}</div>
-          </div>
-
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-5  lg:hidden">
             <IconButton
           
               variant="text"
-              className=" h-6 w-6 text-black hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+              className=" h-6 w-6 text-black hover:bg-transparent focus:bg-transparent active:bg-transparent"
               ripple={false}
               onClick={() => setOpenNav(!openNav)}
             >
@@ -156,10 +153,31 @@ const BottomHeader = () => {
                 </svg>
               )}
             </IconButton>
-            <div></div>
+      
           </div>
+          <div className="flex items-center justify-center">
+            <div className="hidden lg:block">{navList}</div>
+          </div>
+          <div className="lg:w-[350px] mx-auto">
+          <h2 className="font-bold text-lg md:text-4xl text-black">
+            <span className="text-[#17340c]">INK</span>SPIRE.
+          </h2>
         </div>
-        <MobileNav open={openNav} className={`flex justify-start`}>
+    {/* card icon */}
+         <div className="flex gap-x-4 justify-center items-center mr-1">
+    
+           {/* cart */}
+           <div className="border-[#092635] relative p-1 border-[1px] rounded-full bg-[#0926351f]">
+             <div className="absolute text-[10px] md:text-[12px] px-[5px] top-[-6px] left-[17px] md:left-6 bg-red-400 text-white flex justify-center items-center rounded-full">
+               <span>0</span>
+             </div>
+             <IoMdCart className="md:w-6 md:h-6 text-[#092635]" />
+           </div>
+         </div>
+
+     
+        </div>
+        <MobileNav open={openNav} className={`flex justify-start ms-3`}>
           {navList}
         </MobileNav>
       </Navbar>
