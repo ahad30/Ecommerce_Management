@@ -10,7 +10,9 @@ const Footer = () => {
         <div className="max-auto max-w-7xl grid grid-cols-1 text-center lg:text-left gap-8 lg:grid-cols-3">
           <div>
             <div>
-              <p className="text-white text-4xl font-bold">LOGO</p>
+            <h2 className="font-bold text-lg md:text-4xl text-white">
+            <span className="text-white">INK</span>SPIRE.
+          </h2>
               <p className="max-w-2xl lg:w-[245px] text-[#C5C5C5] mt-3 text-[12px]">
                 Lorem ipsum dolor sit amet consectetur. At aliquam et diam
                 blandit gravida at dictumst.

@@ -13,12 +13,11 @@ const TopHeader = () => {
     (state) => state.modal
   );
 
-  // onclick = {()=> dispatch(setIsHomeCategorySidebarOpen()}
   return (
-    <section className=" my-2">
+    <section className="my-2">
 
       <div className="flex sticky top-0 justify-between items-center">
-        <div className="lg:hidden text-black">
+        <div className="lg:hidden text-black mb-2">
           <button
             onClick={() => dispatch(setIsHomeCategorySidebarOpen())}
             className="text-2xl py-1 transition duration-500 ease-in-out transform hover:scale-70"
@@ -37,7 +36,7 @@ const TopHeader = () => {
         {/* heading */}
         <div className="">
           <h2 className="font-bold text-lg md:text-3xl">
-            <span className="text-[#45F806]">LO</span>GO
+            <span className="text-[#45F806]">INK</span>SPIRE
           </h2>
         </div>
 
@@ -64,48 +63,7 @@ const TopHeader = () => {
             </div>
           </div>
         </div>
-        {/* <div className="flex items-center space-x-2">
 
-        
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-            />
-          </svg>
-      
-        <NavLink
-          style={({ isActive, isTransitioning }) => {
-            return {
-              fontWeight: isActive ? "bold" : "",
-              color: isActive ? "red" : "black",
-              viewTransitionName: isTransitioning ? "slide" : "",
-            };
-          }}
-          to="/login" className="flex text-sm items-center text-[#808080]">
-          login
-        </NavLink>/
-        <NavLink
-          style={({ isActive, isTransitioning }) => {
-            return {
-              fontWeight: isActive ? "bold" : "",
-              color: isActive ? "red" : "black",
-              viewTransitionName: isTransitioning ? "slide" : "",
-            };
-          }}
-          to="/register" className=" text-sm text-[#808080]">
-          Register
-        </NavLink>
-
-        </div> */}
         {/* card icon */}
         <div className="flex gap-x-4 justify-center items-center mr-1">
           {/* love */}
