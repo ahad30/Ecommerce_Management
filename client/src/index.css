@@ -1,3 +1,166 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    font-family: "Poppins", sans-serif;
+  }
+
+  /* HTML: <div class="loader"></div> */
+.loader {
+  width: 120px;
+  height: 60px;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  filter: blur(5px) contrast(10) hue-rotate(60deg);
+  mix-blend-mode: darken;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  width: 40px;
+  border-radius: 50%;
+  background: #24354C;
+  animation: l3 1s infinite alternate;
+}
+.loader:after {
+  --s:-1;
+}
+@keyframes l3{
+  90%,100% {transform: translate(calc(var(--s,1)*30px))}
+}
+
+
+/* styles.css */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 0; /* Adjust this value to make the scrollbar thinner or thicker */
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: white; /* Optional: Track color */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #ffffff; /* Optional: Thumb color */
+  border-radius: 0px; /* Optional: Round corners */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; /* Optional: Thumb color on hover */
+}
+
+.transition-max-height {
+  transition: max-height 0.6s ease-in-out, opacity 0.6s ease-in-out;
+}
+
+.opening {
+  max-height: 24rem; /* Adjust as needed */
+  opacity: 1;
+  transition-duration: 1s; /* Opening duration */
+}
+
+.closing {
+  max-height: 0;
+  opacity: 0;
+  transition-duration: 0.6s; /* Closing duration */
+}
+
+.max-h-0 {
+  max-height: 0;
+  opacity: 0;
+}
+
+.max-h-96 {
+  max-height: 24rem; /* TailwindCSS equivalent */
+  opacity: 1;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+
+/* ant table style */
+/* .ant-table .ant-table-thead{
+   background-color: #265eda !important; 
+} */
+.ant-table-thead > tr > th {
+  background-color: #265eda !important;
+  color: white !important;
+  /* border: none !important; */
+}
+
+/* tab panel style */
+.react-tabs__tab-list {
+  margin: 0;
+  border: none;
+}
+.react-tabs__tab--selected{
+  border: none;
+}
+@media (max-width: 600px) {
+  .react-tabs__tab{
+    display: block;
+  }
+}
+.carousel .thumb{
+height: 0;
+width: 0;
+margin: 0;
+padding: 0;
+border: 0;
+transition: none;
+transform: none;
+}
+
+.carousel .thumb.selected{
+border: 0;
+
+}
+
+/* product banner key framing */
+
+@keyframes zoomInOut {
+  0% {
+      transform: scale(0.5);
+  }
+  50% {
+      transform: scale(1);
+  }
+  100% {
+      transform: scale(0.5);
+  }
+}
+
+.animate-zoom.animate-zoom-2s {
+  animation: zoomInOut 4s ease-in-out infinite;
+}
+
+.animate-zoom.animate-zoom-3s {
+  animation: zoomInOut 5s ease-in-out infinite;
+}
+
+.animate-zoom.animate-zoom-4s {
+  animation: zoomInOut 4s ease-in-out infinite;
+}
+
+.animate-zoom.animate-zoom-5s {
+  animation: zoomInOut 5s ease-in-out infinite;
+}
+
+/* banner left sidebar */
+.arrow-icon {
+  display: none; 
+}
+
+.flex:hover .arrow-icon {
+  display: inline-block;
+}
