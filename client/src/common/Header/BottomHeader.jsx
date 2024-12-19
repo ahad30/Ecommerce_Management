@@ -113,11 +113,11 @@ const BottomHeader = () => {
      
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 ">
+          <div className="flex items-center justify-center">
             <div className="mr-2 hidden lg:block">{navList}</div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-2">
             <IconButton
           
               variant="text"
