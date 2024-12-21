@@ -1,32 +1,34 @@
 import { useEffect } from "react";
-import { Rating } from "@smastrom/react-rating";
+import { Rating, Star } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { Button } from "@material-tailwind/react";
 import KeenSlider from "keen-slider";
 import "keen-slider/keen-slider.min.css";
 import img1 from "../../../assets/Product/product-01.png";
 import img2 from "../../../assets/Product/product-02.png";
-import img3 from "../../../assets/Product/product-03.png";
-import img4 from "../../../assets/Product/product-04.png";
-import img6 from "../../../assets/Product/product-06.png";
-import img7 from "../../../assets/Product/product-07.png";
-import img8 from "../../../assets/Product/product-08.png";
+import img3 from "../../../assets/Product/product-03.webp";
+import img4 from "../../../assets/Product/product-04.webp";
+import img5 from "../../../assets/Product/product-05.webp";
+import img6 from "../../../assets/Product/product-06.webp";
+import img7 from "../../../assets/Product/product-07.webp";
+import img8 from "../../../assets/Product/product-08.webp";
 import img9 from "../../../assets/Product/product-09.png";
 import img10 from "../../../assets/Product/product-10.png";
 import img11 from "../../../assets/Product/product-11.png";
 import img12 from "../../../assets/Product/product-12.png";
-import HomeTitle from "../../../Component/Home/HomeTitle";
-import { CiHeart } from "react-icons/ci";
+import { CiHeart, CiShoppingCart } from "react-icons/ci";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import HomeTitle from "../../../components/Home/HomeTitle";
+import SectionTitle from "../SectionTitle/SectionTitle";
 
 const productCard = [
   {
     id: 1,
-    img: img1,
+    img: img5,
     title: "Men's Fashion",
     price: "100",
-    discount: "4",
+    discount: "Top Sale",
     rating: 2,
   },
   { id: 2, img: img2, title: "Women's Casual", price: "120", rating: 3.5 },
@@ -35,7 +37,7 @@ const productCard = [
     img: img3,
     title: "Electronics",
     price: "80",
-    discount: "6",
+    discount: "Feature",
     rating: 5,
   },
   { id: 4, img: img4, title: "Kitchen ", price: "90", rating: 5 },
@@ -44,7 +46,7 @@ const productCard = [
     img: img4,
     title: "Home Lamp",
     price: "110",
-    discount: "3",
+    discount: "New",
     rating: 3.5,
   },
   { id: 6, img: img6, title: "Fitness Watch", price: "95", rating: 5 },
@@ -54,7 +56,7 @@ const productCard = [
     img: img8,
     title: "Men's Wallet",
     price: "70",
-    discount: "5",
+    discount: "Top Sale",
     rating: 5,
   },
   { id: 9, img: img9, title: "Women's Designer", price: "130", rating: 5 },
@@ -63,7 +65,7 @@ const productCard = [
     img: img10,
     title: "Smartphone Case",
     price: "100",
-    discount: "2",
+    discount: "Feature",
     rating: 3.9,
   },
   { id: 11, img: img11, title: "Gaming Mouse", price: "85", rating: 4.8 },
@@ -72,10 +74,12 @@ const productCard = [
     img: img12,
     title: "Portable Bluetooth",
     price: "110",
-    discount: "7",
+    discount: "New",
     rating: 4,
   },
 ];
+
+
 
 const Product = () => {
   useEffect(() => {
@@ -90,11 +94,11 @@ const Product = () => {
         "(min-width: 1024px)": {
           slides: {
             origin: "auto",
-            perView: 5,
+            perView: 4,
             spacing: 30,
           },
         },
-        "(max-width: 400px)": {
+        "(max-width: 600px)": {
           slides: {
             origin: "center",
             perView: 1,
@@ -115,14 +119,20 @@ const Product = () => {
     // };
   }, []);
 
+  const customStyles = {
+    itemShapes: Star,
+    activeFillColor: '#F6BC3E',
+    inactiveFillColor: '#BBF7D0',
+  };
+
   return (
-    <div className="mt-16">
-      <HomeTitle text="Popular Products"></HomeTitle>
+    <div className="mt-16 mb-16">
+      <SectionTitle title="TOP NEW ARRIVALS" subTitle="Our Best-Selling and Most Popular Items" />
       <div className="mt-8 flex gap-4 lg:mt-5 justify-end">
         <button
           aria-label="Previous slide"
           id="keen-slider-previous"
-          className="rounded-full border  p-3 text-black transition hover:bg-[#CC2229] hover:text-white"
+          className="rounded-full border  p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
         >
           <FaAngleLeft></FaAngleLeft>
         </button>
@@ -130,7 +140,7 @@ const Product = () => {
         <button
           aria-label="Next slide"
           id="keen-slider-next"
-          className="rounded-full border p-3 text-black transition hover:bg-[#CC2229] hover:text-white"
+          className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
         >
           <FaAngleRight></FaAngleRight>
         </button>
@@ -138,9 +148,9 @@ const Product = () => {
 
       {/* product card */}
 
-      <div id="keen-slider" className="mt-16 keen-slider cursor-grab">
+      <div id="keen-slider" className="mt-16 keen-slider cursor-grabbing">
         {productCard.map((item, index) => (
-          <div className="keen-slider__slide" key={index}>
+          <div className="keen-slider__slide border border-gray-200 rounded-lg" key={index}>
             <div className="group h-[250px] relative block bg-black">
               <img
                 alt=""
@@ -148,49 +158,68 @@ const Product = () => {
                 className="absolute inset-0 h-[250px] w-full object-cover transition-opacity group-hover:opacity-50"
               />
 
-              <div className="relative p-4 sm:p-6 lg:p-2">
-                <div className="flex justify-between">
+              <div className="relative ">
+                <div className="flex justify-between p-4 sm:p-6 lg:p-2">
                   <div>
                     {item?.discount && (
-                      <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-[#DB4444] text-white">
-                        -{item?.discount}%
+                      <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-primary text-white">
+                        {item?.discount}
                       </p>
                     )}
                   </div>
-                  <div className="translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 text-white">
-                    <CiHeart size={30} />
+                  <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                    {/* <CiHeart size={30} /> */}
                     <MdOutlineRemoveRedEye size={28} />
                   </div>
                 </div>
 
-                <div className="text-center translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 mt-[135px] duration-700  flex justify-center items-center">
-                  <Button
-                    className="bg-secondary w-full font-Poppins font-medium"
-                    placeholder={undefined}
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
+                <div className="text-center translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 mt-[155px] duration-700">
+                  <button
+                    className="bg-secondary text-white w-full font-Poppins font-medium py-2"
                   >
-                    Add to Cart
-                  </Button>
+                   <p className="flex items-center justify-center">
+                   <CiShoppingCart className="me-2" size={30}/>
+                   Add to Cart
+                   </p>
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="mt-5 text-base font-medium">
+            <div className="p-2">
+            <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
               <h2>{item?.title}</h2>
             </div>
-            <div className="mt-5 text-base font-medium text-[#DB4444]">
+            <div className="mt-2 text-base font-medium text-primary">
               <h2>${item?.price}</h2>
-            </div>
-            <div>
+            </div>        
               <Rating
                 style={{ maxWidth: 140 }}
-                value={item?.rating as number}
+                value={item?.rating}
+                itemStyles={customStyles}
                 readOnly
               />
+
+            
             </div>
+            <div className="flex justify-center mt-10 mb-5">
+              <button
+                    className="bg-primary w-full font-Poppins font-medium py-2 px-1
+                    rounded-t-none bottom-0 absolute text-white
+                    "                  
+                  >
+                 View Details
+              </button>
+        </div>
           </div>
         ))}
       </div>
+        <div className="flex justify-center mx-auto w-[200px] mt-10 mb-5">
+        <Button
+                    className="bg-[#3498DB] w-full font-Poppins font-medium py-2 px-1"
+                  >
+                 See More
+                  </Button>
+        </div>
     </div>
   );
 };

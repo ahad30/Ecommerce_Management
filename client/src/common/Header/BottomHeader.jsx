@@ -159,9 +159,11 @@ const BottomHeader = () => {
             <div className="hidden lg:block">{navList}</div>
           </div>
           <div className="lg:w-[350px] mx-auto">
-          <h2 className="font-bold text-lg md:text-4xl text-black">
+         <a href="/">
+         <h2 className="font-bold text-lg md:text-4xl text-black">
             <span className="text-[#17340c]">INK</span>SPIRE.
           </h2>
+         </a>
         </div>
     {/* card icon */}
          <div className="flex gap-x-4 justify-center items-center mr-1">
