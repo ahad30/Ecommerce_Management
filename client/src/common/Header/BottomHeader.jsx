@@ -60,7 +60,7 @@ const BottomHeader = () => {
         </NavLink>
       </Typography>
 
-      <Typography
+      {/* <Typography
        
         as="li"
         color="blue-gray"
@@ -79,7 +79,7 @@ const BottomHeader = () => {
         >
           About
         </NavLink>
-      </Typography>
+      </Typography> */}
 
       <Typography
        
