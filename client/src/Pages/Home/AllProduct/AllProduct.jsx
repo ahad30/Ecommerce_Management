@@ -125,25 +125,7 @@ const AllProduct = () => {
   return (
     <div className="mt-16 mb-16">
       <SectionTitle title="Recommended For you" subTitle="Empowering everyone to express themselves through clothes." />
-      {/* <div className="mt-8 flex gap-4 lg:mt-5 justify-end">
-        <button
-          aria-label="Previous slide"
-          id="keen-slider-previous"
-          className="rounded-full border  p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
-        >
-          <FaAngleLeft></FaAngleLeft>
-        </button>
 
-        <button
-          aria-label="Next slide"
-          id="keen-slider-next"
-          className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
-        >
-          <FaAngleRight></FaAngleRight>
-        </button>
-      </div> */}
-
-      {/* product card */}
 
       <div className="mt-16  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {productCard.map((item, index) => (
@@ -170,7 +152,7 @@ const AllProduct = () => {
                   </div>
                 </div>
 
-                <div className="text-center translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 mt-[155px] duration-700">
+                {/* <div className="text-center translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 mt-[155px] duration-700">
                   <button
                     className="bg-secondary text-white w-full font-Poppins font-medium py-2"
                   >
@@ -179,7 +161,7 @@ const AllProduct = () => {
                    Add to Cart
                    </p>
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="p-2">

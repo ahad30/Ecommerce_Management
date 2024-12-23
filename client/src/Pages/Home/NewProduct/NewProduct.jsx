@@ -95,7 +95,7 @@ const productCard = [
   },
 ];
 
-const Product = () => {
+const NewProduct = () => {
   useEffect(() => {
     const keenSlider = new KeenSlider("#keen-slider", {
       loop: true,
@@ -199,14 +199,14 @@ const Product = () => {
                   </div>
                 </div>
 
-                <div className="text-center translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 mt-[155px] duration-700">
+                {/* <div className="text-center translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 mt-[155px] duration-700">
                   <button className="bg-secondary text-white w-full font-Poppins font-medium py-2">
                     <p className="flex items-center justify-center">
                       <CiShoppingCart className="me-2" size={30} />
                       Add to Cart
                     </p>
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="p-2">
@@ -244,4 +244,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default NewProduct;

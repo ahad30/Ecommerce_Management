@@ -95,7 +95,7 @@ const BottomHeader = () => {
               viewTransitionName: isTransitioning ? "slide" : "",
             };
           }}
-          to="/myList"
+          to="/contact"
           className="flex items-center text-[#150B2BB3]"
         >
           Contact
