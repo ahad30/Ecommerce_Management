@@ -2,14 +2,10 @@
 import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
 import AllProduct from "./AllProduct/AllProduct";
 import BannerSlider from "./BannerSlider/BannerSlider";
-import BusinessSummary from "./BusinessSummary";
-import Category from "./Category/Category";
-import HomeLeftSidebar from "./HomeLeftSidebar/HomeLeftSidebar";
 import InfoCardDetails from "./InfoCardDetails/InfoCardDetails";
 import NewsSletter from "./NewsSletter/NewsSletter";
-import Product from "./Product/Product";
 import ProductBanner from "./ProductBanner/ProductBanner";
-import TopBrands from "./TopBrands/TopBrands";
+import NewProduct from "./NewProduct/NewProduct";
 // import { useKeenSlider } from "keen-slider/react";
 // import "keen-slider/keen-slider.min.css";
 
@@ -42,7 +38,7 @@ const Home = () => {
       </div>
       {/* <Category/> */}
    
-      <Product/>
+      <NewProduct/>
       <AllProduct/>
       {/* <TopBrands></TopBrands> */}
     
