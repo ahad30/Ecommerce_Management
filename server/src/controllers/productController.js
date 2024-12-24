@@ -1,3 +1,4 @@
+const ResponseHandler = require("../shared/response.handaler");
 
 class ProductController {
     constructor(productService) {
@@ -8,31 +9,37 @@ class ProductController {
     async createProduct(req, res, next) {
         try {
             const result = await this.productService.createProducts(req.body);
-            res.status(201).json(result); 
+
+            if(result)
+
+            ResponseHandler.success(res, 'product created successfully', result)
+            else{
+                ResponseHandler.error(res,"product not created")
+            }
         } catch (error) {
             console.error(error);
-            next(error);  
+            next(error);
         }
     }
 
     // Get all products with optional filtering
     async getProducts(req, res, next) {
         try {
-            const { category, price } = req.query; 
+            const { category, price } = req.query;
             const filter = {};
 
             if (category) {
                 filter.categoryId = category;
             }
             if (price) {
-                filter.price = { gte: parseFloat(price) }; 
+                filter.price = { gte: parseFloat(price) };
             }
 
             const result = await this.productService.getProducts(filter);
             res.status(200).json(result);
         } catch (error) {
             console.error(error);
-            next(error);  
+            next(error);
         }
     }
 
@@ -44,7 +51,7 @@ class ProductController {
             res.status(200).json(result);
         } catch (error) {
             console.error(error);
-            next(error);  
+            next(error);
         }
     }
 
@@ -53,10 +60,10 @@ class ProductController {
         try {
             const productId = req.params.id;
             const result = await this.productService.updateProduct(productId, req.body);
-            res.status(200).json(result);  
+            res.status(200).json(result);
         } catch (error) {
             console.error(error);
-            next(error);  
+            next(error);
         }
     }
 
@@ -68,7 +75,7 @@ class ProductController {
             res.status(200).json({ message: 'Product deleted successfully', result });
         } catch (error) {
             console.error(error);
-            next(error);  
+            next(error);
         }
     }
 }

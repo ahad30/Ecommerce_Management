@@ -59,11 +59,34 @@ router.delete("/category/:id",(req,res,next)=>{
 })
 
 
-//[route("/product")]
+//[route("/product/create")]
 router.post("/product/create",(req,res,next)=>{
     const productController = new ProductController(productService);
     productController.createProduct(req,res,next)
 
+})
+//[route("/product")]
+router.get("/product",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.getProducts(req,res,next);
+})
+//[route("/product/{id}")]
+router.get("/product/:id",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.getProductById(req,res,next);
+})
+
+
+//[route("/product/{id}")]
+router.put("/product/:id",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.updateProduct(req,res,next);
+})
+
+//[route("/product/{id}")]
+router.delete("/product/:id",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.deleteProduct(req,res,next)
 })
     
 module.exports = router;
