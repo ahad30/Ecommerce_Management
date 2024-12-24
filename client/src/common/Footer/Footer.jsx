@@ -1,25 +1,23 @@
-import map from "../../assets/map/map.png";
-import bikash from "../../assets/payment/bikash.png";
-import img from "../../assets/payment/img.png";
-import rocket from "../../assets/payment/Rokect.png";
-import paypal from "../../assets/payment/paypal.png";
+
+import visa from "../../assets/payment/visa.png";
+import mastercard from "../../assets/payment/card.png";
+
 const Footer = () => {
   return (
     <footer className="bg-secondary">
-      <div className="max-w-7xl mx-auto px-4 py-8 ">
-        <div className="max-auto max-w-7xl grid grid-cols-1 text-center lg:text-left gap-8 lg:grid-cols-3">
+      <div className="max-w-7xl mx-auto py-8 px-6">
+        <div className=" grid grid-cols-1 text-center lg:text-left gap-8 lg:grid-cols-3">
           <div>
             <div>
             <h2 className="font-bold text-lg md:text-4xl text-white">
             <span className="text-white">INK</span>SPIRE.
-          </h2>
-              <p className="max-w-2xl lg:w-[245px] text-[#C5C5C5] mt-3 text-[12px]">
-                Lorem ipsum dolor sit amet consectetur. At aliquam et diam
-                blandit gravida at dictumst.
+           </h2>
+              <p className=" lg:max-w-[350px] text-[#C5C5C5] mt-3 text-[15px]">
+              Wear your creativity with our unique t-shirt design by enhancing your look more brightest.
               </p>
             </div>
 
-            <ul className="mt-16 flex justify-center lg:justify-start gap-6">
+            <ul className="mt-8 flex justify-center lg:justify-start gap-6">
               <li>
                 <a
                   href="#"
@@ -114,9 +112,9 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className="grid sm:grid-cols-1 lg:grid-cols-4 lg:col-span-2 gap-8">
+          <div className="grid sm:grid-cols-1 lg:grid-cols-3 lg:col-span-2 gap-3">
             <div>
-              <p className="font-semibold text-white text-[14px] underline">
+              <p className="font-semibold text-white text-[16px] underline">
                 Information
               </p>
 
@@ -124,7 +122,7 @@ const Footer = () => {
                 <li>
                   <a
                     href="#"
-                    className="text-white font-normal hover:underline decoration-sky-900 text-[12px] hover:opacity-75"
+                    className="text-white font-normal hover:underline decoration-sky-900 text-[15px] hover:opacity-75"
                   >
                     Custom Service
                   </a>
@@ -133,24 +131,17 @@ const Footer = () => {
                 <li>
                   <a
                     href="#"
-                    className="text-white  font-normal text-[12px] hover:opacity-75"
+                    className="text-white  font-normal text-[15px] hover:opacity-75"
                   >
                     FAQs
                   </a>
                 </li>
 
+       
                 <li>
                   <a
                     href="#"
-                    className="text-white  font-normal text-[12px] hover:opacity-75"
-                  >
-                    Ordering Tracking
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-white  font-normal text-[12px] hover:opacity-75"
+                    className="text-white  font-normal text-[15px] hover:opacity-75"
                   >
                     Contacts
                   </a>
@@ -159,7 +150,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <p className="font-semibold text-white underline text-[14px]">
+              <p className="font-semibold text-white underline text-[16px]">
                 Company
               </p>
 
@@ -167,7 +158,7 @@ const Footer = () => {
                 <li>
                   <a
                     href="#"
-                    className="text-white text-[12px] hover:opacity-75"
+                    className="text-white text-[15px] hover:opacity-75"
                   >
                     Delivery Information
                   </a>
@@ -176,90 +167,88 @@ const Footer = () => {
                 <li>
                   <a
                     href="#"
-                    className="text-white transition hover:opacity-75 text-[12px]"
+                    className="text-white transition hover:opacity-75 text-[15px]"
                   >
                     Privacy Policy
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-white transition hover:opacity-75 text-[12px]"
-                  >
-                    Discount
-                  </a>
-                </li>
+  
 
                 <li>
                   <a
                     href="#"
-                    className="text-white transition hover:opacity-75 text-[12px]"
+                    className="text-white transition hover:opacity-75 text-[15px]"
                   >
-                    Terms and Conditiom
+                    Terms and Condition
                   </a>
                 </li>
               </ul>
             </div>
 
             <div className="">
-              <p className="font-semibold text-white text-[14px] text-center">
+              <p className="font-semibold text-white text-[16px] text-center lg:text-start underline">
                 Get in Touch
               </p>
+              <div>
+              <ul className="mt-6 space-y-4 text-sm">
+                <li>
+                  <a
+                    href="#"
+                    className="text-white text-[15px] hover:opacity-75"
+                  >
+                  info@inksprie.com
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-white text-[15px] hover:opacity-75"
+                  >
+                +566 477 256, +566 254 575
+                  </a>
+                </li>
 
-              <div className="flex justify-center">
-              <img src={map} className="mt-7 w-[280px] h-[150px] " />
-               </div>           
-               </div>
+                <li>
+                  <a
+                    href="#"
+                    className="text-white transition hover:opacity-75 text-[15px]"
+                  >
+                    4730 Littlejohn St, Baldwin Park, CA 91706
+                  </a>
+                </li>
+       
 
-            <div>
-              <p className="font-normal text-white text-[14px]">
-                Name , Road No ,
-              </p>
-              <p className="font-normal text-white text-[14px] mt-4">
-                GEC , Chittagong
-              </p>
-              <p className="font-semibold text-[#F85506] text-[16px] mt-10">
-                Send Message
-              </p>
-              <p className="font-medium text-white text-[14px]">
-                Fri - Sat : 9am - 7pm
-              </p>
+            
+              </ul>
+
+            </div>
+
             </div>
           </div>
         </div>
       </div>
-      <hr className="border-black opacity-25" />
-      <div className="bg-secondary mt-5 h-[140px]">
-        <div className="mx-auto max-w-7xl px-5">
-          <div>
-            <div className="flex justify-between mt-8">
-              <img
-                src={bikash}
-                className="lg:w-[103px] w-[50px] lg:h-[47px] h-[20px]"
-              />
-              <img
-                src={img}
-                className="lg:w-[103px] w-[50px] lg:h-[47px] h-[20px]"
-              />
-              <img
-                src={rocket}
-                className="lg:w-[103px] w-[50px] lg:h-[47px] h-[20px]"
-              />
-              <img
-                src={paypal}
-                className="lg:w-[103px] w-[50px] lg:h-[47px] h-[20px]"
-              />
-              <img
-                src={img}
-                className="lg:w-[103px] w-[50px] lg:h-[47px] h-[20px]"
-              />
-            </div>
-          </div>
-          <hr className="border-black opacity-25 mt-6" />
+      <hr className="border-gray-200 opacity-25" />
+      <div className="bg-secondary">
+        <div className="mx-auto max-w-7xl px-5 py-2 flex flex-col lg:flex-row justify-between items-center">
           <div className="mt-8">
-            <p className="text-xs text-gray-500 text-start lg:w-[222px]">
-              &copy; 2024.All rights reserved.
+            <p className="text-lg text-gray-200 text-center lg:text-start  mb-5">
+              &copy; 2025, INKSPIRE. All rights reserved.
             </p>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mt-8 mb-5">
+            
+              <img
+                src={visa}
+                className="lg:w-[50px] w-[50px] lg:h-[50px] h-[50px] object-cover rounded-lg"
+              />
+              <img
+                src={mastercard}
+                className="lg:w-[50px] w-[50px] lg:h-[55px] h-[50px] object-cover rounded-lg"
+              />
+
+  
+            </div>
           </div>
         </div>
       </div>
