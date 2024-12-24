@@ -7,6 +7,8 @@ const BcryptHasher = require('../utility/BcryptPasswordHasher');
 const AuthController = require('../controllers/AuthController');
 const CategoryService = require('../services/Category/CategoryService');
 const CategoryController = require('../controllers/categoryController');
+const ProductService = require('../services/Product/ProductService');
+const ProductController = require('../controllers/productController');
 
 const router = express.Router();
 
@@ -16,6 +18,9 @@ const adminController = new AdminController(adminService);
 const hasher = new BcryptHasher()
 const authService = new AuthService(prisma,hasher)
 const categoryService = new CategoryService(prisma)
+const productService= new ProductService(prisma);
+
+
 
 // Define routes
 router.post('/admin/create', (req, res,next) => adminController.createAdmin(req, res,next));
@@ -51,6 +56,37 @@ router.put("/category/:id",(req,res,next)=>{
 router.delete("/category/:id",(req,res,next)=>{
     const categoryController = new CategoryController(categoryService)
     categoryController.deleteCategory(req,res,next)
+})
+
+
+//[route("/product/create")]
+router.post("/product/create",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.createProduct(req,res,next)
+
+})
+//[route("/product")]
+router.get("/product",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.getProducts(req,res,next);
+})
+//[route("/product/{id}")]
+router.get("/product/:id",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.getProductById(req,res,next);
+})
+
+
+//[route("/product/{id}")]
+router.put("/product/:id",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.updateProduct(req,res,next);
+})
+
+//[route("/product/{id}")]
+router.delete("/product/:id",(req,res,next)=>{
+    const productController = new ProductController(productService);
+    productController.deleteProduct(req,res,next)
 })
     
 module.exports = router;
