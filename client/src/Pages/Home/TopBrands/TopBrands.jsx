@@ -23,7 +23,7 @@ const TopBrands = () => {
   return (
     <div className="mt-16 mb-16">
        <HomeTitle text="Top Brands"/>
-      <div className="grid grid-cols-6 mt-12 gap-x-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 mt-12 gap-x-4">
         {brandsArr?.map((item , index) => (
           <div key={index} className="flex border border-[#928D8D70] h-[180px] justify-center flex-col items-center">
             <img src={item?.img} alt="" className="object-cover"/>
