@@ -9,12 +9,14 @@ class ProductService {
         try {
             const { variants, ...productData } = data;
 
+        console.log(productData);
         
             const product = await this.prisma.product.create({
               data: productData, 
             });
         
-    
+            console.log('Finding product with ID:', product.id); // Check the ID used for lookup
+
             if (variants && variants.length > 0) {
               const variantsData = variants.map((variant) => ({
                 ...variant,
@@ -26,7 +28,8 @@ class ProductService {
                 data: variantsData,
               });
             }
-        
+            console.log('Finding product with ID:', product.id); // Check the ID used for lookup
+
             
             const fullProduct = await this.prisma.product.findUnique({
               where: { id: product.id },
@@ -35,6 +38,7 @@ class ProductService {
         
             return fullProduct;
         } catch (error) {
+console.log(error);
 
         }
 
@@ -48,7 +52,7 @@ class ProductService {
             const products = await this.prisma.product.findMany({
                 where: filter,
                 include: {
-                    category: true,
+                    // category: true,
                     variants: true,
                 },
             });
