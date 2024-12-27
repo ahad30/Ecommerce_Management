@@ -1,7 +1,7 @@
-import { TRoutes, TRoutesData } from "../types/sidebarAndRouesTypes";
 
-export const routesGenerator = (Routes: TRoutesData[]) => {
-  const routeGenerator = Routes.reduce((acc: TRoutes[], item) => {
+
+export const routesGenerator = (Routes) => {
+  const routeGenerator = Routes.reduce((acc, item) => {
     if (item.path) {
       acc.push({ path: item.path, element: item.element });
     }

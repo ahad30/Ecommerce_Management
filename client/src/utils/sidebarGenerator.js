@@ -1,7 +1,5 @@
-import { TRoutesData, TSidebar } from "../types/sidebarAndRouesTypes";
-
-export const sidebarGenerator = (arr: TRoutesData[]) => {
-  const sidebarGeneratorModified = arr.reduce((acc: TSidebar[], item) => {
+export const sidebarGenerator = (arr) => {
+  const sidebarGeneratorModified = arr.reduce((acc, item) => {
     if (item?.path && item.label) {
       acc?.push({
         key: item?.path,

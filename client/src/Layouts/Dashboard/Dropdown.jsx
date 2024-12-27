@@ -8,17 +8,17 @@ import {
   IoPersonOutline,
   IoPersonSharp,
 } from "react-icons/io5";
-import { useAppDispatch } from "../../Redux/hook";
-import { useLogoutMutation } from "../../Redux/Feature/auth/authApi";
-import { logout } from "../../Redux/Feature/auth/authSlice";
+// import { useLogoutMutation } from "../../Redux/Feature/auth/authApi";
+// import { logout } from "../../Redux/Feature/auth/authSlice";
+import { useAppDispatch } from "../../redux/Hook/Hook";
 
 const Dropdown = () => {
   const dispatch = useAppDispatch();
-  const [logoutUser] = useLogoutMutation();
-  const handleLogout = () => {
-    logoutUser(undefined);
-    dispatch(logout());
-  };
+  // const [logoutUser] = useLogoutMutation();
+  // const handleLogout = () => {
+  //   logoutUser(undefined);
+  //   dispatch(logout());
+  // };
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
