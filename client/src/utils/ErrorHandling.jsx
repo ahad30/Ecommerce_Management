@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 
-export type TError = {
-  [key: string]: string[];
-} | undefined;
+
 const ErrorHandling = (
-  errors: TError,
-  isAddModalOpen: boolean,
-  isEditModalOpen: boolean
+  errors,
+  isAddModalOpen,
+  isEditModalOpen
 ) => {
-  const [error, setError] = useState<string[]>([]);
+  const [error, setError] = useState([]);
   useEffect(() => {
     if (!isAddModalOpen || !isEditModalOpen) {
       setError([]);
@@ -16,7 +14,7 @@ const ErrorHandling = (
   }, [isAddModalOpen, isEditModalOpen]);
   useEffect(() => {
     if (errors) {
-      const arr: string[] = [];
+      const arr = [];
       for (const key in errors) {
         if (Array.isArray(errors[key])) {
           errors[key].forEach((err) => arr.push(err));
