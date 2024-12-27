@@ -5,9 +5,6 @@ import { IoIosArrowDroprightCircle } from "react-icons/io";
 const Navbar = ({
   setIsSidebarOpen,
   isSidebarOpen,
-}: {
-  isSidebarOpen: boolean;
-  setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
     <>
