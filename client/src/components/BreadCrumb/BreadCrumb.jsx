@@ -1,12 +1,12 @@
 "use client";
 import React from 'react';
 import { Card } from '@material-tailwind/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { IoIosArrowForward } from "react-icons/io";
+import { Link, useLocation } from 'react-router-dom';
 
 const BreadCrumb = () => {
-  const pathName = usePathname();
+  const location = useLocation();
+  const pathName = location.pathname;
   let currentLinks = "";
   const crumb = pathName
     .split("/")
@@ -28,7 +28,7 @@ const BreadCrumb = () => {
 
       return (
         <div key={linkPath}>
-          <Link href={linkPath} legacyBehavior>
+          <Link to={linkPath} legacyBehavior>
             <a
               className={`text-base flex items-center gap-x-2 ${
                 isLast ? "text-cyan-700 font-semibold" : ""
