@@ -9,6 +9,8 @@ const CategoryService = require('../services/Category/CategoryService');
 const CategoryController = require('../controllers/categoryController');
 const ProductService = require('../services/Product/ProductService');
 const ProductController = require('../controllers/productController');
+const BrandController = require('../controllers/BrandController');
+const BrandService = require('../services/Brand/BrandService');
 
 const router = express.Router();
 
@@ -19,7 +21,7 @@ const hasher = new BcryptHasher()
 const authService = new AuthService(prisma,hasher)
 const categoryService = new CategoryService(prisma)
 const productService= new ProductService(prisma);
-
+const brandService = new BrandService(prisma);
 
 
 // Define routes
@@ -88,5 +90,10 @@ router.delete("/product/:id",(req,res,next)=>{
     const productController = new ProductController(productService);
     productController.deleteProduct(req,res,next)
 })
-    
+
+//[route("/brand/create")]
+router.post("/brand/create",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.create(req,res,next)
+})
 module.exports = router;
