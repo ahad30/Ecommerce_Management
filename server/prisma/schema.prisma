@@ -35,19 +35,31 @@ model Category {
   updatedAt   DateTime @updatedAt
 }
 
+model Brand {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  brandName String  @unique
+  status    Boolean
+  imageUrl  String
+
+  createdById String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   price       Float
-  imageUrl    String
-  categoryId  String   @db.ObjectId
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  topSale     Boolean @default(false)
-  newArrival  Boolean @default(false)
-  status      Boolean @default(true)
-  variants Variant[]
+  imageUrl    Json
+  categoryId  String    @db.ObjectId
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  topSale     Boolean   @default(false)
+  newArrival  Boolean   @default(false)
+  status      Boolean   @default(true)
+  brandId     String    @db.ObjectId
+  variants    Variant[]
 }
 
 model Variant {
@@ -57,7 +69,7 @@ model Variant {
   stock      Int
   price      Float?
   priceTiers Json
-  
+  imageUrl   Json
   sku        String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

@@ -32,6 +32,7 @@ class AuthController {
                 success: true,
                 message: "Login successful",
                 token,
+                user
               });
 
         } catch (error) {
