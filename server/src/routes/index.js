@@ -96,4 +96,24 @@ router.post("/brand/create",(req,res,next)=>{
     const brandController = new BrandController(brandService);
     brandController.create(req,res,next)
 })
+//[route("/brand")]
+router.get("/brand",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.getAll(req,res,next)
+})
+//[route("/brand/{id}")]
+router.get("/brand/:id",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.getSingle(req,res,next)
+})
+//[route("/brand/{id}")]
+router.put("/brand/:id",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.update(req,res,next)
+})
+//[route("/brand/{id}")]
+router.delete("/brand/:id",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.delete(req,res,next)
+})
 module.exports = router;
