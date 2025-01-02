@@ -3,6 +3,7 @@ import ProductImageSlider from "./ProductImageSlider";
 import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb";
 import { FaGreaterThan, FaHome } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
+import { HiOutlineShoppingBag } from "react-icons/hi2";
 
 const ProductDetails = () => {
   const allProduct = useLoaderData();
@@ -56,7 +57,7 @@ const ProductDetails = () => {
               (totalStock, variant) => totalStock + variant.stock,
               0
             )} */}
-            {singleProduct.variants[0].stock ? "In Stock" : "Out of Stock"}
+            {singleProduct.availability === true ? "In Stock" : "Out of Stock"}
             </span>
           </p>
           {/* <p className="font-medium">SKU: {singleProduct.variants[0].sku}</p> */}
@@ -137,15 +138,18 @@ const ProductDetails = () => {
                    Add to Cart
                    </p>
             </button>
-            {/* <button className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500">
-              Wishlist
-            </button> */}
+            <button className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all">
+            <p className="flex items-center justify-center">
+                   <HiOutlineShoppingBag className="me-2" size={24}/>
+                   Buy Now
+                   </p>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Tabs Section */}
-      <div className="container mx-auto lg:-mt-[120px]">
+      <div className="container mx-auto lg:-mt-[120px] mb-16">
         <div className="">
           <ul className="flex justify-center space-x-8 text-2xl font-medium">
             <li className="text-blue-500 border-b-2 border-blue-500">

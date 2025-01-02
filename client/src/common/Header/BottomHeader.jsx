@@ -53,7 +53,7 @@ const BottomHeader = () => {
               viewTransitionName: isTransitioning ? "slide" : "",
             };
           }}
-          to="/allArt&Craft"
+          to="/shop"
           className="flex items-center text-[#150B2BB3]"
         >
           Shop
