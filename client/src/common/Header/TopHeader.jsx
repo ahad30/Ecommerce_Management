@@ -24,7 +24,6 @@ const TopHeader = () => {
             title={isHomeCategorySidebarOpen ? 'Close Menu' : 'Open Menu'}
          >
             <span className="cursor-pointer">
-              {" "}
               {isHomeCategorySidebarOpen ? (
                 <MdClose className="inline-block w-6 h-6" />
               ) : (
