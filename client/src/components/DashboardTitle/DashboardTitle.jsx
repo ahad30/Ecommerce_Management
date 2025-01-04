@@ -7,7 +7,7 @@ const DashboardTitle = ({ text, children, windowTitle }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      document.title = `${windowTitle ? windowTitle : ""} | অভিযোগ প্রতিকার ব্যবস্থা`;
+      document.title = `${windowTitle ? windowTitle : ""} | INKSPIRE`;
     }
   }, [windowTitle]);
 

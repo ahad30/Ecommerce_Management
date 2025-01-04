@@ -9,6 +9,10 @@ const CategoryService = require('../services/Category/CategoryService');
 const CategoryController = require('../controllers/categoryController');
 const ProductService = require('../services/Product/ProductService');
 const ProductController = require('../controllers/productController');
+const BrandController = require('../controllers/BrandController');
+const BrandService = require('../services/Brand/BrandService');
+const OrderService = require('../services/Order/OrderService');
+const OrderCOntroller = require('../controllers/orderController');
 
 const router = express.Router();
 
@@ -19,8 +23,8 @@ const hasher = new BcryptHasher()
 const authService = new AuthService(prisma,hasher)
 const categoryService = new CategoryService(prisma)
 const productService= new ProductService(prisma);
-
-
+const brandService = new BrandService(prisma);
+const orderService = new OrderService(prisma)
 
 // Define routes
 router.post('/admin/create', (req, res,next) => adminController.createAdmin(req, res,next));
@@ -88,5 +92,36 @@ router.delete("/product/:id",(req,res,next)=>{
     const productController = new ProductController(productService);
     productController.deleteProduct(req,res,next)
 })
-    
+
+//[route("/brand/create")]
+router.post("/brand/create",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.create(req,res,next)
+})
+//[route("/brand")]
+router.get("/brand",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.getAll(req,res,next)
+})
+//[route("/brand/{id}")]
+router.get("/brand/:id",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.getSingle(req,res,next)
+})
+//[route("/brand/{id}")]
+router.put("/brand/:id",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.update(req,res,next)
+})
+//[route("/brand/{id}")]
+router.delete("/brand/:id",(req,res,next)=>{
+    const brandController = new BrandController(brandService);
+    brandController.delete(req,res,next)
+})
+
+//[route("/orders/create")]
+router.post("/orders/create",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.createOrder(req,res,next);
+})
 module.exports = router;

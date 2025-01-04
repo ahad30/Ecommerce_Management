@@ -60,7 +60,7 @@ const BottomHeader = () => {
         </NavLink>
       </Typography>
 
-      <Typography
+      {/* <Typography
        
         as="li"
         color="blue-gray"
@@ -79,7 +79,7 @@ const BottomHeader = () => {
         >
           About
         </NavLink>
-      </Typography>
+      </Typography> */}
 
       <Typography
        
@@ -95,7 +95,7 @@ const BottomHeader = () => {
               viewTransitionName: isTransitioning ? "slide" : "",
             };
           }}
-          to="/myList"
+          to="/contact"
           className="flex items-center text-[#150B2BB3]"
         >
           Contact
@@ -159,9 +159,11 @@ const BottomHeader = () => {
             <div className="hidden lg:block">{navList}</div>
           </div>
           <div className="lg:w-[350px] mx-auto">
-          <h2 className="font-bold text-lg md:text-4xl text-black">
+         <a href="/">
+         <h2 className="font-bold text-lg md:text-4xl text-black">
             <span className="text-[#17340c]">INK</span>SPIRE.
           </h2>
+         </a>
         </div>
     {/* card icon */}
          <div className="flex gap-x-4 justify-center items-center mr-1">
