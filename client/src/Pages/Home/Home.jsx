@@ -1,14 +1,27 @@
 
+import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
+import AllProduct from "./AllProduct/AllProduct";
 import BannerSlider from "./BannerSlider/BannerSlider";
-import Category from "./Category/Category";
-import HomeLeftSidebar from "./HomeLeftSidebar/HomeLeftSidebar";
 import InfoCardDetails from "./InfoCardDetails/InfoCardDetails";
+import NewsSletter from "./NewsSletter/NewsSletter";
 import ProductBanner from "./ProductBanner/ProductBanner";
-import TopBrands from "./TopBrands/TopBrands";
+import NewProduct from "./NewProduct/NewProduct";
+// import { useKeenSlider } from "keen-slider/react";
+// import "keen-slider/keen-slider.min.css";
 
 const Home = () => {
+  // const [sliderRef1] = useKeenSlider({
+  //   loop: true,
+  //   slides: { perView: 1, spacing: 10 },
+  // });
+
+  // const [sliderRef2] = useKeenSlider({
+  //   loop: true,
+  //   slides: { perView: 1, spacing: 15 },
+  // });
   return (
     <div className="">
+    <DashboardTitle windowTitle={"Home"}/>
       {/* <div className="grid lg:grid-cols-[2fr_5fr]"> */}
          {/* <HomeLeftSidebar /> */}
         <div className="mt-5">
@@ -23,11 +36,28 @@ const Home = () => {
       <div className="mt-6">
         <InfoCardDetails/>
       </div>
+      {/* <Category/> */}
+   
+      <NewProduct/>
+      <AllProduct/>
+      {/* <TopBrands></TopBrands> */}
+    
+       <NewsSletter/>
 
-      <Category/>
-      <TopBrands></TopBrands>
-       {/* <Product></Product> */}
-      {/* <BusinessSummary></BusinessSummary>  */}
+       {/* <div>
+
+      <div ref={sliderRef1} className="keen-slider">
+        <div className="keen-slider__slide">Slide 1</div>
+        <div className="keen-slider__slide">Slide 2</div>
+        <div className="keen-slider__slide">Slide 3</div>
+      </div>
+
+      <div ref={sliderRef2} className="keen-slider mt-10">
+        <div className="keen-slider__slide">Slide A</div>
+        <div className="keen-slider__slide">Slide B</div>
+        <div className="keen-slider__slide">Slide C</div>
+      </div>
+    </div> */}
     </div>
   );
 };

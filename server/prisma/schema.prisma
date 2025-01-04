@@ -2,6 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum PaymentStatus {
+  pending
+  paid
+  failed
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -47,31 +53,63 @@ model Brand {
 }
 
 model Product {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  price       Float
-  imageUrl    Json
-  categoryId  String    @db.ObjectId
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  topSale     Boolean   @default(false)
-  newArrival  Boolean   @default(false)
-  status      Boolean   @default(true)
-  brandId     String    @db.ObjectId
-  variants    Variant[]
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
+  productSubtitle String
+  price           Float
+  imageUrl        Json
+  weight          String
+  material        String
+  thickness       String
+  elasticity      String
+  breathability   String
+  categoryId      String    @db.ObjectId
+  brandId         String    @db.ObjectId
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  topSale         Boolean   @default(false)
+  newArrival      Boolean   @default(false)
+  status          Boolean   @default(true)
+  availability    Boolean   @default(true)
+  variants        Variant[]
 }
 
+
+
 model Variant {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId  String   @db.ObjectId
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String @db.ObjectId
   attributes Json
   stock      Int
   price      Float?
   priceTiers Json
   imageUrl   Json
-  sku        String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  product    Product  @relation(fields: [productId], references: [id])
+
+  sku       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+enum OrderStatus {
+  pending
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+model Order {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String        @db.ObjectId
+  orderTotal      Float
+  paymentStatus   PaymentStatus
+  shippingAddress String
+  billingAddress  String
+  orderStatus     OrderStatus   @default(pending)
+  orderItems      Json
+  deliveryFee     Float         @default(0)
+  taxAmount       Float         @default(0)
+  transactionId  String
 }

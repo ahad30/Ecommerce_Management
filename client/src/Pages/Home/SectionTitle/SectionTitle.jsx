@@ -9,7 +9,7 @@ const SectionTitle = ({ title, subTitle }) => {
 
                         <span><BsSignIntersectionFill className="text-2xl text-[#24354C]" /></span>
 
-                        <h1 className="text-2xl font-bold">{title}</h1>
+                        <h1 className="text-2xl font-bold uppercase">{title}</h1>
                     </div>
                     <h5 className="text-base">{subTitle}</h5>
                 </div>

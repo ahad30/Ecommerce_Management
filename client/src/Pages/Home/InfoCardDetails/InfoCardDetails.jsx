@@ -29,14 +29,14 @@ const InfoCardDetails = () => {
        
     ]
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] xl:grid-cols-[1fr_1fr_1fr_1fr] gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] xl:grid-cols-[1fr_1fr_1fr_1fr] gap-4 mt-10 mb-16">
             {
                 infoDetailsData.map((info,idx) => (
                     <div key={idx} className="grid grid-cols-[1fr_4fr] place-items-center py-2 px-4 gap-2 rounded-md bg-[#edeeef]">
                         <span className="text-2xl md:text-4xl text-[#707070]">{info.icon}</span>
                         <div>
                             <h1 className="text-[12px] md:text-sm font-medium text-[#232323]">{info.name}</h1>
-                            <p className=" text-[10px] md:text-[12px] text-justify text-[#777777]">{info.description}</p>
+                            <p className=" text-[10px] md:text-[12px]  text-[#777777]">{info.description}</p>
                         </div>
                     </div>
                 ))
