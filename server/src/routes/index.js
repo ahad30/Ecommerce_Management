@@ -11,6 +11,8 @@ const ProductService = require('../services/Product/ProductService');
 const ProductController = require('../controllers/productController');
 const BrandController = require('../controllers/BrandController');
 const BrandService = require('../services/Brand/BrandService');
+const AttributesService = require('../services/Attributes/AttributesService');
+const AttributesController = require('../controllers/attributesController');
 
 const router = express.Router();
 
@@ -22,6 +24,7 @@ const authService = new AuthService(prisma,hasher)
 const categoryService = new CategoryService(prisma)
 const productService= new ProductService(prisma);
 const brandService = new BrandService(prisma);
+const attributeService = new AttributesService(prisma);
 
 
 // Define routes
@@ -115,5 +118,33 @@ router.put("/brand/:id",(req,res,next)=>{
 router.delete("/brand/:id",(req,res,next)=>{
     const brandController = new BrandController(brandService);
     brandController.delete(req,res,next)
+})
+
+
+
+//[route("/attributes/create")]
+router.post("/attributes/create",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.createAttribute(req,res,next)
+})
+//[route("/attributes")]
+router.get("/attributes",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.getAllAttributes(req,res,next)
+})
+//[route("/attributes/{id}")]
+router.get("/attributes/:id",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.getAttributeById(req,res,next)
+})
+//[route("/attributes/{id}")]
+router.put("/attributes/:id",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.updateAttribute(req,res,next)
+})
+//[route("/attributes/{id}")]
+router.delete("/attributes/:id",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.deleteAttribute(req,res,next)
 })
 module.exports = router;
