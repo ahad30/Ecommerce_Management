@@ -48,6 +48,16 @@ model attributes{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+model Brand {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  brandName String  @unique
+  status    Boolean
+  imageUrl  String
+
+  createdById String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
 model Product {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -72,14 +82,7 @@ model Product {
   variants        Variant[]
 }
 
-model Brand {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  imageUrl  String
-  status    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+
 
 model Variant {
   id         String @id @default(auto()) @map("_id") @db.ObjectId

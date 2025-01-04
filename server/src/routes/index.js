@@ -13,6 +13,8 @@ const BrandController = require('../controllers/BrandController');
 const BrandService = require('../services/Brand/BrandService');
 const AttributesService = require('../services/Attributes/AttributesService');
 const AttributesController = require('../controllers/attributesController');
+const OrderService = require('../services/Order/OrderService');
+const OrderCOntroller = require('../controllers/orderController');
 
 const router = express.Router();
 
@@ -26,6 +28,7 @@ const productService= new ProductService(prisma);
 const brandService = new BrandService(prisma);
 const attributeService = new AttributesService(prisma);
 
+const orderService = new OrderService(prisma)
 
 // Define routes
 router.post('/admin/create', (req, res,next) => adminController.createAdmin(req, res,next));
@@ -147,4 +150,12 @@ router.delete("/attributes/:id",(req,res,next)=>{
     const attributesController = new AttributesController(attributeService);
     attributesController.deleteAttribute(req,res,next)
 })
+//[route("/orders/create")]
+router.post("/orders/create",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.createOrder(req,res,next);
+})
+
+
+
 module.exports = router;

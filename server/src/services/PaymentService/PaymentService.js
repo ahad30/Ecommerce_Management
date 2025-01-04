@@ -24,6 +24,8 @@ class PaymentService {
             });
             return paymentIntent;
         } catch (error) {
+            console.log(error);
+            
             throw new Error("Payment Intent creation failed");
         }
     }

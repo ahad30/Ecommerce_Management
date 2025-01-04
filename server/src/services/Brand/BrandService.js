@@ -15,7 +15,7 @@ class BrandService{
     async getById(id){
         return this.prisma.brand.findUnique({
         where:{
-            id: parseInt(id)
+            id: id
         }
         })
     }
