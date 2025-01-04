@@ -17,7 +17,7 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { useAppSelector } from "../../../redux/Hook/Hook";
 
 
-const HomeLeftSidebar = () => {
+const LeftSidebar = () => {
     const categories = [
         { id: 1, name: "Electronics", icon: <PiDevicesFill /> },
         { id: 2, name: "Clothes and Fashion", icon: <FaTshirt /> },
@@ -33,11 +33,7 @@ const HomeLeftSidebar = () => {
         { id: 12, name: "E-Books", icon: <FaBookReader /> },
         { id: 13, name: "Gift Cards and Tickets", icon: <FaTicketAlt /> },
     ];
-    // const [isOpen, setIsOpen] = useState(false);
 
-    // const toggleSidebar = () => {
-    //     setIsOpen(!isOpen);
-    // };
 
     const { isHomeCategorySidebarOpen } = useAppSelector(
         (state) => state.modal
@@ -81,4 +77,4 @@ const HomeLeftSidebar = () => {
     );
 };
 
-export default HomeLeftSidebar;
+export default LeftSidebar;

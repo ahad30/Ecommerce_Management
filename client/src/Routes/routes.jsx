@@ -9,6 +9,8 @@ import { adminRoutes } from "./Admin.Routes";
 import ErrorPage from "../common/ErrorPage/ErrorPage";
 import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
 import MainLayout from "../Layouts/Home/MainLayout";
+import ProductDetails from "../Pages/Home/ProductDetails/ProductDetails";
+import Shop from "../Pages/Shop/Shop";
 
 export const routes = createBrowserRouter([
   {
@@ -19,6 +21,16 @@ export const routes = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/shop",
+        element: <Shop/>,
+      },
+      {
+        path: "/product/:id",
+        element: <ProductDetails />,
+        loader: () => fetch('/products.json')
+
       },
       {
         path: "/contact",
