@@ -155,7 +155,13 @@ router.post("/orders/create",(req,res,next)=>{
     const orderController = new OrderCOntroller(orderService);
     orderController.createOrder(req,res,next);
 })
-
-
+router.get("/orders",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.getOrders(req,res,next);
+})
+router.get("/success",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.paymentSuccess(req,res,next);
+})
 
 module.exports = router;
