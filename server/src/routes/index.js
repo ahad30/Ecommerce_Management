@@ -11,6 +11,8 @@ const ProductService = require('../services/Product/ProductService');
 const ProductController = require('../controllers/productController');
 const BrandController = require('../controllers/BrandController');
 const BrandService = require('../services/Brand/BrandService');
+const AttributesService = require('../services/Attributes/AttributesService');
+const AttributesController = require('../controllers/attributesController');
 const OrderService = require('../services/Order/OrderService');
 const OrderCOntroller = require('../controllers/orderController');
 
@@ -24,6 +26,8 @@ const authService = new AuthService(prisma,hasher)
 const categoryService = new CategoryService(prisma)
 const productService= new ProductService(prisma);
 const brandService = new BrandService(prisma);
+const attributeService = new AttributesService(prisma);
+
 const orderService = new OrderService(prisma)
 
 // Define routes
@@ -119,9 +123,45 @@ router.delete("/brand/:id",(req,res,next)=>{
     brandController.delete(req,res,next)
 })
 
+
+
+//[route("/attributes/create")]
+router.post("/attributes/create",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.createAttribute(req,res,next)
+})
+//[route("/attributes")]
+router.get("/attributes",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.getAllAttributes(req,res,next)
+})
+//[route("/attributes/{id}")]
+router.get("/attributes/:id",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.getAttributeById(req,res,next)
+})
+//[route("/attributes/{id}")]
+router.put("/attributes/:id",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.updateAttribute(req,res,next)
+})
+//[route("/attributes/{id}")]
+router.delete("/attributes/:id",(req,res,next)=>{
+    const attributesController = new AttributesController(attributeService);
+    attributesController.deleteAttribute(req,res,next)
+})
 //[route("/orders/create")]
 router.post("/orders/create",(req,res,next)=>{
     const orderController = new OrderCOntroller(orderService);
     orderController.createOrder(req,res,next);
 })
+router.get("/orders",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.getOrders(req,res,next);
+})
+router.get("/success",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.paymentSuccess(req,res,next);
+})
+
 module.exports = router;
