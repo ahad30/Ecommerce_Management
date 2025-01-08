@@ -39,6 +39,7 @@ model Category {
   createdById String   @db.ObjectId
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  products    Product[]
 }
 
 model attributes{
@@ -57,6 +58,7 @@ model Brand {
   createdById String   @db.ObjectId
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  products Product[]
 }
 
 model Product {
@@ -80,6 +82,8 @@ model Product {
   status          Boolean   @default(true)
   availability    Boolean   @default(true)
   variants        Variant[]
+  category        Category  @relation(fields: [categoryId], references: [id])
+  brand           Brand     @relation(fields: [brandId], references: [id])
 }
 
 
@@ -118,5 +122,5 @@ model Order {
   orderItems      Json
   deliveryFee     Float         @default(0)
   taxAmount       Float         @default(0)
-  transactionId  String
+  transactionId  String          @unique
 }
