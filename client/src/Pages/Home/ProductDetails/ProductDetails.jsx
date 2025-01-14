@@ -7,9 +7,6 @@ import { HiOutlineShoppingBag } from "react-icons/hi2";
 const ProductDetails = () => {
   const singleProduct = useLoaderData();
   console.log(singleProduct)
-  // const { id } = useParams();
-  // const singleProduct = allProduct.find((product) => product.id === id);
-  // console.log(singleProduct);
   return (
     <section className="py-5">
       <nav className="flex justify-start space-x-3 py-8 px-5">
