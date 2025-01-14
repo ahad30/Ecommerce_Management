@@ -29,8 +29,8 @@ export const routes = createBrowserRouter([
       {
         path: "/product/:id",
         element: <ProductDetails />,
-        loader: () => fetch('/products.json')
-
+        loader: ({ params }) =>
+          fetch(`${import.meta.env.VITE_BACKEND_URL}/product/${params.id}`)
       },
       {
         path: "/contact",
