@@ -52,8 +52,9 @@ console.log(error);
             const products = await this.prisma.product.findMany({
                 where: filter,
                 include: {
-                    // category: true,
+                    category: true,
                     variants: true,
+                    brand:true
                 },
             });
             return products;

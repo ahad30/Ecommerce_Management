@@ -66,10 +66,15 @@ class PaymentService extends OrderService{
                 //     },
                 // });
                 console.log(session.client_reference_id);
-                
+                const orderData = await prisma.order.findUnique({
+                    where:{
+                        transactionId: transactionId,
+                    }
+                })
+                console.log(orderData,"orderData");
                 const updatedOrder = await prisma.order.update({
                     where: {
-                        id: session.client_reference_id,  // Assuming 'id' is the primary unique identifier in the database
+                        id: orderData.id,  
                     },
                     data: {
                         paymentStatus: "paid",
