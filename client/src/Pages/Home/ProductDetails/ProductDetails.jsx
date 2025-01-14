@@ -1,15 +1,12 @@
 import { Link, useLoaderData, useParams } from "react-router-dom";
 import ProductImageSlider from "./ProductImageSlider";
-import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb";
 import { FaGreaterThan, FaHome } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 
 const ProductDetails = () => {
-  const allProduct = useLoaderData();
-  const { id } = useParams();
-  const singleProduct = allProduct.find((product) => product.id === id);
-  console.log(singleProduct);
+  const singleProduct = useLoaderData();
+  console.log(singleProduct)
   return (
     <section className="py-5">
       <nav className="flex justify-start space-x-3 py-8 px-5">
@@ -42,7 +39,7 @@ const ProductDetails = () => {
         {/* Slider Section */}
         <div>
           <ProductImageSlider
-            images={singleProduct.variants.map((variant) => variant.imageUrl)}
+            images={singleProduct.variants.map((variant) => variant.imageUrl[0])}
           />
         </div>
 
@@ -70,7 +67,7 @@ const ProductDetails = () => {
           <div className="text-xl font-bold text-blue-500">
             Price: ${singleProduct.price}
           </div>
-          <p className="text-xl text-gray-500">"Elegance Redefined: The Perfect Blend of Style and Comfort"</p>
+          <p className="text-xl text-gray-500">{singleProduct?.productSubtitle}</p>
 
           {/* Size Selector */}
           <div className="mt-4">
@@ -160,16 +157,8 @@ const ProductDetails = () => {
 
         {/* Tab Content */}
         <div className="mt-6">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Est nec
-            condimentum lorem lacus. Lectus libero in vulputate quis massa nisl
-            risus, libero ut. Morbi praesent ipsum sed morbi turpis sed. Amet
-            sed fames fermentum, augue dignissim. Montes, velit velit eu gravida
-            nibh in feugiat. Lorem ipsum dolor sit amet, consectetur adipiscing
-            elit. Est nec condimentum lorem lacus. Lectus libero in vulputate
-            quis massa nisl risus, libero ut. Morbi praesent ipsum sed morbi
-            turpis sed. Amet sed fames fermentum, augue dignissim. Montes, velit
-            velit eu gravida nibh in feugiat.
+          <p className="text-lg text-gray-500">
+         {singleProduct?.description}
           </p>
           <table className="mt-6 w-[50%] mx-auto border border-gray-300 text-left">
             <thead>
