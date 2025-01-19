@@ -1,10 +1,10 @@
 
 "use client"
-import { useAppDispatch } from "@/redux/Hook/Hook";
-import { setIsDeleteModalOpen } from "@/redux/Modal/ModalSlice";
 import { Alert, Button, Flex, Modal } from "antd";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useAppDispatch } from "../../redux/Hook/Hook";
+import { setIsDeleteModalOpen } from "../../redux/Modal/ModalSlice";
 
 
 

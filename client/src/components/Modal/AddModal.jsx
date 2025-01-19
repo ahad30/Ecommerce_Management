@@ -1,7 +1,7 @@
 "use client"
-import { useAppDispatch } from "@/redux/Hook/Hook";
-import { setIsAddModalOpen, setIsCustomerModalOpen, setIsProductModalOpen } from "@/redux/Modal/ModalSlice";
 import { Modal } from "antd";
+import { useAppDispatch } from "../../redux/Hook/Hook";
+import { setIsAddModalOpen } from "../../redux/Modal/ModalSlice";
 
 
 const AddModal = ({ children, isAddModalOpen, title, width }) => {

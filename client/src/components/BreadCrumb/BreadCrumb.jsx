@@ -1,4 +1,3 @@
-"use client";
 import React from 'react';
 import { Card } from '@material-tailwind/react';
 import { IoIosArrowForward } from "react-icons/io";
@@ -16,8 +15,6 @@ const BreadCrumb = () => {
       const linkPath = 
       item === "Dashboard" 
         ? "/Dashboard/AdminHome" 
-        : item === "UserBusiness" 
-        ? "/UserDashboard/UserBusiness" 
         : item === "UserDashboard" 
         ? "/UserDashboard/UserHome" 
         : currentLinks;
