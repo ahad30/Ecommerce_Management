@@ -47,36 +47,37 @@ class CategoryService {
         }
     }
 
-    // Update an existing category by ID
-    async updateCategory(id, postBody) {
-        try {
-            const category = await this.prisma.category.update({
-                where: {
-                    id: id,  // Find the category by its ID
-                },
-                data: postBody,  // New data to update the category
-            });
-            return category;  // Return the updated category
-        } catch (error) {
-            console.error('Error updating category:', error);
-            throw new Error('Category update failed');
-        }
+// Update an existing category by ID
+async updateCategory(id, postBody) {
+    try {
+        const category = await this.prisma.category.update({
+            where: {
+                id: id,  // Ensure id is a string
+            },
+            data: postBody,  // New data to update the category
+        });
+        return category;  // Return the updated category
+    } catch (error) {
+        console.error('Error updating category:', error);
+        throw new Error('Category update failed');
     }
+}
 
-    // Delete a category by ID
-    async deleteCategory(id) {
-        try {
-            const category = await this.prisma.category.delete({
-                where: {
-                    id: id,  // Find and delete the category by its ID
-                },
-            });
-            return category;  // Return the deleted category
-        } catch (error) {
-            console.error('Error deleting category:', error);
-            throw new Error('Category deletion failed');
-        }
+// Delete a category by ID
+async deleteCategory(id) {
+    try {
+        const category = await this.prisma.category.delete({
+            where: {
+                id: id,  // Ensure id is a string
+            },
+        });
+        return category;  // Return the deleted category
+    } catch (error) {
+        console.error('Error deleting category:', error);
+        throw new Error('Category deletion failed');
     }
+}
+
 }
 
 module.exports = CategoryService;
