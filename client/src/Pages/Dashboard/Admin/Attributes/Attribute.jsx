@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Image, Tag } from "antd";
+import { Alert, Image, Tag } from "antd";
 import { Space, Tooltip, message } from "antd";
 
 import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb";
@@ -23,6 +23,8 @@ const Attribute = () => {
   const [selectedAttribute, setSelectedAttribute] = useState({});
   const [deleteAttribute, { isLoading: dAIsLoading, isError, isSuccess, data: dAData, error: dAError }] = useDeleteAttributesMutation();
 
+
+
   const attributeData = data?.data?.map((attribute, index) => ({
     key: index,
     id: attribute?.id,
@@ -31,6 +33,8 @@ const Attribute = () => {
     createdAt: attribute?.createdAt,
     updatedAt: attribute?.updatedAt
   }));
+
+  console.log(attributeData)
 
   const handleEditAttribute = (attributeData) => {
     setSelectedAttribute(attributeData);
@@ -56,6 +60,17 @@ const Attribute = () => {
       title: "Values",
       dataIndex: "value",
       key: "value",
+      render: (value) =>  
+        <div className="flex justify-center gap-2">
+      {
+        value?.map((item) => (
+          <div key={item?.id} className="relative">
+            <Alert message={item?.name} type="info" />
+          </div>
+        ))
+             
+      }
+    </div>
     },
     {
       title: "Action",
