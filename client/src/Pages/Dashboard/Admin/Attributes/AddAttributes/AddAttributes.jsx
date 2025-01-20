@@ -5,68 +5,62 @@ import { useAddAttributesMutation } from "../../../../../redux/Feature/Admin/att
 import { setIsAddModalOpen } from "../../../../../redux/Modal/ModalSlice";
 import ZFormTwo from "../../../../../components/Form/ZFormTwo";
 import ZInputTwo from "../../../../../components/Form/ZInputTwo";
-
+import { v4 as uuidv4 } from 'uuid';
 
 const AddAttributes = () => {
   const dispatch = useAppDispatch();
-  const [addonPages, setAddonPages] = useState([1]);
+  const [addonPages, setAddonPages] = useState([{ name: "" }]);
   const { isAddModalOpen } = useAppSelector((state) => state.modal);
+console.log(addonPages)
+  const [createAttribute, { isLoading, isError, isSuccess, error, data }] = useAddAttributesMutation();
 
-
-  const [
-    createAttribute,
-    { isLoading, isError, isSuccess, error, data },
-  ] = useAddAttributesMutation();
-
-
-
- 
   useEffect(() => {
     if (!isAddModalOpen) {
-      setAddonPages([1]);
+      setAddonPages([{ name: "" }]);
     }
-    // if(isSuccess){
-    //   router.push("/Dashboard/Variation")
-    // }
-    
   }, [isAddModalOpen]);
-  
-  
-  const handleSubmit = async (formData) => {
-  // console.log(formData)
-   createAttribute(formData)
-  };
-  
-  
+
   const handleAddPage = () => {
-    setAddonPages([...addonPages, addonPages.length + 1]);
+    setAddonPages([...addonPages, { name: "" }]);
   };
 
-  const handleRemovePage = (pageValue) => {
-    const updatedPages = addonPages.filter((item) => item !== pageValue);
-    setAddonPages([...updatedPages]);
+  const handleRemovePage = (index) => {
+    const updatedPages = addonPages.filter((_, idx) => idx !== index);
+    setAddonPages(updatedPages);
   };
-
 
   const handleInputChange = (index, value) => {
     const updatedPages = [...addonPages];
-    updatedPages[index] = value;
+    updatedPages[index].name = value;
     setAddonPages(updatedPages);
   };
-  
+
+  const handleSubmit = async (formData) => {
+    const { name } = formData;
+    const value = addonPages.map((page) => ({
+      id: uuidv4(),
+      attribute: name,
+      name: page.name || ""
+    }));
+
+    const attributeData = { name, value };
+    console.log(attributeData)
+
+    createAttribute(attributeData);
+  };
+
+
+
+
+
   const handleCloseAndOpen = () => {
     dispatch(setIsAddModalOpen());
   };
 
-  
-
   return (
-    <div className="">
-         <div>
-        {/* <BreadCrumb /> */}
-      </div>
+    <div>
       <ZFormTwo
-        isLoading={isLoading }
+        isLoading={isLoading}
         isSuccess={isSuccess}
         isError={isError}
         error={error}
@@ -77,7 +71,6 @@ const AddAttributes = () => {
         buttonName={`Create`}
       >
         <div className="grid grid-cols-1 gap-3 mt-10">
-          {/* Attribute Name */}
           <ZInputTwo
             required
             name="name"
@@ -85,30 +78,24 @@ const AddAttributes = () => {
             label="Attribute Name"
             placeholder="Enter Attribute Name"
           />
-          {/* Attribute Value */}
           <div>
             <h4 className="text-lg font-semibold mb-3">Attribute Value</h4>
             <div className="max-h-[400px] overflow-y-scroll thin-scrollbar mb-5">
               {addonPages.map((page, index) => (
-                <div
-                  key={index}
-                  className="flex  gap-4 items-center"
-                >
-                   <div className="w-[90%]">
-                   <ZInputTwo
-                      required={1}
+                <div key={index} className="flex gap-4 items-center">
+                  <div className="w-[90%]">
+                    <ZInputTwo
+                      required
                       name={`value.${index}`}
                       type="text"
                       label="Value Name"
                       placeholder="Enter Value Name"
-                      onChange={(e) =>
-                        handleInputChange(index, e.target.value)
-                      }
-
+                      value={page.name}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
                     />
-                   </div>
-                  <div className="">
-                    {index === 0 && (
+                  </div>
+                  <div>
+                    {index === 0 ? (
                       <button
                         type="button"
                         onClick={handleAddPage}
@@ -116,34 +103,21 @@ const AddAttributes = () => {
                       >
                         <AiOutlinePlus size={15} />
                       </button>
-                    )}
-                    {index !== 0 && (
+                    ) : (
                       <button
                         type="button"
-                        onClick={() => handleRemovePage(page)}
-                        className="bg-red-500 text-white rounded px-2 py-1 mt-2 "
+                        onClick={() => handleRemovePage(index)}
+                        className="bg-red-500 text-white rounded px-2 py-1 mt-2"
                       >
                         <AiOutlineMinus size={15} />
                       </button>
-                      
                     )}
                   </div>
                 </div>
-                
               ))}
             </div>
           </div>
         </div>
-        {/* <div className="flex justify-end">
-                   
-                   <Button
-                      htmlType="submit"
-                      style={{ backgroundColor: "#162447", color: "white" }}
-                    >
-                      Submit
-                    </Button>
-
-                  </div> */}
       </ZFormTwo>
     </div>
   );
