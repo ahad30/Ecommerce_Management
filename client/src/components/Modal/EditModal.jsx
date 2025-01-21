@@ -1,8 +1,9 @@
 "use client";
 import React  from "react";
 import { Modal} from "antd";
-import { useAppDispatch } from "@/redux/Hook/Hook";
-import { setIsEditModalOpen } from "@/redux/Modal/ModalSlice";
+import { useAppDispatch } from "../../redux/Hook/Hook";
+import { setIsEditModalOpen } from "../../redux/Modal/ModalSlice";
+
 
 
 const EditModal = ({ isEditModalOpen, title, children , width }) => {
