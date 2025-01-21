@@ -1,37 +1,36 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Form, Upload, Button } from "antd";
-import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
+"use client";
+import { Form, Upload, Button, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 
-const ZMultipleImage = ({ name, label,dragDrop }) => {
+const ZMultipleImage = ({
+  name,
+  label,
+  defaultValue,
+  onRemove,
+}) => {
   const { control, resetField } = useFormContext();
 
-  const onChange = (fileList) => {
-    const images = fileList.map((item) => item.originFileObj);
-    // Additional logic can be added here if needed
-    console.log(fileList);
-  };
-
-  const onDrop = (e) => {
-    console.log("Dropped files", e.dataTransfer.files);
-    // Additional logic can be added here if needed
+  const beforeUpload = (file) => {
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      message.error('You can only upload image files!');
+    }
+    return false; // Prevent auto upload
   };
 
   useEffect(() => {
     if (resetField) {
-      resetField(name, { defaultValue: [] });
+      resetField(name, { defaultValue: defaultValue || [] });
     }
-  }, [resetField, name]);
+  }, [resetField, name, defaultValue]);
 
   return (
     <Controller
       name={name}
       control={control}
-      defaultValue={[]} // Ensuring the default value is an empty array
-      rules={{
-        required: "The field is required",
-      }}
+      defaultValue={defaultValue || []}
       render={({ field, fieldState: { error } }) => (
         <Form.Item
           label={label}
@@ -39,28 +38,38 @@ const ZMultipleImage = ({ name, label,dragDrop }) => {
           help={error?.message}
         >
           <Upload
-            {...field}
-            
             listType="picture"
             multiple
-            beforeUpload={() => false} // Prevent auto-upload
-            onChange={({ fileList }) => {
-              field.onChange(fileList);
-              onChange(fileList);
+            beforeUpload={beforeUpload}
+            onPreview={(file) => {
+              window.open(file.url || file.preview, '_blank');
             }}
-            onDrop={onDrop}
-            fileList={field.value || []} // Ensure the fileList is an empty array by default
-            maxCount={4}
+            onChange={({ fileList }) => {
+              const updatedFileList = fileList.map(file => ({
+                ...file,
+                preview: file.originFileObj ? URL.createObjectURL(file.originFileObj) : file.url,
+              }));
+              field.onChange(updatedFileList); // Properly update field value
+            }}
+            onRemove={(file) => {
+              const newFileList = field.value.filter(item => item.uid !== file.uid);
+              field.onChange(newFileList);
+              if (onRemove) {
+                onRemove(file);
+              }
+            }}
+            fileList={field.value.map((file) => ({
+              ...file,
+              status: 'done',
+              url: file.preview || file.url,
+            }))}
+            maxCount={5}
           >
-            {dragDrop ? 
-            <Button icon={<InboxOutlined className="text-blue-500 text-[20px]"/>}>
-             Drag & Drop Upload
-            </Button>
-            :
-            <Button icon={<UploadOutlined/>}>
-              Upload
-             </Button>
-           }
+           
+              <Button icon={<UploadOutlined />}>
+                Upload (Max: 5)
+              </Button>
+ 
           </Upload>
         </Form.Item>
       )}

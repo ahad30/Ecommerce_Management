@@ -3,12 +3,16 @@ class AttributesService {
       this.prisma = prisma;
     }
   
-    // Create a new attribute
-    async createAttribute(data) {
-      return await this.prisma.attributes.create({
-        data,
-      });
-    }
+     // Create a new attribute
+  async createAttribute(data) {
+    // Ensure `value` is passed as an array of objects (JSON)
+    return await this.prisma.attributes.create({
+      data: {
+        name: data.name, // assuming name is passed as part of the form data
+        value: data.value, // directly pass the value array
+      },
+    });
+  }
   
     // Get all attributes
     async getAllAttributes() {
@@ -26,7 +30,10 @@ class AttributesService {
     async updateAttribute(id, data) {
       return await this.prisma.attributes.update({
         where: { id },
-        data,
+        data: {
+        name: data.name, 
+        value: data.value
+      },
       });
     }
   
