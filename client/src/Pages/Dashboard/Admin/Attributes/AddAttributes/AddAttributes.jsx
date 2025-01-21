@@ -24,9 +24,9 @@ console.log(addonPages)
     setAddonPages([...addonPages, { name: "" }]);
   };
 
-  const handleRemovePage = (index) => {
-    const updatedPages = addonPages.filter((_, idx) => idx !== index);
-    setAddonPages(updatedPages);
+  const handleRemovePage = (itemValue) => {
+    const filterData = addonPages.filter((item) => item !== itemValue);
+    setAddonPages([...filterData]);
   };
 
   const handleInputChange = (index, value) => {
@@ -48,8 +48,6 @@ console.log(addonPages)
 
     createAttribute(attributeData);
   };
-
-
 
 
 
@@ -82,13 +80,13 @@ console.log(addonPages)
             <h4 className="text-lg font-semibold mb-3">Attribute Value</h4>
             <div className="max-h-[400px] overflow-y-scroll thin-scrollbar mb-5">
               {addonPages.map((page, index) => (
-                <div key={index} className="flex gap-4 items-center">
+                <div key={page} className="flex gap-4 items-center">
                   <div className="w-[90%]">
                     <ZInputTwo
                       required
                       name={`value.${index}`}
                       type="text"
-                      label="Value Name"
+                      label={`Attribute Value ${index + 1}`}
                       placeholder="Enter Value Name"
                       value={page.name}
                       onChange={(e) => handleInputChange(index, e.target.value)}
@@ -106,7 +104,7 @@ console.log(addonPages)
                     ) : (
                       <button
                         type="button"
-                        onClick={() => handleRemovePage(index)}
+                        onClick={() => handleRemovePage(page)}
                         className="bg-red-500 text-white rounded px-2 py-1 mt-2"
                       >
                         <AiOutlineMinus size={15} />
