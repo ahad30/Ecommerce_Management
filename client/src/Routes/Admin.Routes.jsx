@@ -3,6 +3,10 @@ import { MdOutlineDashboardCustomize } from "react-icons/md";
 import DashboardStatistics from "../Pages/Dashboard/Admin/DashboardStatistics/DashboardStatistics";
 import Orders from "../Pages/Dashboard/Admin/Orders/Orders";
 import Customers from "../Pages/Dashboard/Admin/Customers/Customers";
+import Category from "../Pages/Dashboard/Admin/Category/Category";
+import { AiFillBoxPlot } from "react-icons/ai";
+import Brand from "../Pages/Dashboard/Admin/Brand/Brand";
+import Attribute from "../Pages/Dashboard/Admin/Attributes/Attribute";
 // import { LuUserCog2 } from "react-icons/lu";
 // import Roles from "../Pages/Dashboard/Admin/UserManagement/Roles/Roles";
 // import Users from "../Pages/Dashboard/Admin/UserManagement/Users/Users";
@@ -62,37 +66,37 @@ export const adminRoutes = [
     ],
   },
 
-  // {
-  //   label: "Products Management",
-  //   icon: <FiBox size={20}></FiBox>,
-  //   children: [
-  //     {
-  //       path: "categories",
-  //       label: "Category",
-  //       element: <Category></Category>,
-  //       permissionName: "view category",
-  //     },
-  //     {
-  //       path: "brands",
-  //       label: "Brands",
-  //       element: <Brand></Brand>,
-  //       permissionName: "view brand",
-  //     },
-  //     {
-  //       path: "attributes",
-  //       label: "Attribute",
-  //       element: <Attributes></Attributes>,
-  //       permissionName: "view attribute",
-  //     },
-  //     {
-  //       path: "products",
-  //       label: "Products",
-  //       element: <Products></Products>,
-  //       permissionName: "view product",
-  //     },
+  {
+    label: "Products Management",
+    icon: <AiFillBoxPlot size={20}/>,
+    children: [
+      {
+        path: "categories",
+        label: "Category",
+        element: <Category></Category>,
+        permissionName: "view category",
+      },
+      {
+        path: "brands",
+        label: "Brands",
+        element: <Brand></Brand>,
+        permissionName: "view brand",
+      },
+      {
+        path: "attributes",
+        label: "Attribute",
+        element: <Attribute></Attribute>,
+        permissionName: "view attribute",
+      }
+      // {
+      //   path: "products",
+      //   label: "Products",
+      //   element: <Products></Products>,
+      //   permissionName: "view product",
+      // },
     
-  //   ],
-  // },
+    ],
+  },
   // {
   //   path: "add-product",
   //   element: <AddProduct></AddProduct>,
@@ -162,16 +166,4 @@ export const adminRoutes = [
   //   ],
   // },
 
-  // {
-  //   label: "Configuration",
-  //   icon: <CiSettings size={20}></CiSettings>,
-  //   children: [
-  //     { path: "db-backup", label: "DB Backup", element: <DbBackup></DbBackup> },
-  //     {
-  //       path: "admin-profile",
-  //       label: "Admin Profile",
-  //       element: <AdminProfile></AdminProfile>,
-  //     },
-  //   ],
-  // },
 ];

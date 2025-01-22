@@ -1,53 +1,50 @@
 import baseApi from '../../../Api/baseApi';
-import { getTagsByModuleName } from "@/redux/Tag/Tag";
-
-
 
 const categoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Add Category
     addCategory: builder.mutation({
       query: (data) => ({
-        url: "/sys-categories/create",
+        url: "/category/create",
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
         body: data,
       }),
-      invalidatesTags:getTagsByModuleName('Category')
+      invalidatesTags:['categories']
     }),
 
     // Get Categories
     getCategory: builder.query({
       query: () => ({
-        url: "/sys-categories",
+        url: "/category",
       }),
-      providesTags:getTagsByModuleName('Category')
+      providesTags:['categories']
   
     }),
 
     // Update Category
     updateCategory: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/sys-categories/update/${id}`,
+        url: `/category/${id}`,
         headers: {
           "Content-Type": "application/json",
         },
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
-      invalidatesTags:getTagsByModuleName('Category')
+      invalidatesTags:['categories']
      
     }),
 
     // Delete Category mutation in RTK Query
     deleteCategory: builder.mutation({
       query: (id) => ({
-        url: `/sys-categories/delete/${id}`,
+        url: `/category/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: getTagsByModuleName('Category')
+      invalidatesTags: ['categories']
       
     }),
   }),

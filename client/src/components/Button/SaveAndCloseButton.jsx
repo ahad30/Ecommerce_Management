@@ -1,5 +1,4 @@
-"use client";
-import React from "react";
+import React, { useContext } from "react";
 
 
 const SaveAndCloseButton = ({ title, isLoading, closeModal }) => {
@@ -14,7 +13,7 @@ const SaveAndCloseButton = ({ title, isLoading, closeModal }) => {
           type="button"
           className="bg-gray-200 disabled:cursor-not-allowed text-center text-gray-600 w-full lg:w-[200px] h-[45px] rounded-md"
         >
-          Close
+        Close
         </button>
       )}
       <button
@@ -27,7 +26,8 @@ const SaveAndCloseButton = ({ title, isLoading, closeModal }) => {
         } bg-[#24354C] disabled:bg-[#4f5a67] disabled:cursor-not-allowed text-center text-white rounded-md`}
       >
         {isLoading
-          ? "Processing..." : title}
+         ? "Processing..."
+          : title}
       </button>
     </div>
   );

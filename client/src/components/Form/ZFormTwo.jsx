@@ -93,7 +93,7 @@ const ZFormTwo = ({
         toast.success(data?.message, { id: 1 });
       }
       if (isError) {
-        toast.error(error?.data?.errorMessages[0]?.message, { id: 1, duration: 3000 });
+        toast.error(error?.data?.message, { id: 1, duration: 3000 });
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

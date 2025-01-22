@@ -1,23 +1,33 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Form, Upload } from "antd";
 import { useState, useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
-// import { useAppSelector } from "../../Redux/hook";
+import { UploadOutlined } from "@ant-design/icons";
+import { useAppSelector } from "../../redux/Hook/Hook";
 
-const ZImageInput = ({ name, label, dragDrop }) => {
+const ZImageInput = ({ name, label, dragDrop, defaultValue, onRemove }) => {
   const [imageList, setImageList] = useState([]);
   const { control, resetField } = useFormContext();
-  // const { isAddModalOpen, isEditModalOpen } = useAppSelector(
-  //   (state) => state.modal
-  // );
+  const { isAddModalOpen, isEditModalOpen } = useAppSelector((state) => state.modal);
 
-  // useEffect(() => {
-  //   if (!isAddModalOpen || !isEditModalOpen) {
-  //     setImageList([]);
-  //     resetField(name);
-  //   }
-  // }, [isAddModalOpen, isEditModalOpen]);
+  useEffect(() => {
+    if (!isAddModalOpen || !isEditModalOpen) {
+      setImageList([]);
+      resetField(name);
+    }
+  }, [isAddModalOpen, isEditModalOpen]);
+
+  useEffect(() => {
+    if (defaultValue && defaultValue[0]?.url) {
+      setImageList([
+        {
+          uid: defaultValue[0].uid,
+          name: defaultValue[0].name,
+          status: "done",
+          url: defaultValue[0].url,
+        },
+      ]);
+    }
+  }, [defaultValue]);
 
   const handleChange = (info) => {
     const file = info.file;
@@ -28,9 +38,6 @@ const ZImageInput = ({ name, label, dragDrop }) => {
     <Controller
       name={name}
       control={control}
-      // rules={{
-      //   required: "The field is required",
-      // }}
       render={({ field: { onChange }, fieldState: { error } }) => (
         <Form.Item
           label={label}
@@ -39,10 +46,10 @@ const ZImageInput = ({ name, label, dragDrop }) => {
         >
           <Upload
             name="image"
-            listType="picture"
+            listType="picture-card"
             fileList={imageList}
             onPreview={(file) => {
-              const url = URL.createObjectURL(file.originFileObj);
+              const url = file.url || URL.createObjectURL(file.originFileObj);
               window.open(url, "_blank");
             }}
             beforeUpload={(file) => {
@@ -61,19 +68,17 @@ const ZImageInput = ({ name, label, dragDrop }) => {
             onRemove={() => {
               setImageList([]);
               onChange(null);
+              if (onRemove) onRemove(); // Call the onRemove callback if provided
             }}
             maxCount={1}
             onChange={handleChange}
           >
-          {dragDrop ? 
-            <Button className="py-8" icon={<InboxOutlined className="text-blue-500 text-[24px]"/>}>
-             Drag & Drop Upload
-            </Button>
-            :
-            <Button icon={<UploadOutlined/>}>
-              Upload
-             </Button>
-           }
+            {imageList.length < 1 && (
+              <div>
+                <UploadOutlined />
+                <div style={{ marginTop: 8 }}>Upload</div>
+              </div>
+            )}
           </Upload>
         </Form.Item>
       )}
