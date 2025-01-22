@@ -33,8 +33,6 @@ const orderService = new OrderService(prisma)
 // Define routes
 router.post('/admin/create', (req, res,next) => adminController.createAdmin(req, res,next));
 
-
-
 //authentication
 router.post('/login',(req,res,next)=>{
     const authController = new AuthController(authService)
@@ -46,7 +44,6 @@ router.post('/login',(req,res,next)=>{
 router.post("/category/create",(req,res,next)=>{
     const categoryController = new CategoryController(categoryService)
      categoryController.createCategory(req,res,next)
-
 })
 
 router.get("/category",(req,res,next)=>{
