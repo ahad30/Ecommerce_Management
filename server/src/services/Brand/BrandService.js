@@ -23,7 +23,7 @@ class BrandService{
     async update(id,data){
         return this.prisma.brand.update({
             where:{
-                id: parseInt(id)
+                id: id
             },
             data:data
         })
@@ -32,7 +32,7 @@ class BrandService{
     async delete (id){
         return this.prisma.brand.delete({
             where:{
-                id: parseInt(id)
+                id: id
             }
         })
     }

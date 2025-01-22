@@ -1,77 +1,157 @@
-import {
-    FaTshirt,
-    FaHeartbeat,
-    FaBook,
-    FaFootballBall,
-    FaPuzzlePiece,
-    FaGem,
-    FaCouch,
-    FaPlane,
-    FaMobileAlt,
-    FaBookReader,
-    FaTicketAlt,
-} from "react-icons/fa";
-import { PiDevicesFill } from "react-icons/pi";
-import { Link } from "react-router-dom";
-import { MdArrowForwardIos } from "react-icons/md";
+import React, { useState } from "react";
 import { useAppSelector } from "../../../redux/Hook/Hook";
-
+import { Slider } from "antd";
 
 const LeftSidebar = () => {
-    const categories = [
-        { id: 1, name: "Electronics", icon: <PiDevicesFill /> },
-        { id: 2, name: "Clothes and Fashion", icon: <FaTshirt /> },
-        { id: 3, name: "Health and Beauty", icon: <FaHeartbeat /> },
-        { id: 4, name: "Books and Stationery", icon: <FaBook /> },
-        { id: 5, name: "Sports and Fitness", icon: <FaFootballBall /> },
-        { id: 6, name: "Toys and Games", icon: <FaPuzzlePiece /> },
-        { id: 7, name: "Jewelry and Accessories", icon: <FaGem /> },
-        { id: 8, name: "Home and Furniture", icon: <FaCouch /> },
-        { id: 9, name: "Travel and Accessories", icon: <FaPlane /> },
-        { id: 10, name: "E-Goods", icon: <FaMobileAlt /> },
-        { id: 11, name: "Travel and Accessories", icon: <FaPlane /> },
-        { id: 12, name: "E-Books", icon: <FaBookReader /> },
-        { id: 13, name: "Gift Cards and Tickets", icon: <FaTicketAlt /> },
-    ];
+    const { isHomeCategorySidebarOpen } = useAppSelector((state) => state.modal);
+    const [priceRange, setPriceRange] = useState([2.59, 18.59]);
 
+    const handleSliderChange = (value) => {
+        setPriceRange(value);
+    };
 
-    const { isHomeCategorySidebarOpen } = useAppSelector(
-        (state) => state.modal
-    );
+    const handleInputChange = (index, value) => {
+        const newValue = parseFloat(value);
+        if (!isNaN(newValue)) {
+            const newRange = [...priceRange];
+            newRange[index] = newValue;
+            if (newRange[0] <= newRange[1]) {
+                setPriceRange(newRange);
+            }
+        }
+    };
 
     return (
         <div className="md:px-4 bg-white">
+            <div className={`${isHomeCategorySidebarOpen ? "block" : "hidden"} lg:block w-[250px]`}>
+                {/* Categories Section */}
+                <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-lg">CATEGORIES</h3>
+                    <div className="space-y-2">
+                        <div className="flex items-center">
+                            <input type="checkbox" id="bedroom" className="mr-2" />
+                            <label htmlFor="bedroom">Bedroom (15)</label>
+                        </div>
+                        <div className="flex items-center">
+                            <input type="checkbox" id="sofa" className="mr-2" />
+                            <label htmlFor="sofa">Sofa (0)</label>
+                        </div>
+                        <div className="flex items-center">
+                            <input type="checkbox" id="office" className="mr-2" />
+                            <label htmlFor="office">Office (21)</label>
+                        </div>
+                        <div className="flex items-center">
+                            <input type="checkbox" id="outdoor" className="mr-2" />
+                            <label htmlFor="outdoor">Outdoor (10)</label>
+                        </div>
+                    </div>
+                </div>
 
-            <div
-                className={`${isHomeCategorySidebarOpen ? "block" : "hidden"} lg:block`}
-            >
-                {categories.slice(0, 11).map((category, idx) => (
-                    <Link to="/all-categories" className="" key={idx}>
-                        <div className="flex justify-between items-center transition-all duration-200 ease-in-out hover:px-2 h-8 hover:bg-[#edeeef]">
-                            <div className="flex gap-3">
-                                <span className="text-xl font-medium text-[#092635]">
-                                    {category.icon}
-                                </span>
-                                <h1 className="text-sm">{category.name}</h1>
+                {/* Brands Section */}
+                <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-lg">BRANDS</h3>
+                    <div className="space-y-2">
+                        <div className="flex items-center">
+                            <input type="checkbox" id="cookingColor" className="mr-2" />
+                            <label htmlFor="cookingColor">Cooking Color (15)</label>
+                        </div>
+                        <div className="flex items-center">
+                            <input type="checkbox" id="magniflex" className="mr-2" />
+                            <label htmlFor="magniflex">Magniflex (9)</label>
+                        </div>
+                        <div className="flex items-center">
+                            <input type="checkbox" id="ashley" className="mr-2" />
+                            <label htmlFor="ashley">Ashley (21)</label>
+                        </div>
+                        <div className="flex items-center">
+                            <input type="checkbox" id="m&d" className="mr-2" />
+                            <label htmlFor="m&d">M&D (10)</label>
+                        </div>
+                        <div className="flex items-center">
+                            <input type="checkbox" id="olympic" className="mr-2" />
+                            <label htmlFor="olympic">Olympic (10)</label>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Price Range Section */}
+                <div className="mb-6">
+                    <div className="flex items-center justify-between">
+                        <h3 className="font-semibold mb-3 text-lg">PRICE</h3>
+                        <span className="bg-black text-white text-sm px-2 py-1 rounded">
+                            {priceRange[0].toFixed(2)}-{priceRange[1].toFixed(2)}
+                        </span>
+                    </div>
+                    
+                    <div className="mt-6 px-2">
+                        <Slider
+                            range
+                            value={priceRange}
+                            onChange={handleSliderChange}
+                            min={0}
+                            max={100}
+                            step={0.01}
+                            trackStyle={[{ backgroundColor: 'black' }]}
+                            handleStyle={[
+                                { borderColor: 'black', backgroundColor: 'white' },
+                                { borderColor: 'black', backgroundColor: 'white' }
+                            ]}
+                            railStyle={{ backgroundColor: '#d1d5db' }}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4">
+                        <div className="flex-1 mr-4">
+                            <label className="text-sm text-gray-600">Minimum</label>
+                            <div className="mt-1 relative rounded-md shadow-sm">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input
+                                    type="text"
+                                    // value={priceRange[0].toFixed(2)}
+                                    onChange={(e) => handleInputChange(0, e.target.value)}
+                                    className="focus:ring-black focus:border-black block w-full pl-7 pr-2 py-2 sm:text-sm border-gray-300 rounded-md"
+                                />
                             </div>
                         </div>
-                        <div className="border-t-[1px] border-gray-300 mb-[2px]"></div>
-                    </Link>
-                ))}
-                {categories.length > 11 && (
-                    <div className="">
-                        <Link
-                            to="/"
-                            className="text-blue-500 hover:bg-[#edeeef] transition-all duration-200 ease-in-out hover:px-2 flex justify-between items-center gap-2 py-1"
-                        >
-                            <span>View All</span>
-                            <div className="border-[#092635] p-1 rounded-full bg-[#edeeef]">
-                                {" "}
-                                <MdArrowForwardIos />
+                        <div className="flex-1">
+                            <label className="text-sm text-gray-600">Maximum</label>
+                            <div className="mt-1 relative rounded-md shadow-sm">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input
+                                    type="text"
+                                    // value={priceRange[1].toFixed(2)}
+                                    onChange={(e) => handleInputChange(1, e.target.value)}
+                                    className="focus:ring-black focus:border-black block w-full pl-7 pr-2 py-2 sm:text-sm border-gray-300 rounded-md"
+                                />
                             </div>
-                        </Link>
+                        </div>
                     </div>
-                )}
+                </div>
+
+                {/* Size Section */}
+                <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-lg">SIZE</h3>
+                    <div className="flex space-x-2">
+                        <button className="px-3 py-1 border rounded hover:bg-gray-100">XS</button>
+                        <button className="px-3 py-1 border rounded hover:bg-gray-100">S</button>
+                        <button className="px-3 py-1 border rounded hover:bg-gray-100">M</button>
+                        <button className="px-3 py-1 border rounded hover:bg-gray-100">L</button>
+                        <button className="px-3 py-1 border rounded hover:bg-gray-100">XL</button>
+                    </div>
+                </div>
+
+                {/* Color Section */}
+                <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-lg">COLOR</h3>
+                    <div className="flex space-x-2">
+                        <button className="w-6 h-6 rounded-sm bg-red-500"></button>
+                        <button className="w-6 h-6 rounded-sm bg-black"></button>
+                    </div>
+                </div>
             </div>
         </div>
     );

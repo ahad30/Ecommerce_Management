@@ -42,13 +42,14 @@ model Category {
   products    Product[]
 }
 
-model attributes{
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  value String[]
+model Attributes {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  value     Json    
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model Brand {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   brandName String  @unique

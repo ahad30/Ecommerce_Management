@@ -1,49 +1,48 @@
 import baseApi from '../../../Api/baseApi';
-import { getTagsByModuleName } from "@/redux/Tag/Tag";
 
 const brandApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Add Brand
     addBrand: builder.mutation({
       query: (data) => ({
-        url: "/brands/create",
+        url: "/brand/create",
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
         body: data,
       }),
-      invalidatesTags: getTagsByModuleName('Brand')
+      invalidatesTags: ['brands']
     }),
 
     // Get Brands
     getBrand: builder.query({
       query: () => ({
-        url: "/brands",
+        url: "/brand",
       }),
-      providesTags: getTagsByModuleName('Brand')
+      providesTags: ['brands']
     }),
 
     // Update Brand
     updateBrand: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/brands/update/${id}`,
+        url: `/brand/${id}`,
         headers: {
           "Content-Type": "application/json",
         },
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
-      invalidatesTags: getTagsByModuleName('Brand')
+      invalidatesTags: ['brands']
     }),
 
     // Delete Brand mutation in RTK Query
     deleteBrand: builder.mutation({
       query: (id) => ({
-        url: `/brands/delete/${id}`,
+        url: `/brand/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: getTagsByModuleName('Brand')
+      invalidatesTags: ['brands']
     }),
   }),
 });
