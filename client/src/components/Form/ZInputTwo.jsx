@@ -19,9 +19,9 @@ const ZInputTwo = ({
   const { isEditModalOpen } = useAppSelector((state) => state.modal);
 
   useEffect(() => {
-    if (value) {
+    // if (value) {
       setValue(name, value);
-    }
+    // }
   }, [value, setValue, name]);
 
   useEffect(() => {
