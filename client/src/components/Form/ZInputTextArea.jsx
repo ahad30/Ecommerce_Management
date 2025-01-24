@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Form, Input } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
-import { useAppSelector } from "@/redux/Hook/Hook";
+import { useAppSelector } from "../../redux/Hook/Hook";
 
 
 const ZInputTextArea = ({
