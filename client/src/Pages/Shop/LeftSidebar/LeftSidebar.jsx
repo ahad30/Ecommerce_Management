@@ -132,7 +132,7 @@ const LeftSidebar = () => {
                     </div>
                 </div>
 
-                {/* Size Section */}
+{/*  
                 <div className="mb-6">
                     <h3 className="font-semibold mb-3 text-lg">SIZE</h3>
                     <div className="flex space-x-2">
@@ -144,14 +144,14 @@ const LeftSidebar = () => {
                     </div>
                 </div>
 
-                {/* Color Section */}
+    
                 <div className="mb-6">
                     <h3 className="font-semibold mb-3 text-lg">COLOR</h3>
                     <div className="flex space-x-2">
                         <button className="w-6 h-6 rounded-sm bg-red-500"></button>
                         <button className="w-6 h-6 rounded-sm bg-black"></button>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

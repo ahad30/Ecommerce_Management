@@ -1,13 +1,13 @@
 "use client";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegisterMutation } from "../../redux/Feature/auth/authApi";
-import ZInputTwo from "../../components/Form/ZInputTwo";
-import ZFormTwo from "../../components/Form/ZFormTwo";
-import ZEmail from "../../components/Form/ZEmail";
-import ZPhone from "../../components/Form/ZPhone";
+import { useRegisterMutation } from "../../../redux/Feature/auth/authApi";
+import ZInputTwo from "../../../components/Form/ZInputTwo";
+import ZFormTwo from "../../../components/Form/ZFormTwo";
+import ZEmail from "../../../components/Form/ZEmail";
+import ZPhone from "../../../components/Form/ZPhone";
 import { FaGreaterThan, FaHome } from "react-icons/fa";
-import img from "../../assets/banner/contact-banner.jpg";
+import img from "../../../assets/banner/contact-banner.jpg";
 
 
 const Register = () => {  
