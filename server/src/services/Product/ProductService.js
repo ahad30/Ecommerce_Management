@@ -72,9 +72,9 @@ console.log(error);
                 skip,        
                 take: limit, 
                 include: {
-                    // category: true,
+                    category: true,
                     variants: true,
-                    // brand: true,
+                    brand: true,
                 },
             });
 
@@ -148,6 +148,9 @@ console.log(error);
     // Delete a product by ID
     async deleteProduct(id) {
         try {
+            await this.prisma.variant.deleteMany({
+                where: { productId: id },
+            });
             const product = await this.prisma.product.delete({
                 where: { id },
             });
