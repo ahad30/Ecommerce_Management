@@ -59,10 +59,10 @@ const ProductDetails = () => {
           </p>
           {/* <p className="font-medium">SKU: {singleProduct.variants[0].sku}</p> */}
           <p className="font-medium">
-            <span className="font-bold me-2">Category : </span> T Shirt
+            <span className="font-bold me-2">Category :</span>  {singleProduct?.category?.categoryName}
           </p>
           <p className="font-medium">
-            <span className="font-bold me-2">Brand : </span> Raymond
+            <span className="font-bold me-2">Brand : </span> {singleProduct?.brand?.brandName}
           </p>
           <div className="text-xl font-bold text-blue-500">
             Price: ${singleProduct.price}
