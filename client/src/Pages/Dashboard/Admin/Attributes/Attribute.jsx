@@ -34,7 +34,6 @@ const Attribute = () => {
     updatedAt: attribute?.updatedAt
   }));
 
-  console.log(attributeData)
 
   const handleEditAttribute = (attributeData) => {
     setSelectedAttribute(attributeData);

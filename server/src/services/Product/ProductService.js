@@ -104,8 +104,9 @@ console.log(error);
             const product = await this.prisma.product.findUnique({
                 where: { id },
                 include: {
-                    // category: true,
+                    category: true,
                     variants: true,
+                    brand: true,
                 },
             });
             if (!product) throw new Error("Product not found");

@@ -15,7 +15,6 @@ import ZInputTextArea from "../../../../../components/Form/ZInputTextArea";
 import { variantExists } from "../../../../../components/helper/SameVariantExist";
 import BreadCrumb from "../../../../../components/BreadCrumb/BreadCrumb";
 import ZNumber from "../../../../../components/Form/ZNumber";
-import ZRadio from "../../../../../components/Form/ZRadio";
 
 function generateUniqueId(length = 2) {
   const chars = "123456789";
@@ -61,18 +60,7 @@ const AddProduct = () => {
     qrCode: "",
   });
 
-  // single -----> image file , price , quantity - 9
-  const [singlePriceQuantityImage, singleSetPriceQuantityImage] = useState({
-    // images:"",
-    // salePrice: "",
-    // serialNo: "",
-    productInitialQty: "",
-    productMinQty: "",
-    productMaxQty: "",
-    productPurchasePrice: "",
-    productWholeSalesPrice: "",
-    productRetailPrice: "",
-  });
+
 
   const navigate = useNavigate();
 
@@ -143,7 +131,7 @@ const AddProduct = () => {
 
   useEffect(() => {
     if (CIsSuccess) {
-      navigate("/products");
+      navigate("/admin/products");
     }
   }, [CIsSuccess]);
 
@@ -261,119 +249,16 @@ const AddProduct = () => {
 
   const handleSubmit = (data) => {
     const modifiedData = {
-      productType: Number(data.productType),
-      branchIDs: data.branchIDs,
-      brandID: data.brandID,
-      businessID: data.businessID,
-      erpCategoryID: data.erpCategoryID,
-      isActive: data.isActive,
-      notAvailableBranchIDs: data.notAvailableBranchIDs,
-      productDescription: data.productDescription,
+      brandId: data.brandId,
+      categoryId: data.categoryId,
+      status: data.status,
+      description: data.description,
       productSubtitle: data.productSubtitle,
-      productTitle: data.productTitle,
+      name: data.name,
     };
 
-    // Check if product is single
-    if (modifiedData.productType === 1) {
-      // Validation for single product fields
-      if (data.sku === "") {
-        toast.error("Single product sku is required", {
-          id: 10,
-          duration: 2000,
-          position: "top-right",
-        });
-      }
 
-      // if (data.salePrice === "") {
-      //   toast.error("Single product sale price required", {
-      //     id: 10,
-      //     duration: 1000,
-      //     position: "top-right",
-      //   });
-      // }
-
-      if (data.productInitialQty === "") {
-        toast.error("Single product stock required", {
-          id: 2,
-          duration: 1000,
-          position: "top-right",
-        });
-      }
-      if (data.productMinQty === "") {
-        toast.error("Single product min stock required", {
-          id: 2,
-          duration: 1000,
-          position: "top-right",
-        });
-      }
-      if (data.productMaxQty === "") {
-        toast.error("Single product max stock required", {
-          id: 2,
-          duration: 1000,
-          position: "top-right",
-        });
-      }
-      // if (data.serialNo === "") {
-      //   toast.error("Single product serial number required", {
-      //     id: 3,
-      //     duration: 1000,
-      //     position: "top-right",
-      //   });
-      // }
-      if (data.productPurchasePrice === "") {
-        toast.error("Single product purchase price required", {
-          id: 4,
-          duration: 1000,
-          position: "top-right",
-        });
-      }
-      if (data.productWholeSalesPrice === "") {
-        toast.error("Single product wholesale price required", {
-          id: 5,
-          duration: 1000,
-          position: "top-right",
-        });
-      }
-      if (data.productRetailPrice === "") {
-        toast.error("Single product retail price required", {
-          id: 6,
-          duration: 1000,
-          position: "top-right",
-        });
-      }
-
-      // Only proceed if all required fields are filled
-      if (
-        // data.salePrice &&
-        data.productInitialQty &&
-        // data.serialNo &&
-        data.productPurchasePrice &&
-        data.productWholeSalesPrice &&
-        data.productRetailPrice &&
-        data.productMinQty &&
-        data.productMaxQty &&
-        data?.sku
-      ) {
-        const singleProductData = {
-          ...modifiedData,
-          sku: data?.sku,
-          // salePrice: data.salePrice,
-          // serialNo: data.serialNo,
-          productInitialQty: data.productInitialQty, 
-          productMinQty: data.productMinQty,
-          productMaxQty: data.productMaxQty,
-          productPurchasePrice: data.productPurchasePrice,
-          productWholeSalesPrice: data.productWholeSalesPrice,
-          productRetailPrice: data.productRetailPrice,
-          productVariant: [],
-        };
-
-        console.log(singleProductData);
-        // createProduct(singleProductData);
-      }
-    }
-    // Check if the product is a variant product
-    else if (modifiedData.productType === 0) {
+   
       if (skus.length > 0) {
         const variantProductData = {
           ...modifiedData,
@@ -396,14 +281,15 @@ const AddProduct = () => {
         };
         console.log(variantProductData);
         // createProduct(variantProductData);
-      } else {
-        toast.error("Missing variant attribute", {
-          id: 1,
-          duration: 1000,
-          position: "top-right",
-        });
-      }
-    }
+      } 
+      // else {
+      //   toast.error("Missing variant attribute", {
+      //     id: 1,
+      //     duration: 1000,
+      //     position: "top-right",
+      //   });
+      // }
+    
   };
 
   if (eLoading || bLoading || attributeIsLoading) {
@@ -446,15 +332,6 @@ const AddProduct = () => {
                 placeholder="Enter product subtitle"
               />
 
-              {typeProduct == 1 && (
-                <ZInputTwo
-                  name="sku"
-                  type="text"
-                  label="SKU"
-                  placeholder="Enter SKU"
-                  required
-                />
-              )}
               <ZSelect
                 name="categoryId"
                 isLoading={eLoading}
@@ -528,102 +405,11 @@ const AddProduct = () => {
                 placeholder="Select status"
               />
 
-              <div className="mt-7 lg:col-span-2">
-                <h5 className="text-xl  pb-2 mb-2  ">Type of products</h5>
-                <ZRadio
-                  options={[
-                    {
-                      name: "Without Variant",
-                      value: "1",
-                    },
-                    {
-                      name: "With Variant",
-                      value: "0",
-                    },
-                  ]}
-                  name={"productType"}
-                  label={"Product type"}
-                  setProductType={setProductType}
-                ></ZRadio>
-              </div>
 
-              {/* single Product type start */}
-
-              {typeProduct === "1" && (
-                <>
-                  <ZNumber
-                    name="productInitialQty"
-                    label="Stock Quantity"
-                    placeholder="Enter Stock Quantity"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
-
-                  <ZNumber
-                    name="productMinQty"
-                    label="Minimum Stock"
-                    placeholder="Enter Minimum Stock"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
-                  <ZNumber
-                    name="productMaxQty"
-                    label="Maximum Stock"
-                    placeholder="Enter Maximum Stock"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
-                  {/* <ZNumber
-                    name="salePrice"
-                    label="Sale Price"
-                    placeholder="Enter Sale Price"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
-
-                  <ZNumber
-                    name="serialNo"
-                    label="Serial No"
-                    placeholder="Enter Serial No"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  /> */}
-
-                  <ZNumber
-                    name="productPurchasePrice"
-                    label="Purchase Price"
-                    placeholder="Enter Purchase Price"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
-                  <ZNumber
-                    name="productWholeSalesPrice"
-                    label="Wholesale Price"
-                    placeholder="Enter Wholesale Price"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
-                  <ZNumber
-                    name="productRetailPrice"
-                    label="Retail Price"
-                    placeholder="Enter Retail Price"
-                    refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
-                </>
-              )}
             </div>
 
             {/* variant Product type start */}
-            {typeProduct === "0" && (
+    
               <div className="mb-3">
                 {/* per sku  */}
 
@@ -633,7 +419,7 @@ const AddProduct = () => {
                   options={attributeOptions}
                   isLoading={attributeIsLoading}
                   mode={"multiple"}
-                  label={"Select Variations"}
+                  label={"Select Variations (if any)"}
                   name={"attribute-selected"}
                   defaultKey="product"
                   placeholder={"Select Variant Name"}
@@ -760,7 +546,7 @@ const AddProduct = () => {
                 </div>
                 {/* per sku end */}
               </div>
-            )}
+
 
           
           </>
