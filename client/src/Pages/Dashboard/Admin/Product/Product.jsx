@@ -25,21 +25,20 @@ const Product = () => {
   const [selectedProduct, setSelectedProduct] = useState({});
   const [deleteProduct, { isLoading: dCIsloading, isError, isSuccess, data: dCData, error: dError }] = useDeleteProductMutation();
   const navigate = useNavigate();
-  // console.log(data)
+  console.log(data)
 
-  const productData = data?.data?.map((product, index) => ({
+  const productData = data?.products?.map((product, index) => ({
       key: index,
-      id: product?.productID,
-      category: product?.erpCategoryID,
-      title: product?.productTitle,
+      id: product?.id,
+      category: product?.category?.categoryName,
+      name: product?.name,
       subtitle: product?.productSubtitle,
       description: product?.description,
       sku: product?.sku,
-      brand: product?.brandID,
-      business:product?.businessID,
+      brand: product?.brand?.brandName,
       type: product?.productType,
-      status: product?.isActive,
-      variant: product?.productVariant
+      status: product?.status,
+      variants: product?.variants
   }));
 
   // console.log(productData);
@@ -67,22 +66,22 @@ const Product = () => {
     
     {
       title: "Title",
-      dataIndex: "title",
-      key: "title",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Subtitle",
       dataIndex: "subtitle",
       key: "subtitle",
     },
-    {
-      title: "Type",
-      render: (values, record) => (
-        <div className="flex justify-center">
-          <Alert message={`${record.type === "0" ? "Variant Product" : "Single Product"}`} type="info" />
-        </div>
-      ),
-    },
+    // {
+    //   title: "Type",
+    //   render: (values, record) => (
+    //     <div className="flex justify-center">
+    //       <Alert message={`${record.type === "0" ? "Variant Product" : "Single Product"}`} type="info" />
+    //     </div>
+    //   ),
+    // },
     // {
     //   title: "SKU",
     //   render: (values, record) => (
@@ -106,7 +105,7 @@ const Product = () => {
     // },
     {
       title: "Variant",
-      dataIndex: "variant",
+      dataIndex: "variants",
       render: (values) => (
         <div className="flex justify-center">
           <Alert message={`Total Variant : ${values?.length || 0}`} type="info" />
@@ -114,16 +113,16 @@ const Product = () => {
       ),
     },
     
-    // {
-    //   title: "Category",
-    //   dataIndex: "erpCategoryID",
-    //   key: "erpCategoryID",
-    // },
-    // {
-    //   title: "Brand",
-    //   dataIndex: "brandID",
-    //   key: "brandID",
-    // },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Brand",
+      dataIndex: "brand",
+      key: "brand",
+    },
     {
       title: "Status",
       dataIndex: "status",
@@ -163,7 +162,7 @@ const Product = () => {
  
 
 
-//  if (error) return <p>Error loading products</p>;
+ if (error) return <p className="text-center text-red-500">Error loading products</p>;
 
 
   return (
@@ -181,10 +180,10 @@ const Product = () => {
       </EditModal> */}
 
       {/* Product Table */}
-      {/* <DashboardTable columns={columns} data={productData} loading={isLoading} /> */}
+      <DashboardTable columns={columns} data={productData} loading={isLoading} />
 
       {/* Delete Modal */}
-      {/* <DeleteModal
+      <DeleteModal
         data={dCData}
         error={dError}
         isLoading={dCIsloading}
@@ -194,7 +193,7 @@ const Product = () => {
         isDeleteModalOpen={isDeleteModalOpen}
         isError={isError}
         description={"Deleting this product will remove all corresponding data."}
-      /> */}
+      />
     </>
   );
 };
