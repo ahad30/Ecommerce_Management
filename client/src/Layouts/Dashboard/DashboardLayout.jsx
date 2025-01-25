@@ -22,7 +22,7 @@ const DashboardLayout = () => {
         ></DashboardSidebarTwo>
       </div>
 
-      <div className="relative thin-scrollbar h-screen overflow-y-scroll w-full">
+      <div className="relative scrollbar-0 h-screen overflow-y-scroll w-full">
         <div className="w-full text-gray-900">
           <Navbar
             isSidebarOpen={isSidebarOpen}

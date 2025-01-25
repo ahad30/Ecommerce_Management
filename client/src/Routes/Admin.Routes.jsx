@@ -7,6 +7,8 @@ import Category from "../Pages/Dashboard/Admin/Category/Category";
 import { AiFillBoxPlot } from "react-icons/ai";
 import Brand from "../Pages/Dashboard/Admin/Brand/Brand";
 import Attribute from "../Pages/Dashboard/Admin/Attributes/Attribute";
+import Product from "../Pages/Dashboard/Admin/Product/Product";
+import AddProduct from "../Pages/Dashboard/Admin/Product/AddProduct/AddProduct";
 // import { LuUserCog2 } from "react-icons/lu";
 // import Roles from "../Pages/Dashboard/Admin/UserManagement/Roles/Roles";
 // import Users from "../Pages/Dashboard/Admin/UserManagement/Users/Users";
@@ -16,7 +18,6 @@ import Attribute from "../Pages/Dashboard/Admin/Attributes/Attribute";
 // import Attributes from "../Pages/Dashboard/Admin/Attributes/Attributes";
 // import Sliders from "../Pages/Dashboard/Admin/configuration/Sliders/Sliders";
 // import { IoConstructOutline } from "react-icons/io5";
-// import Products from "../Pages/Dashboard/Admin/Products/Products";
 // import Packages from "../Pages/Dashboard/Admin/Package/Packages";
 // import AddProduct from "../Pages/Dashboard/Admin/Products/AddProduct";
 // import EditProduct from "../Pages/Dashboard/Admin/Products/EditProduct";
@@ -87,20 +88,20 @@ export const adminRoutes = [
         label: "Attribute",
         element: <Attribute></Attribute>,
         permissionName: "view attribute",
+      },
+      {
+        path: "products",
+        label: "Products",
+        element: <Product></Product>,
+        permissionName: "view product",
       }
-      // {
-      //   path: "products",
-      //   label: "Products",
-      //   element: <Products></Products>,
-      //   permissionName: "view product",
-      // },
     
-    ],
+    ]
   },
-  // {
-  //   path: "add-product",
-  //   element: <AddProduct></AddProduct>,
-  // },
+  {
+    path: "add-product",
+    element: <AddProduct></AddProduct>,
+  },
   // {
   //   path: "edit-product/:id",
   //   element: <EditProduct></EditProduct>,

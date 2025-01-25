@@ -1,8 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "../Pages/Home/Home";
 import Contact from "../Pages/Contact/Contact";
-import Login from "../Pages/Login/Login";
-import Register from "../Pages/Register/Register";
 import ErrorPageDashboard from "../Pages/Error/ErrorPageDashboard";
 import { routesGenerator } from "../utils/routesGenerator";
 import { adminRoutes } from "./Admin.Routes";
@@ -11,6 +9,8 @@ import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
 import MainLayout from "../Layouts/Home/MainLayout";
 import ProductDetails from "../Pages/Home/ProductDetails/ProductDetails";
 import Shop from "../Pages/Shop/Shop";
+import Login from "../Pages/Auth/Login/Login";
+import Register from "../Pages/Auth/Register/Register";
 
 export const routes = createBrowserRouter([
   {
