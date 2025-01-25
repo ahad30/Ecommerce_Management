@@ -15,6 +15,10 @@ const AttributesService = require('../services/Attributes/AttributesService');
 const AttributesController = require('../controllers/attributesController');
 const OrderService = require('../services/Order/OrderService');
 const OrderCOntroller = require('../controllers/orderController');
+const SliderController = require('../controllers/sliderController');
+const SliderService = require('../services/Slider/SliderService');
+const SubscribeService = require('../services/Subscribe/SubscribeService');
+const SubscribeController = require('../controllers/subscribeController');
 
 const router = express.Router();
 
@@ -27,9 +31,9 @@ const categoryService = new CategoryService(prisma)
 const productService= new ProductService(prisma);
 const brandService = new BrandService(prisma);
 const attributeService = new AttributesService(prisma);
-
+const sliderService = new SliderService(prisma);
 const orderService = new OrderService(prisma)
-
+const subscribeService = new SubscribeService(prisma)
 // Define routes
 router.post('/admin/create', (req, res,next) => adminController.createAdmin(req, res,next));
 
@@ -162,6 +166,55 @@ router.get("/orders",(req,res,next)=>{
 router.get("/success",(req,res,next)=>{
     const orderController = new OrderCOntroller(orderService);
     orderController.paymentSuccess(req,res,next);
+})
+
+//slider routes
+//[route("/sliders/create")]
+router.post("/sliders/create",(req,res,next)=>{
+    const sliderController = new SliderController(sliderService);
+    sliderController.createSlider(req,res,next)
+})
+//[route("/sliders")]
+router.get("/sliders",(req,res,next)=>{
+    const sliderController = new SliderController(sliderService);
+    sliderController.getSliders(req,res,next)
+})
+//[route("/sliders/{id}")]
+router.get("/sliders/:id",(req,res,next)=>{
+    const sliderController = new SliderController(sliderService);
+    sliderController.getSliderById(req,res,next)
+})
+//[route("/sliders/{id}")]
+router.put("/sliders/:id",(req,res,next)=>{
+    const sliderController = new SliderController(sliderService);
+    sliderController.updateSlider(req,res,next)
+})
+//[route("/sliders/{id}")]
+router.delete("/sliders/:id",(req,res,next)=>{
+    const sliderController = new SliderController(sliderService);
+    sliderController.deleteSlider(req,res,next)
+})
+
+//subscribe routes
+//[route("/subscribe/create")]
+router.post("/subscribe/create",(req,res,next)=>{
+    const subscribeController = new SubscribeController(subscribeService);
+    subscribeController.subscribe(req,res,next)
+})
+//[route("/unsubscribe")]
+router.post("/unsubscribe",(req,res,next)=>{
+    const subscribeController = new SubscribeController(subscribeService);
+    subscribeController.unsubscribe(req,res,next)
+})
+//[route("/subscriptions")]
+router.get("/subscriptions",(req,res,next)=>{
+    const subscribeController = new SubscribeController(subscribeService);
+    subscribeController.getSubscriptions(req,res,next)
+})
+//[route("/subscriptions/{email}")]
+router.get("/subscriptions/:email",(req,res,next)=>{
+    const subscribeController = new SubscribeController(subscribeService);
+    subscribeController.getSubscriptionByEmail(req,res,next)
 })
 
 module.exports = router;
