@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import img from "../../assets/banner/contact-banner.jpg";
+import img from "../../../assets/banner/contact-banner.jpg";
 import { FaGreaterThan, FaHome } from 'react-icons/fa';
 
 const Login = () => {

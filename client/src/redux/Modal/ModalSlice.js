@@ -8,6 +8,7 @@ const initialState = {
   isCustomerModalOpen: false,
   isProductModalOpen: false,
   isCalculatorModalOpen: false,
+  isVariantModalOpen: false,
   isHomeCategorySidebarOpen: false
 };
 
@@ -37,6 +38,10 @@ const ModalSlice = createSlice({
       state.isCalculatorModalOpen = !state.isCalculatorModalOpen;
     },
 
+    setIsVariantModalOpen: (state) => {
+      state.isVariantModalOpen = !state.isVariantModalOpen;
+    },
+
     setIsHomeCategorySidebarOpen: (state) => {
       state.isHomeCategorySidebarOpen = !state.isHomeCategorySidebarOpen;
     },
@@ -51,6 +56,7 @@ export const {
   setIsCustomerModalOpen,
   setIsProductModalOpen,
   setIsCalculatorModalOpen,
+  setIsVariantModalOpen,
   setIsHomeCategorySidebarOpen,
 } = ModalSlice.actions;
 

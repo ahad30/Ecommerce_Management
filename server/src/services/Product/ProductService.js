@@ -4,6 +4,22 @@ class ProductService {
         this.prisma = prisma;
     }
 
+    buildWhereClause(filters, searchTerm) {
+        const searchCondition = searchTerm
+            ? {
+                  OR: [
+                      { name: { contains: searchTerm, mode: 'insensitive' } },
+                      { description: { contains: searchTerm, mode: 'insensitive' } },
+                      { productSubtitle : { contains: searchTerm, mode: 'insensitive' } }
+                      
+                    ],
+              }
+            : {};
+
+        return {
+            AND: [filters, searchCondition],
+        };
+    }
 
     async createProducts(data) {
         try {
@@ -47,17 +63,35 @@ console.log(error);
 
 
     // Get all products with optional filtering
-    async getProducts(filter = {}) {
+    async getProducts(filters = {}, searchTerm = null,page=1,limit=10) {
         try {
+            const whereClause = this.buildWhereClause(filters, searchTerm);
+            const skip = (page - 1) * limit;
             const products = await this.prisma.product.findMany({
-                where: filter,
+                where: whereClause,
+                skip,        
+                take: limit, 
                 include: {
-                    category: true,
+                    // category: true,
                     variants: true,
-                    brand:true
+                    // brand: true,
                 },
             });
-            return products;
+
+            // Count total products for pagination meta
+            const totalProducts = await this.prisma.product.count({
+                where: whereClause,
+            });
+
+            // Pagination metadata
+            const meta = {
+                totalItems: totalProducts,
+                totalPages: Math.ceil(totalProducts / limit),
+                currentPage: page,
+                itemsPerPage: limit,
+            };
+
+            return { products, meta };
         } catch (error) {
             console.error("Error fetching products:", error);
             throw new Error("Failed to fetch products");

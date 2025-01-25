@@ -1,26 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import ZFormTwo from "@/components/Form/ZFormTwo";
-import ZInputTwo from "@/components/Form/ZInputTwo";
-import ZSelect from "@/components/Form/ZSelect";
-import ZCheckbox from "@/components/Form/ZCheckbox";
-import BreadCrumb from "@/components/BreadCrumb/BreadCrumb";
-import { useGetErpCategoryQuery } from "@/redux/Feature/Admin/erpcategory/erpcategory";
-import { useGetBrandQuery } from "@/redux/Feature/Admin/brand/brandApi";
-import { useGetBusinessesQuery } from "@/redux/Feature/Admin/businesses/businesses";
-import { useAddProductMutation } from "@/redux/Feature/Admin/product/productApi";
-import ZInputTextArea from "@/components/Form/ZInputTextArea";
-import { useGetProductVariationApiQuery } from "@/redux/Feature/Admin/product/productVariationApi";
-import { useGetBranchesQuery } from "@/redux/Feature/Admin/branch/branchesApi";
-import ZRadio from "@/components/Form/ZRadio";
-import ZImageInput from "@/components/Form/ZImageInput";
-import { useGetAttributesQuery } from "@/redux/Feature/Admin/product/attributesApi";
 import { Button, Spin } from "antd";
-import ZNumber from "@/components/Form/ZNumber";
-import { VariantProductTable } from "@/components/VariantProductTable";
 import { toast } from "sonner";
-import { variantExists } from "@/components/helper/SameVariantExist";
+import { useGetAttributesQuery } from "../../../../../redux/Feature/Admin/attribute/attributesApi";
+import { useGetBrandQuery } from "../../../../../redux/Feature/Admin/brand/brandApi";
+import { useAddProductMutation } from "../../../../../redux/Feature/Admin/product/productApi";
+import { useGetCategoryQuery } from "../../../../../redux/Feature/Admin/category/categoryApi";
+import { useNavigate } from "react-router-dom";
+import { VariantProductTable } from "../../../../../components/VariantProductTable";
+import ZFormTwo from "../../../../../components/Form/ZFormTwo";
+import ZInputTwo from "../../../../../components/Form/ZInputTwo";
+import ZSelect from "../../../../../components/Form/ZSelect";
+import ZInputTextArea from "../../../../../components/Form/ZInputTextArea";
+import { variantExists } from "../../../../../components/helper/SameVariantExist";
+import BreadCrumb from "../../../../../components/BreadCrumb/BreadCrumb";
+import ZNumber from "../../../../../components/Form/ZNumber";
+import ZRadio from "../../../../../components/Form/ZRadio";
 
 function generateUniqueId(length = 2) {
   const chars = "123456789";
@@ -79,18 +74,10 @@ const AddProduct = () => {
     productRetailPrice: "",
   });
 
-  const router = useRouter();
-  const pathName = usePathname();
+  const navigate = useNavigate();
 
-  const { data: eData, isLoading: eLoading } = useGetErpCategoryQuery();
+  const { data: eData, isLoading: eLoading } = useGetCategoryQuery();
   const { data: bData, isLoading: bLoading } = useGetBrandQuery();
-  const { data: businessData, isLoading: businessLoading } =
-    useGetBusinessesQuery();
-  const {
-    data: allBranchData,
-    error,
-    isLoading: branchIsLoading,
-  } = useGetBranchesQuery();
   const { data: attributeWithValue, isLoading: attributeIsLoading } =
     useGetAttributesQuery();
   const [
@@ -106,14 +93,11 @@ const AddProduct = () => {
 
   //  console.log(attributeWithValue);
 
-  const businessOptions = businessData?.data?.map((business) => ({
-    label: business.businessName,
-    value: business.businessID,
-  }));
+
 
   const categoryData = eData?.data?.map((eCategory) => ({
-    label: eCategory.erpCategoryName,
-    value: eCategory.erpCategoryID,
+    label: eCategory.categoryName,
+    value: eCategory.id,
   }));
 
   const brandData = bData?.data?.map((brand) => ({
@@ -121,10 +105,6 @@ const AddProduct = () => {
     value: brand.brandID,
   }));
 
-  const branchData = allBranchData?.data?.map((branch) => ({
-    label: branch.branchName,
-    value: branch.branchID,
-  }));
 
   useEffect(() => {
     if (
@@ -132,8 +112,8 @@ const AddProduct = () => {
       attributeWithValue?.data?.length > 0
     ) {
       const attributeOptions = attributeWithValue?.data?.map((item) => ({
-        label: item.attributeName,
-        value: item.attributeName,
+        label: item.name,
+        value: item.name,
       }));
       setAttributeOptions([...attributeOptions]);
       setAttributeValue([...attributeWithValue.data]);
@@ -146,7 +126,7 @@ const AddProduct = () => {
       for (let index = 0; index < selectedAttribute.length; index++) {
         const element = selectedAttribute[index];
         const findTheAttributeWithValue = attributeValue?.find(
-          (item) => item.attributeName == element
+          (item) => item.name == element
         );
 
         if (findTheAttributeWithValue) {
@@ -163,13 +143,13 @@ const AddProduct = () => {
 
   useEffect(() => {
     if (CIsSuccess) {
-      router.push("/Dashboard/Product");
+      navigate("/products");
     }
-  }, [CIsSuccess, router]);
+  }, [CIsSuccess]);
 
   const handleAddPerSkuInSkus = () => {
-    const attributes = [];
-    // const attributes = {};
+
+    const attributes = {};
     const valuesName = [];
 
     if (perSku.length === 0) {
@@ -220,13 +200,11 @@ const AddProduct = () => {
       priceQuantityImage.qrCode
     ) {
       perSku.forEach((element) => {
-        // const proPertyKey = element.split("-")[0];
-        // const proPertyValue = element.split("-")[1];
-        // valuesName.push(proPertyValue);
-        // attributes[proPertyKey] = proPertyValue;
-        const [attributeName, attributeValue] = element.split("-");
-        valuesName.push(attributeValue);
-        attributes.push({ attributeName, attributeValue });
+        const proPertyKey = element.split("-")[0];
+        const proPertyValue = element.split("-")[1];
+        valuesName.push(proPertyValue);
+        attributes[proPertyKey] = proPertyValue;
+     
       });
 
       const sku = {
@@ -249,29 +227,19 @@ const AddProduct = () => {
         setSkus([...skus, { ...sku }]);
         handleRefreshVariantState();
       }
-      // else if (skus.length > 0) {
-      //   const skusAttributes = skus.map((sku) => sku.attributes);
-      //   const exist = variantExists(skusAttributes, sku.attributes);
-      //   if (!exist) {
-      //     setSkus([...skus, { ...sku }]);
-      //     handleRefreshVariantState();
-      //   } else {
-      //     toast.error("Already exists the variant of the product", {
-      //       duration: 2000,
-      //     });
-      //   }
-      // }
       else if (skus.length > 0) {
-        const isDuplicate = skus.some(
-          (existingSku) => existingSku.sku === sku.sku
-        );
-        if (isDuplicate) {
-          toast.error("This variant has already been added.", { id: 9 });
-        } else {
+        const skusAttributes = skus.map((sku) => sku.attributes);
+        const exist = variantExists(skusAttributes, sku.attributes);
+        if (!exist) {
           setSkus([...skus, { ...sku }]);
           handleRefreshVariantState();
+        } else {
+          toast.error("Already exists the variant of the product", {
+            duration: 2000,
+          });
         }
       }
+
     }
   };
 
@@ -401,7 +369,7 @@ const AddProduct = () => {
         };
 
         console.log(singleProductData);
-        createProduct(singleProductData);
+        // createProduct(singleProductData);
       }
     }
     // Check if the product is a variant product
@@ -410,9 +378,9 @@ const AddProduct = () => {
         const variantProductData = {
           ...modifiedData,
            sku: "",
-          productVariant: skus.map((sku, index) => ({
+          variants: skus.map((sku, index) => ({
             key: index,
-            attribute_combination: sku.attributes,
+            attributes: sku.attributes,
             sku: sku.sku,
             // variationId: sku?.variationId,
             stock: sku.stock,
@@ -427,7 +395,7 @@ const AddProduct = () => {
           })),
         };
         console.log(variantProductData);
-        createProduct(variantProductData);
+        // createProduct(variantProductData);
       } else {
         toast.error("Missing variant attribute", {
           id: 1,
@@ -450,9 +418,8 @@ const AddProduct = () => {
 
   return (
     <div className="">
-      <div className={`${pathName === "/Dashboard/pos" ? "hidden" : ""}`}>
+    
         <BreadCrumb />
-      </div>
       <ZFormTwo
         isLoading={CIsloading}
         isSuccess={CIsSuccess}
@@ -463,71 +430,13 @@ const AddProduct = () => {
         data={data}
         buttonName="Submit"
       >
-        {pathName === "/Dashboard/pos" ? (
+
           <>
             <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-10">
               <ZInputTwo
-                name="productTitle"
+                name="name"
                 type="text"
-                label="Product Title"
-                placeholder="Enter product title"
-              />
-
-              <ZInputTwo
-                name="productSubtitle"
-                type="text"
-                label="Subtitle"
-                placeholder="Enter product subtitle"
-              />
-
-              <ZSelect
-                name="businessID"
-                label="Business Name"
-                placeholder="Select business"
-                options={businessOptions}
-                isLoading={businessLoading}
-              />
-              <ZSelect
-                name="branchIDs"
-                mode={"multiple"}
-                label="Branch Name"
-                placeholder="Select Available Branch"
-                options={branchData}
-                isLoading={branchIsLoading}
-              />
-
-              <ZSelect
-                name="erpCategoryID"
-                isLoading={eLoading}
-                label="Product Category"
-                options={categoryData}
-                placeholder="Select category"
-              />
-              <ZSelect
-                name="brandID"
-                isLoading={bLoading}
-                label="Product Brand"
-                options={brandData}
-                placeholder="Select brand"
-              />
-
-              <div className="lg:col-span-2">
-                <ZInputTextArea
-                  name="description"
-                  type="text"
-                  label="Description"
-                  placeholder="Enter product description"
-                />
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-10">
-              <ZInputTwo
-                name="productTitle"
-                type="text"
-                label="Product Title"
+                label="Product Name"
                 placeholder="Enter product title"
               />
               <ZInputTwo
@@ -547,7 +456,7 @@ const AddProduct = () => {
                 />
               )}
               <ZSelect
-                name="erpCategoryID"
+                name="categoryId"
                 isLoading={eLoading}
                 label="Product Category"
                 options={categoryData}
@@ -555,66 +464,66 @@ const AddProduct = () => {
               />
 
               <ZSelect
-                name="brandID"
+                name="brandId"
                 isLoading={bLoading}
                 label="Product Brand"
                 options={brandData}
                 placeholder="Select brand"
               />
 
-              <ZSelect
-                name="businessID"
-                label="Business Name"
-                placeholder="Select business"
-                options={businessOptions}
-                isLoading={businessLoading}
-              />
-
-              <ZSelect
-                name="branchIDs"
-                mode={"multiple"}
-                label="Branch Name"
-                placeholder="Select Available Branch"
-                options={branchData}
-                isLoading={branchIsLoading}
-              />
+          
 
               <div className="lg:col-span-2">
                 <ZInputTextArea
-                  name="productDescription"
+                  name="description"
                   type="text"
                   label="Description"
                   placeholder="Enter product description"
                 />
               </div>
 
-              <ZSelect
-                name="notAvailableBranchIDs"
-                mode={"multiple"}
-                label="Not available Branch Name"
-                placeholder="Select Not Available Branch"
-                options={branchData}
-                isLoading={branchIsLoading}
-              />
+             
 
-              {/* <ZInputTwo
-                name="expiryDate"
-                type="date"
-                label="Expiry Date"
-                placeholder="Enter Expiry Date"
-              />
+           
 
-              <ZImageInput
+              {/* <ZImageInput
                 label="Product Image"
                 name="productImage"
               ></ZImageInput> */}
 
               <ZSelect
-                name="isActive"
+                name="status"
                 label="Status"
                 options={[
                   { label: "Active", value: true },
                   { label: "Inactive", value: false },
+                ]}
+                placeholder="Select status"
+              />
+              <ZSelect
+                name="topSale"
+                label="Top Sale"
+                options={[
+                  { label: "Yes", value: true },
+                  { label: "No", value: false },
+                ]}
+                placeholder="Select status"
+              />
+              <ZSelect
+                name="newArrival"
+                label="New Arrival"
+                options={[
+                  { label: "Yes", value: true },
+                  { label: "No", value: false },
+                ]}
+                placeholder="Select status"
+              />
+              <ZSelect
+                name="availability"
+                label="Availability"
+                options={[
+                  { label: "Yes", value: true },
+                  { label: "No", value: false },
                 ]}
                 placeholder="Select status"
               />
@@ -739,19 +648,19 @@ const AddProduct = () => {
                       return (
                         <ZSelect
                           key={item?.id}
-                          options={item?.values?.map((option) => ({
-                            value: `${item?.attributeName}-${option?.attributeValue}`,
-                            label: option?.attributeValue,
+                          options={item?.value?.map((option) => ({
+                            value: `${item?.name}-${option?.name}`,
+                            label: option?.name,
                           }))}
                           isLoading={attributeIsLoading}
                           mode={undefined}
-                          label={`${item.attributeName} value`}
-                          name={`${item.attributeName}`}
+                          label={`${item.name} value`}
+                          name={`${item.name}`}
                           setPerSku={setPerSku}
                           defaultKey="product"
                           selectedAttribute={selectedAttribute}
                           refresh={refresh}
-                          placeholder={`Select ${item.attributeName} value`}
+                          placeholder={`Select ${item.name} value`}
                         ></ZSelect>
                       );
                     })}
@@ -853,58 +762,8 @@ const AddProduct = () => {
               </div>
             )}
 
-            {/* <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={true}
-            label="Is All Branch"
-            name="isAllBranch"
-          />
-          <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={true}
-            label="Is In-house Available"
-            name="isInHouseAvailable"
-          />
-          <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={true}
-            label="Is Pickup Available"
-            name="isPickupAvailable"
-          />
-          <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={true}
-            label="Is Delivery Available"
-            name="isDeliveryAvailable"
-          />
-
-          <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={false}
-            label="Is Featured"
-            name="isFeatured"
-          />
-          <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={false}
-            label="Has Color Variations"
-            name="isColorVariations"
-          />
-
-          <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={true}
-            label="Is VAT Applicable"
-            name="isVATApplicable"
-          />
-          <ZCheckbox
-            isSuccess={CIsSuccess}
-            checkedAttribute={false}
-            label="Is SD Applicable"
-            name="isSDApplicable"
-          /> */}
+          
           </>
-        )}
       </ZFormTwo>
       <VariantProductTable skus={skus} setSkus={setSkus}></VariantProductTable>
     </div>

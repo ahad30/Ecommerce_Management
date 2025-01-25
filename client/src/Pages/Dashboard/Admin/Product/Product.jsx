@@ -1,20 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import BreadCrumb from "@/components/BreadCrumb/BreadCrumb";
 import { Alert, Button, Image, Modal, Tag } from "antd";
-import DashboardTable from "@/components/Table/DashboardTable";
 import { Space, Tooltip, message } from "antd";
 import { CiEdit } from "react-icons/ci";
 import { AiOutlineDelete } from "react-icons/ai";
-import EditModal from "@/components/Modal/EditModal";
-import { useAppDispatch, useAppSelector } from "@/redux/Hook/Hook";
-import ButtonWithModal from "@/components/Button/ButtonWithModal";
-import { setIsDeleteModalOpen, setIsEditModalOpen } from "@/redux/Modal/ModalSlice";
-import DeleteModal from "@/components/Modal/DeleteModal";
-import { useDeleteProductMutation, useGetProductsQuery } from "@/redux/Feature/Admin/product/productApi";
-import EditProduct from "./EditProduct/page";
 import { FaEye } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "../../../../redux/Hook/Hook";
+import { useDeleteProductMutation, useGetProductsQuery } from "../../../../redux/Feature/Admin/product/productApi";
+import { setIsDeleteModalOpen } from "../../../../redux/Modal/ModalSlice";
+import EditModal from "../../../../components/Modal/EditModal";
+// import EditProduct from "./EditProduct/EditProduct";
+import ButtonWithModal from "../../../../components/Button/ButtonWithModal";
+import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb";
+import { useNavigate } from "react-router-dom";
+import DashboardTable from "../../../../components/Table/DashboardTable";
+import DeleteModal from "../../../../components/Modal/DeleteModal";
 
 const Product = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +24,7 @@ const Product = () => {
   );
   const [selectedProduct, setSelectedProduct] = useState({});
   const [deleteProduct, { isLoading: dCIsloading, isError, isSuccess, data: dCData, error: dError }] = useDeleteProductMutation();
-  const router = useRouter();
+  const navigate = useNavigate();
   // console.log(data)
 
   const productData = data?.data?.map((product, index) => ({
@@ -53,22 +53,18 @@ const Product = () => {
   };
 
   const handleEditProduct = (id) => {
-     router.push(`/Dashboard/Product/EditProduct?id=${id}`);
+    navigate(`/Dashboard/Product/EditProduct?id=${id}`);
   };
 
   const handleViewProduct = (id) => {
-    router.push(`/Dashboard/Product/ViewProduct?id=${id}`);
+    navigate(`/Dashboard/Product/ViewProduct?id=${id}`);
   };
 
 
 
   // Define table columns
   const columns = [
-    // {
-    //   title: "ID",
-    //   dataIndex: "productID",
-    //   key: "productID",
-    // },
+    
     {
       title: "Title",
       dataIndex: "title",
@@ -165,11 +161,9 @@ const Product = () => {
   ];
 
  
-//  if( data?.data?.length === 0){
-//   return <div className="text-red-600 font-bold text-center">No Product Found</div>
-//  }
 
- if (error) return <p>Error loading products</p>;
+
+//  if (error) return <p>Error loading products</p>;
 
 
   return (
@@ -178,19 +172,19 @@ const Product = () => {
         <BreadCrumb />
       </div>
       <div className="flex flex-col lg:flex-row items-center gap-x-2 justify-end my-5">
-        <ButtonWithModal title="Add Product" path={"/Dashboard/Product/AddProduct"} />
+        <ButtonWithModal title="Add Product" path={"/admin/add-product"} />
       </div>
 
       {/* EditModal Component */}
-      <EditModal isEditModalOpen={isEditModalOpen} title="Edit Product">
+      {/* <EditModal isEditModalOpen={isEditModalOpen} title="Edit Product">
         <EditProduct selectedProduct={selectedProduct} />
-      </EditModal>
+      </EditModal> */}
 
       {/* Product Table */}
-      <DashboardTable columns={columns} data={productData} loading={isLoading} />
+      {/* <DashboardTable columns={columns} data={productData} loading={isLoading} /> */}
 
       {/* Delete Modal */}
-      <DeleteModal
+      {/* <DeleteModal
         data={dCData}
         error={dError}
         isLoading={dCIsloading}
@@ -200,7 +194,7 @@ const Product = () => {
         isDeleteModalOpen={isDeleteModalOpen}
         isError={isError}
         description={"Deleting this product will remove all corresponding data."}
-      />
+      /> */}
     </>
   );
 };
