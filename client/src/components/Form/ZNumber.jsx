@@ -21,26 +21,11 @@ const ZNumber = ({
 
   // by default reset
   useEffect(() => {
-    const singleProductFields = [
-      "stock",
-      "min_stock",
-      "max_stock",
-      "salePrice",
-      "serialNo",
-      "purchasePrice",
-      "wholeSalePrice",
-      "retailPrice",
-    ];
+
   
     const productFields = [
-      "variationStock",
-      "variation_min_stock",
-      "variation_max_stock",
-      "variationSalePrice",
-      "variationSerialNo",
-      "variationPurchasePrice",
-      "variationWholeSalePrice",
-      "variationRetailPrice",
+      "stock",
+      "price",
     ];
   
     const resetFields = (fields, key) => {
@@ -51,7 +36,6 @@ const ZNumber = ({
       });
     };
   
-    resetFields(singleProductFields, "singleProduct");
     resetFields(productFields, "product");
   }, [resetField]);
   
@@ -67,14 +51,8 @@ const ZNumber = ({
 useEffect(() => {
   if (defaultKey === "product") {
     const productFields = [
-      "variationStock",
-      "variation_min_stock",
-      "variation_max_stock",
-      "variationSalePrice",
-      "variationSerialNo",
-      "variationPurchasePrice",
-      "variationWholeSalePrice",
-      "variationRetailPrice",
+      "stock",
+      "price"
     ];
 
     productFields.forEach((field) => resetField(field));
@@ -83,14 +61,7 @@ useEffect(() => {
 
 const handleKeyPress = (event) => {
   const regex = [
-    "salePrice",
-    "purchasePrice",
-    "wholeSalePrice",
-    "retailPrice",
-    "variationSalePrice",
-    "variationPurchasePrice",
-    "variationWholeSalePrice",
-    "variationRetailPrice",
+    "price",
   ].includes(name)
     ? fractionRegex
     : numberRegex;
@@ -119,28 +90,13 @@ const handleKeyPress = (event) => {
         }
       };
   
-      resetValues("singleProduct", {
-        // images: "",
-        stock: "",
-        min_stock: "",
-        max_stock: "",
-        salePrice: "",
-        serialNo: "",
-        purchasePrice: "",
-        wholeSalePrice: "",
-        retailPrice: "",
-      });
+
   
       resetValues("product", {
         // image: "",
-        variationStock: "",
-        variation_min_stock: "",
-        variation_max_stock: "",
-        variationSalePrice: "",
-        variationSerialNo: "",
-        variationPurchasePrice: "",
-        variationWholeSalePrice: "",
-        variationRetailPrice: "",
+        stock: "",
+        price: "",
+
       });
     }
   }, []);
@@ -173,54 +129,28 @@ const handleKeyPress = (event) => {
         pattern: {
           value:
             [
-              "salePrice",
-              "purchasePrice",
-              "wholeSalePrice",
-              "retailPrice",
-              "variationSalePrice",
-              "variationPurchasePrice",
-              "variationWholeSalePrice",
-              "variationRetailPrice",
+              "price",
             ].includes(name)
               ? fractionRegex
               : numberRegex,
           message:
             [
-              "salePrice",
-              "purchasePrice",
-              "wholeSalePrice",
-              "retailPrice",
-              "variationSalePrice",
-              "variationPurchasePrice",
-              "variationWholeSalePrice",
-              "variationRetailPrice",
+              "price",
             ].includes(name)
               ? "Please enter a valid number, including fractions"
               : "Only digits 1 to 9 are allowed",
         },
         maxLength: {
           value: [
-            "salePrice",
-            "purchasePrice",
-            "wholeSalePrice",
-            "retailPrice",
-            "variationSalePrice",
-            "variationPurchasePrice",
-            "variationWholeSalePrice",
-            "variationRetailPrice",
+            "price",
+           
           ].includes(name)
             ? 10
             : 5,
           message: `Maximum length is ${
             [
-              "salePrice",
-              "purchasePrice",
-              "wholeSalePrice",
-              "retailPrice",
-              "variationSalePrice",
-              "variationPurchasePrice",
-              "variationWholeSalePrice",
-              "variationRetailPrice",
+              "price",
+            
             ].includes(name)
               ? 10
               : 5
@@ -243,20 +173,7 @@ const handleKeyPress = (event) => {
             }}
             placeholder={placeholder}
             onKeyPress={handleKeyPress}
-            maxLength={
-              [
-                "salePrice",
-                "purchasePrice",
-                "wholeSalePrice",
-                "retailPrice",
-                "variationSalePrice",
-                "variationPurchasePrice",
-                "variationWholeSalePrice",
-                "variationRetailPrice",
-              ].includes(name)
-                ? 10
-                : 5
-            }
+          
             
           />
         </Form.Item>

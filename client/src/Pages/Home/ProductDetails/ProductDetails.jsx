@@ -39,7 +39,7 @@ const ProductDetails = () => {
         {/* Slider Section */}
         <div>
           <ProductImageSlider
-            images={singleProduct.variants.map((variant) => variant.imageUrl[0])}
+            images={singleProduct.variants.map((variant) => variant?.imageUrl)}
           />
         </div>
 
@@ -115,19 +115,31 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* Price Tiers */}
-          {/* <div className="mt-4">
-            <span className="font-medium">Price Tiers:</span>
-            <ul className="mt-2 text-sm">
-              {singleProduct.variants[0].priceTiers.map((tier, index) => (
-                <li key={index}>
-                  {tier.minQty ? `Min: ${tier.minQty}` : "Min: 1"} -{" "}
-                  {tier.maxQty ? `Max: ${tier.maxQty}` : "No Max"}: ${tier.price}
-                </li>
-              ))}
-            </ul>
-          </div> */}
-          {/* Add to Cart and Wishlist */}
+        {/* Price Tiers */}
+<div className="mt-4">
+  <span className="font-medium">Price Tiers:</span>
+  <ul className="mt-2 text-sm list-disc pl-5 flex justify-between">
+    {singleProduct.variants.map((variant, variantIndex) => (
+      <li key={variantIndex} className="mt-2">
+        <div className="font-semibold">
+          {variant.attributes.size} / {variant.attributes.color}
+        </div>
+        <ul className="mt-1 text-sm list-none pl-0">
+          {variant.priceTiers.map((tier, index) => (
+            <li key={index}>
+              {`Min Qty: ${tier.minQty || 1} - Max Qty: ${
+                tier.maxQty || "No Max"
+              } Price: $${tier.price.toFixed(2)}`}
+            </li>
+          ))}
+        </ul>
+      </li>
+    ))}
+  </ul>
+</div>
+
+
+          {/* Add to Cart and Buy Now */}
           <div className="flex space-x-4">
             <button className="bg-blue-500 text-white px-7 py-2 rounded hover:bg-white hover:text-blue-500 transition-all border border-blue-500">
             <p className="flex items-center justify-center">
@@ -146,7 +158,7 @@ const ProductDetails = () => {
       </div>
 
       {/* Tabs Section */}
-      <div className="container mx-auto lg:-mt-[120px] mb-16">
+      <div className="container mx-auto lg:mt-[50px] mb-16">
         <div className="">
           <ul className="flex justify-center space-x-8 text-2xl font-medium">
             <li className="text-blue-500 border-b-2 border-blue-500">
