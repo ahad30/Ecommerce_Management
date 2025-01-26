@@ -245,6 +245,7 @@ const AddProduct = () => {
       }
     };
   
+
     // Prepare the main product data
     const modifiedData = {
       brandId: data.brandId || "",
@@ -259,7 +260,7 @@ const AddProduct = () => {
       breathability: data.breathability || "",
       weight: data?.weight|| "",
       imageUrl: "",
-      price: ""
+      price: 1
     };
   
     if (skus.length > 0) {
@@ -404,10 +405,11 @@ const AddProduct = () => {
               placeholder="Enter breathability"
             />
 
-            {/* <ZImageInput
-                label="Product Image"
-                name="productImage"
-              ></ZImageInput> */}
+         {/* <ZImageInput
+            name="imageUrl"
+            label="Thumbnail Image"
+           
+          /> */}
 
             <ZSelect
               name="status"

@@ -3,6 +3,7 @@ import ProductImageSlider from "./ProductImageSlider";
 import { FaGreaterThan, FaHome } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
+import { Alert } from "antd";
 
 const ProductDetails = () => {
   const singleProduct = useLoaderData();
@@ -122,14 +123,14 @@ const ProductDetails = () => {
     {singleProduct.variants.map((variant, variantIndex) => (
       <li key={variantIndex} className="mt-2">
         <div className="font-semibold">
-          {variant.attributes.size} / {variant.attributes.color}
+          {variant.attributes.size} 
         </div>
         <ul className="mt-1 text-sm list-none pl-0">
           {variant.priceTiers.map((tier, index) => (
-            <li key={index}>
-              {`Min Qty: ${tier.minQty || 1} - Max Qty: ${
+            <li className="mb-5" key={index}>
+             <Alert message= {`Min Qty: ${tier.minQty || 1} - Max Qty: ${
                 tier.maxQty || "No Max"
-              } Price: $${tier.price.toFixed(2)}`}
+              } Price: $${tier.price.toFixed(2)}`}/>
             </li>
           ))}
         </ul>
