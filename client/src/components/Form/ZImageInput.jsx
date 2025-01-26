@@ -4,10 +4,20 @@ import { Controller, useFormContext } from "react-hook-form";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAppSelector } from "../../redux/Hook/Hook";
 
-const ZImageInput = ({ name, label, dragDrop, defaultValue, onRemove }) => {
+const ZImageInput = ({
+  name,
+  label,
+  defaultValue,
+  onRemove,
+  defaultKey,
+  setPriceQuantityImage,
+  refresh
+}) => {
   const [imageList, setImageList] = useState([]);
   const { control, resetField } = useFormContext();
-  const { isAddModalOpen, isEditModalOpen } = useAppSelector((state) => state.modal);
+  const { isAddModalOpen, isEditModalOpen } = useAppSelector(
+    (state) => state.modal
+  );
 
   useEffect(() => {
     if (!isAddModalOpen || !isEditModalOpen) {
@@ -29,9 +39,30 @@ const ZImageInput = ({ name, label, dragDrop, defaultValue, onRemove }) => {
     }
   }, [defaultValue]);
 
+  useEffect(() => {
+    if (defaultKey === "product") {
+      setImageList([]);
+    }
+  }, [refresh]);
+
   const handleChange = (info) => {
     const file = info.file;
-    console.log(file);
+
+    if (
+      setPriceQuantityImage &&
+      defaultKey === "product" &&
+      info?.fileList?.length > 0
+    ) {
+      setPriceQuantityImage((prev) => ({
+        ...prev,
+        imageUrl: file,
+      }));
+    } else if (setPriceQuantityImage) {
+      setPriceQuantityImage((prev) => ({
+        ...prev,
+        imageUrl: "",
+      }));
+    }
   };
 
   return (
@@ -63,12 +94,27 @@ const ZImageInput = ({ name, label, dragDrop, defaultValue, onRemove }) => {
               ];
               setImageList(newFileList);
               onChange(file);
+
+              if (defaultKey === "product" && setPriceQuantityImage) {
+                setPriceQuantityImage((prev) => ({
+                  ...prev,
+                  imageUrl: file,
+                }));
+              }
+
               return false; // Prevent automatic upload
             }}
             onRemove={() => {
               setImageList([]);
               onChange(null);
-              if (onRemove) onRemove(); // Call the onRemove callback if provided
+              if (onRemove) onRemove();
+
+              if (setPriceQuantityImage && defaultKey === "product") {
+                setPriceQuantityImage((prev) => ({
+                  ...prev,
+                  imageUrl: "",
+                }));
+              }
             }}
             maxCount={1}
             onChange={handleChange}
