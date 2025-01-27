@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, Image, Modal, Tag } from "antd";
 import { Space, Tooltip, message } from "antd";
 import { CiEdit } from "react-icons/ci";
-import { AiOutlineDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillEdit, AiFillEye, AiOutlineDelete } from "react-icons/ai";
 import { FaEye } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../../../redux/Hook/Hook";
 import { useDeleteProductMutation, useGetProductsQuery } from "../../../../redux/Feature/Admin/product/productApi";
@@ -141,17 +141,17 @@ const Product = () => {
            <a onClick={() => handleViewProduct(record.id)}>
           <Tooltip title="Click here to view product details" placement="top">
           
-          <FaEye size={25}/>
+          <AiFillEye size={25}/>
                   </Tooltip>
           </a>
           <a onClick={() => handleEditProduct(record.id)}>
-            <Tooltip title="Edit" placement="top">
-              <CiEdit size={20} />
+          <Tooltip title="Edit" placement="top">
+              <AiFillEdit className="text-green-500" size={20} />
             </Tooltip>
           </a>
           <a onClick={() => handledl(record)}>
-            <Tooltip title="Delete" placement="top">
-              <AiOutlineDelete size={20} />
+          <Tooltip title="Delete" placement="top">
+              <AiFillDelete className="text-red-500" size={20} />
             </Tooltip>
           </a>
         </Space>
