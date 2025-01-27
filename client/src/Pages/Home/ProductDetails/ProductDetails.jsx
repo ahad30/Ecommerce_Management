@@ -3,6 +3,7 @@ import ProductImageSlider from "./ProductImageSlider";
 import { FaGreaterThan, FaHome } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
+import { Alert } from "antd";
 
 const ProductDetails = () => {
   const singleProduct = useLoaderData();
@@ -117,25 +118,16 @@ const ProductDetails = () => {
 
         {/* Price Tiers */}
 <div className="mt-4">
-  <span className="font-medium">Price Tiers:</span>
-  <ul className="mt-2 text-sm list-disc pl-5 flex justify-between">
-    {singleProduct.variants.map((variant, variantIndex) => (
-      <li key={variantIndex} className="mt-2">
-        <div className="font-semibold">
-          {variant.attributes.size} / {variant.attributes.color}
-        </div>
-        <ul className="mt-1 text-sm list-none pl-0">
-          {variant.priceTiers.map((tier, index) => (
-            <li key={index}>
-              {`Min Qty: ${tier.minQty || 1} - Max Qty: ${
+  <span className="font-medium">Unit Price:</span>
+  <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
+          {singleProduct?.priceTiers?.map((tier, index) => (
+            <li className="mb-5" key={index}>
+             <Alert message= {`${tier.minQty || 1} pc-  ${
                 tier.maxQty || "No Max"
-              } Price: $${tier.price.toFixed(2)}`}
+              } pc    Price: $${tier.price.toFixed(2)}`}/>
             </li>
           ))}
         </ul>
-      </li>
-    ))}
-  </ul>
 </div>
 
 
