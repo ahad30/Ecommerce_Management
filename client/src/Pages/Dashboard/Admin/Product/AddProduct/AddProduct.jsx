@@ -1,7 +1,7 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import { Button, Spin } from "antd";
 import { toast } from "sonner";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { useGetAttributesQuery } from "../../../../../redux/Feature/Admin/attribute/attributesApi";
 import { useGetBrandQuery } from "../../../../../redux/Feature/Admin/brand/brandApi";
 import { useAddProductMutation } from "../../../../../redux/Feature/Admin/product/productApi";
@@ -17,6 +17,7 @@ import BreadCrumb from "../../../../../components/BreadCrumb/BreadCrumb";
 import ZNumber from "../../../../../components/Form/ZNumber";
 import ZImageInput from "../../../../../components/Form/ZImageInput";
 import axios from "axios";
+import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
 
 function generateUniqueId(length = 2) {
   const chars = "123456789";
@@ -28,6 +29,8 @@ function generateUniqueId(length = 2) {
 }
 
 const AddProduct = () => {
+  const navigate = useNavigate();
+  const [addonPages, setAddonPages] = useState([{ minQty: "", maxQty: "", price: "" }]);
   // attribute State - 1 from db
   const [attributeValue, setAttributeValue] = useState([]);
 
@@ -56,13 +59,9 @@ const AddProduct = () => {
     // serialNo: "",
     // qrCode: "",
   });
-
-  const navigate = useNavigate();
-
   const { data: eData, isLoading: eLoading } = useGetCategoryQuery();
   const { data: bData, isLoading: bLoading } = useGetBrandQuery();
-  const { data: attributeWithValue, isLoading: attributeIsLoading } =
-    useGetAttributesQuery();
+  const { data: attributeWithValue, isLoading: attributeIsLoading } = useGetAttributesQuery();
   const [
     createProduct,
     {
@@ -126,6 +125,23 @@ const AddProduct = () => {
       navigate("/admin/products");
     }
   }, [CIsSuccess]);
+
+
+  const handleAddPage = () => {
+    setAddonPages([...addonPages, { minQty: "", maxQty: "", price: "" }]);
+  };
+
+  const handleRemovePage = (itemValue) => {
+    const filterData = addonPages.filter((item) => item !== itemValue);
+    setAddonPages([...filterData]);
+  };
+
+  const handleInputChange = (index, field, value) => {
+    const updatedPages = [...addonPages];
+    updatedPages[index][field] = value;
+    setAddonPages(updatedPages);
+  };
+
 
   const handleAddPerSkuInSkus = () => {
     const attributes = {};
@@ -219,6 +235,8 @@ const AddProduct = () => {
     setRefresh(!refresh);
   };
 
+
+
   const handleSubmit = async (data) => {
     const uploadImage = async (file) => {
       if (!file) return '';
@@ -244,16 +262,26 @@ const AddProduct = () => {
         return ''; // Return an empty string if the upload fails
       }
     };
+
+    const priceTiers = addonPages.map((page) => ({
+      minQty: page.minQty || "",
+      maxQty: page.maxQty || "",
+      price: page.price || ""
+    }));
+
   
 
     // Prepare the main product data
     const modifiedData = {
-      brandId: data.brandId || "",
-      categoryId: data.categoryId || "",
-      status: data.status,
-      description: data.description,
-      productSubtitle: data.productSubtitle,
-      name: data.name,
+      brandId: data?.brandId || "",
+      categoryId: data?.categoryId || "",
+      status: data?.status || true,
+      topSale: data?.topSale || false,
+      availability: data?.availability || true,
+      newArrival: data?.newArrival || false,
+      description: data.description || "",
+      productSubtitle: data.productSubtitle || "",
+      name: data.name || "",
       material: data.material || "",
       thickness: data.thickness || "",
       elasticity: data.elasticity || "",
@@ -267,8 +295,9 @@ const AddProduct = () => {
       // Upload images for each variation
       const variantProductData = {
         ...modifiedData,
+         priceTiers,
         variants: await Promise.all(
-          skus.map(async (sku, index) => {
+          skus.map(async (sku) => {
             const uploadedImageUrl = await uploadImage(sku.imageUrl);
   
             return {
@@ -277,18 +306,7 @@ const AddProduct = () => {
               stock: sku.stock,
               price: sku.price,
               imageUrl: uploadedImageUrl || "",
-              priceTiers: [
-                {
-                    minQty: 1,
-                    maxQty: 5,
-                    price: 80
-                },
-                {
-                    minQty: 6,
-                    maxQty: 50,
-                    price: 50
-                }
-            ]
+              priceTiers: []
             };
           })
         ),
@@ -351,6 +369,7 @@ const AddProduct = () => {
               label="Product Category"
               options={categoryData}
               placeholder="Select category"
+              required={1}
             />
 
             <ZSelect
@@ -447,7 +466,67 @@ const AddProduct = () => {
               ]}
               placeholder="Select status"
             />
+            <div>
+            <h4 className="mb-3">Price Tiers</h4>
+            <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
+              {addonPages.map((page, index) => (
+                <div key={index} className="flex gap-4">
+                  <div className="w-[85%] flex items-center gap-2">
+                    <ZInputTwo
+                      
+                      name={`priceTiers.${index}.minQty`}
+                      type="text"
+                      label={""}
+                      placeholder="Min Quantity"
+                      value={page.minQty}
+                      onChange={(e) => handleInputChange(index, "minQty", e.target.value)}
+                    />
+                    <ZInputTwo
+                      
+                      name={`priceTiers.${index}.maxQty`}
+                      type="text"
+                      label={""}
+                      placeholder="Max Quantity"
+                      value={page.maxQty}
+                      onChange={(e) => handleInputChange(index, "maxQty", e.target.value)}
+                    />
+                    <ZInputTwo
+                      
+                      name={`priceTiers.${index}.price`}
+                      type="text"
+                      label={""}
+                      placeholder="Price"
+                      value={page.price}
+                      onChange={(e) => handleInputChange(index, "price", e.target.value)}
+                    />
+                  </div>
+                  <div className="w-[15%]">
+                    {index === 0 ? (
+                      <button
+                        type="button"
+                        onClick={handleAddPage}
+                        className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
+                      >
+                        <AiOutlinePlus size={15} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePage(page)}
+                        className="bg-red-500 text-white rounded px-2 mt-1 py-1"
+                      >
+                        <AiOutlineMinus size={15} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            </div>
+
           </div>
+
+
 
           {/* variant Product type start */}
 
