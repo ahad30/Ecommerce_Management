@@ -30,7 +30,9 @@ function generateUniqueId(length = 2) {
 
 const AddProduct = () => {
   const navigate = useNavigate();
-  const [addonPages, setAddonPages] = useState([{ minQty: "", maxQty: "", price: "" }]);
+  const [addonPages, setAddonPages] = useState([
+    { minQty: "", maxQty: "", price: "" },
+  ]);
   // attribute State - 1 from db
   const [attributeValue, setAttributeValue] = useState([]);
 
@@ -53,15 +55,16 @@ const AddProduct = () => {
 
   // image file , price , quantity - 8 for vairant product
   const [priceQuantityImage, setPriceQuantityImage] = useState({
-    imageUrl:"",
+    imageUrl: "",
     stock: "",
-    price:""
+    price: "",
     // serialNo: "",
     // qrCode: "",
   });
   const { data: eData, isLoading: eLoading } = useGetCategoryQuery();
   const { data: bData, isLoading: bLoading } = useGetBrandQuery();
-  const { data: attributeWithValue, isLoading: attributeIsLoading } = useGetAttributesQuery();
+  const { data: attributeWithValue, isLoading: attributeIsLoading } =
+    useGetAttributesQuery();
   const [
     createProduct,
     {
@@ -126,7 +129,6 @@ const AddProduct = () => {
     }
   }, [CIsSuccess]);
 
-
   const handleAddPage = () => {
     setAddonPages([...addonPages, { minQty: "", maxQty: "", price: "" }]);
   };
@@ -142,7 +144,6 @@ const AddProduct = () => {
     setAddonPages(updatedPages);
   };
 
-
   const handleAddPerSkuInSkus = () => {
     const attributes = {};
     const valuesName = [];
@@ -157,7 +158,7 @@ const AddProduct = () => {
     if (priceQuantityImage.stock === "") {
       toast.error("Enter variation stock", { id: 1 });
     }
-   
+
     if (priceQuantityImage.price === "") {
       toast.error("Enter variation  price", { id: 2 });
     }
@@ -167,7 +168,7 @@ const AddProduct = () => {
     // if (priceQuantityImage.serialNo === "") {
     //   toast.error("Enter variation serial number", { id: 5 });
     // }
-  
+
     // if (priceQuantityImage.qrCode === "") {
     //   toast.error("Enter variation qr Code", { id: 9 });
     // }
@@ -175,7 +176,7 @@ const AddProduct = () => {
     if (
       perSku.length > 0 &&
       priceQuantityImage.stock &&
-      priceQuantityImage.price 
+      priceQuantityImage.price
       // &&
       // priceQuantityImage.imageUrl
       // &&
@@ -192,12 +193,12 @@ const AddProduct = () => {
       const sku = {
         variationId: generateUniqueId(),
         sku: `${valuesName.join("-")}`,
-        stock: priceQuantityImage.stock,       
+        stock: priceQuantityImage.stock,
         price: priceQuantityImage.price,
         imageUrl: priceQuantityImage.imageUrl || "",
         // serialNo: priceQuantityImage.serialNo,
         // qrCode: priceQuantityImage.qrCode,
-        attributes
+        attributes,
       };
 
       console.log(sku);
@@ -235,41 +236,39 @@ const AddProduct = () => {
     setRefresh(!refresh);
   };
 
-
-
   const handleSubmit = async (data) => {
     const uploadImage = async (file) => {
-      if (!file) return '';
-  
+      if (!file) return "";
+
       try {
         const imageHostingKey = import.meta.env.VITE_IMAGE_HOSTING_KEY;
         const imageHostingApi = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
-  
+
         const imageFile = new FormData();
-        imageFile.append('image', file);
-  
+        imageFile.append("image", file);
+
         const res = await axios.post(imageHostingApi, imageFile, {
-          headers: { 'content-type': 'multipart/form-data' },
+          headers: { "content-type": "multipart/form-data" },
         });
-  
+
         if (res?.data?.success) {
           return res.data.data.display_url;
         } else {
-          throw new Error('Image upload failed');
+          throw new Error("Image upload failed");
         }
       } catch (error) {
-        console.error('Error uploading image:', error.message);
-        return ''; // Return an empty string if the upload fails
+        console.error("Error uploading image:", error.message);
+        return ""; // Return an empty string if the upload fails
       }
     };
 
     const priceTiers = addonPages.map((page) => ({
       minQty: page.minQty || "",
       maxQty: page.maxQty || "",
-      price: page.price || ""
+      price: page.price || "",
     }));
 
-  
+    const mainImageUrl = await uploadImage(data?.ImageUrl);
 
     // Prepare the main product data
     const modifiedData = {
@@ -286,37 +285,36 @@ const AddProduct = () => {
       thickness: data.thickness || "",
       elasticity: data.elasticity || "",
       breathability: data.breathability || "",
-      weight: data?.weight|| "",
-      imageUrl: "",
-      price: 1
+      weight: data?.weight || "",
+      imageUrl: mainImageUrl || "",
+      price: parseFloat(data?.Price),
     };
-  
+
     if (skus.length > 0) {
       // Upload images for each variation
       const variantProductData = {
         ...modifiedData,
-         priceTiers,
+        priceTiers,
         variants: await Promise.all(
           skus.map(async (sku) => {
             const uploadedImageUrl = await uploadImage(sku.imageUrl);
-  
+
             return {
               attributes: sku.attributes,
               sku: sku.sku,
               stock: sku.stock,
               price: sku.price,
               imageUrl: uploadedImageUrl || "",
-              priceTiers: []
+              priceTiers: [],
             };
           })
         ),
       };
-  
-      console.log('Final Product Data:', variantProductData);
+
+      console.log("Final Product Data:", variantProductData);
       createProduct(variantProductData);
     }
   };
-  
 
   if (eLoading || bLoading || attributeIsLoading) {
     return (
@@ -357,11 +355,7 @@ const AddProduct = () => {
               placeholder="Enter product subtitle"
             />
 
-             {/* <ZNumber
-              name="price"
-              label="Price"
-              placeholder="Enter Price"
-              /> */}
+            <ZNumber name="Price" label="Price" placeholder="Enter Price" />
 
             <ZSelect
               name="categoryId"
@@ -380,6 +374,8 @@ const AddProduct = () => {
               placeholder="Select brand"
             />
 
+            <ZImageInput name="ImageUrl" label="Thumbnail Image" />
+
             <div className="lg:col-span-2">
               <ZInputTextArea
                 name="description"
@@ -394,7 +390,6 @@ const AddProduct = () => {
               label="Weight(gm) (optional)"
               placeholder="Enter weight"
             />
-
 
             <ZInputTwo
               name="material"
@@ -423,12 +418,6 @@ const AddProduct = () => {
               label="Breathability(optional)"
               placeholder="Enter breathability"
             />
-
-         {/* <ZImageInput
-            name="imageUrl"
-            label="Thumbnail Image"
-           
-          /> */}
 
             <ZSelect
               name="status"
@@ -467,66 +456,66 @@ const AddProduct = () => {
               placeholder="Select status"
             />
             <div>
-            <h4 className="mb-3">Price Tiers</h4>
-            <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
-              {addonPages.map((page, index) => (
-                <div key={index} className="flex gap-4">
-                  <div className="w-[85%] flex items-center gap-2">
-                    <ZInputTwo
-                      
-                      name={`priceTiers.${index}.minQty`}
-                      type="text"
-                      label={""}
-                      placeholder="Min Quantity"
-                      value={page.minQty}
-                      onChange={(e) => handleInputChange(index, "minQty", e.target.value)}
-                    />
-                    <ZInputTwo
-                      
-                      name={`priceTiers.${index}.maxQty`}
-                      type="text"
-                      label={""}
-                      placeholder="Max Quantity"
-                      value={page.maxQty}
-                      onChange={(e) => handleInputChange(index, "maxQty", e.target.value)}
-                    />
-                    <ZInputTwo
-                      
-                      name={`priceTiers.${index}.price`}
-                      type="text"
-                      label={""}
-                      placeholder="Price"
-                      value={page.price}
-                      onChange={(e) => handleInputChange(index, "price", e.target.value)}
-                    />
+              <h4 className="mb-3">Price Tiers</h4>
+              <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
+                {addonPages.map((page, index) => (
+                  <div key={index} className="flex gap-4">
+                    <div className="w-[85%] flex items-center gap-2">
+                      <ZInputTwo
+                        name={`priceTiers.${index}.minQty`}
+                        type="text"
+                        label={""}
+                        placeholder="Min Quantity"
+                        value={page.minQty}
+                        onChange={(e) =>
+                          handleInputChange(index, "minQty", e.target.value)
+                        }
+                      />
+                      <ZInputTwo
+                        name={`priceTiers.${index}.maxQty`}
+                        type="text"
+                        label={""}
+                        placeholder="Max Quantity"
+                        value={page.maxQty}
+                        onChange={(e) =>
+                          handleInputChange(index, "maxQty", e.target.value)
+                        }
+                      />
+                      <ZInputTwo
+                        name={`priceTiers.${index}.price`}
+                        type="text"
+                        label={""}
+                        placeholder="Price"
+                        value={page.price}
+                        onChange={(e) =>
+                          handleInputChange(index, "price", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="w-[15%]">
+                      {index === 0 ? (
+                        <button
+                          type="button"
+                          onClick={handleAddPage}
+                          className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
+                        >
+                          <AiOutlinePlus size={15} />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleRemovePage(page)}
+                          className="bg-red-500 text-white rounded px-2 mt-1 py-1"
+                        >
+                          <AiOutlineMinus size={15} />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="w-[15%]">
-                    {index === 0 ? (
-                      <button
-                        type="button"
-                        onClick={handleAddPage}
-                        className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
-                      >
-                        <AiOutlinePlus size={15} />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleRemovePage(page)}
-                        className="bg-red-500 text-white rounded px-2 mt-1 py-1"
-                      >
-                        <AiOutlineMinus size={15} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-            </div>
-
           </div>
-
-
 
           {/* variant Product type start */}
 
@@ -574,13 +563,13 @@ const AddProduct = () => {
               {/* image, quantity, price*/}
               <div className="grid grid-cols-1 items-center gap-x-2 lg:grid-cols-3">
                 <>
-                <ZImageInput
-                  defaultKey="product"
-                  setPriceQuantityImage={setPriceQuantityImage}
-                  label="Picture"
-                  name="imageUrl"
-                  refresh={refresh}
-                ></ZImageInput>
+                  <ZImageInput
+                    defaultKey="product"
+                    setPriceQuantityImage={setPriceQuantityImage}
+                    label="Picture"
+                    name="imageUrl"
+                    refresh={refresh}
+                  ></ZImageInput>
                   <ZNumber
                     name="stock"
                     label="Stock Quantity"
@@ -589,7 +578,7 @@ const AddProduct = () => {
                     setPriceQuantityImage={setPriceQuantityImage}
                     refresh={refresh}
                   />
-               
+
                   <ZNumber
                     name="price"
                     label="Price"
@@ -615,7 +604,6 @@ const AddProduct = () => {
                     setPriceQuantityImage={setPriceQuantityImage}
                     refresh={refresh}
                   /> */}
-                  
                 </>
               </div>
 
