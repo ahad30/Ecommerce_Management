@@ -1,5 +1,6 @@
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
+import { TfiLayoutSlider } from "react-icons/tfi";
 import DashboardStatistics from "../Pages/Dashboard/Admin/DashboardStatistics/DashboardStatistics";
 import Orders from "../Pages/Dashboard/Admin/Orders/Orders";
 import Customers from "../Pages/Dashboard/Admin/Customers/Customers";
@@ -17,7 +18,8 @@ import AddProduct from "../Pages/Dashboard/Admin/Product/AddProduct/AddProduct";
 // import Brand from "../Pages/Dashboard/Admin/Brand/Brand";
 // import Attributes from "../Pages/Dashboard/Admin/Attributes/Attributes";
 // import Sliders from "../Pages/Dashboard/Admin/configuration/Sliders/Sliders";
-// import { IoConstructOutline } from "react-icons/io5";
+import { IoConstructOutline } from "react-icons/io5";
+import Sliders from "../Pages/Dashboard/Admin/Slider/Sliders";
 // import Packages from "../Pages/Dashboard/Admin/Package/Packages";
 // import AddProduct from "../Pages/Dashboard/Admin/Products/AddProduct";
 // import EditProduct from "../Pages/Dashboard/Admin/Products/EditProduct";
@@ -28,12 +30,11 @@ import AddProduct from "../Pages/Dashboard/Admin/Product/AddProduct/AddProduct";
 // import AdminProfile from "../Pages/Dashboard/Admin/AdminProfile/AdminProfile";
 // import AdminChangePassword from "../Pages/Dashboard/Admin/AdminProfile/AdminChangePassword";
 
-
 export const adminRoutes = [
   {
-    path: "/admin",
+    path: "home",
     label: "Dashboard",
-    element: <DashboardStatistics/>,
+    element: <DashboardStatistics />,
     icon: <MdOutlineDashboardCustomize size={20}></MdOutlineDashboardCustomize>,
     permissionName: "view dashboard",
   },
@@ -55,13 +56,13 @@ export const adminRoutes = [
       {
         path: "orders",
         label: "Orders",
-        element: <Orders/>,
+        element: <Orders />,
         permissionName: "view customer",
       },
       {
         path: "customers",
         label: "Customers",
-        element: <Customers/>,
+        element: <Customers />,
         permissionName: "view customer",
       },
     ],
@@ -69,7 +70,7 @@ export const adminRoutes = [
 
   {
     label: "Products Management",
-    icon: <AiFillBoxPlot size={20}/>,
+    icon: <AiFillBoxPlot size={20} />,
     children: [
       {
         path: "categories",
@@ -94,9 +95,8 @@ export const adminRoutes = [
         label: "Products",
         element: <Product></Product>,
         permissionName: "view product",
-      }
-    
-    ]
+      },
+    ],
   },
   {
     path: "add-product",
@@ -110,6 +110,14 @@ export const adminRoutes = [
   //   path: "view-product-details/:slug/:id",
   //   element: <ViewProduct></ViewProduct>,
   // },
+
+  {
+    path: "sliders",
+    label: "Sliders",
+    element: <Sliders></Sliders>,
+    icon: <TfiLayoutSlider size={20}></TfiLayoutSlider>,
+    permissionName: "view slider",
+  },
 
   // {
   //   label: "Package Management",
@@ -161,10 +169,9 @@ export const adminRoutes = [
   //     {
   //       path: "sliders",
   //       label: "Sliders",
-  //       element: <Sliders></Sliders>,
+  //       element: <Slider></Slider>,
   //       permissionName: "view slider",
   //     },
   //   ],
   // },
-
 ];
