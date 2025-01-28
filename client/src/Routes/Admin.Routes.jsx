@@ -20,6 +20,8 @@ import AddProduct from "../Pages/Dashboard/Admin/Product/AddProduct/AddProduct";
 // import Sliders from "../Pages/Dashboard/Admin/configuration/Sliders/Sliders";
 import { IoConstructOutline } from "react-icons/io5";
 import Sliders from "../Pages/Dashboard/Admin/Slider/Sliders";
+import { CiShop } from "react-icons/ci";
+import { FaUser, FaUsers } from "react-icons/fa";
 // import Packages from "../Pages/Dashboard/Admin/Package/Packages";
 // import AddProduct from "../Pages/Dashboard/Admin/Products/AddProduct";
 // import EditProduct from "../Pages/Dashboard/Admin/Products/EditProduct";
@@ -46,27 +48,6 @@ export const adminRoutes = [
   //   path: "/admin/changePassword",
   //   element: <AdminChangePassword></AdminChangePassword>,
   // },
-
-  {
-    label: "E-commerce",
-    icon: (
-      <MdOutlineShoppingCartCheckout size={20}></MdOutlineShoppingCartCheckout>
-    ),
-    children: [
-      {
-        path: "orders",
-        label: "Orders",
-        element: <Orders />,
-        permissionName: "view customer",
-      },
-      {
-        path: "customers",
-        label: "Customers",
-        element: <Customers />,
-        permissionName: "view customer",
-      },
-    ],
-  },
 
   {
     label: "Products Management",
@@ -98,6 +79,45 @@ export const adminRoutes = [
       },
     ],
   },
+  {
+    path: "orders",
+    label: "Orders",
+    element: <Orders />,
+    icon: <CiShop size={20}/>,
+
+    permissionName: "view customer",
+  },
+  {
+    path: "customers",
+    label: "Customers",
+    element: <Customers />,
+    icon: <FaUsers size={20}/>,
+    permissionName: "view customer",
+  },
+
+
+  // {
+  //   label: "E-commerce",
+  //   icon: (
+  //     <MdOutlineShoppingCartCheckout size={20}></MdOutlineShoppingCartCheckout>
+  //   ),
+  //   children: [
+  //     {
+  //       path: "orders",
+  //       label: "Orders",
+  //       element: <Orders />,
+  //       permissionName: "view customer",
+  //     },
+  //     {
+  //       path: "customers",
+  //       label: "Customers",
+  //       element: <Customers />,
+  //       permissionName: "view customer",
+  //     },
+  //   ],
+  // },
+
+
   {
     path: "add-product",
     element: <AddProduct></AddProduct>,
