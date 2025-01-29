@@ -1,24 +1,24 @@
 import { Menu, Transition , MenuButton , MenuItems, MenuItem  } from "@headlessui/react";
 import { Fragment } from "react";
-import { NavLink } from "react-router-dom";
-
+import { NavLink , useNavigate } from "react-router-dom";
 import {
   IoLogIn,
   IoLogInOutline,
   IoPersonOutline,
   IoPersonSharp,
 } from "react-icons/io5";
-// import { useLogoutMutation } from "../../Redux/Feature/auth/authApi";
-// import { logout } from "../../Redux/Feature/auth/authSlice";
 import { useAppDispatch } from "../../redux/Hook/Hook";
+import { logout } from "../../redux/Feature/auth/authSlice";
+import { toast } from "sonner";
 
 const Dropdown = () => {
   const dispatch = useAppDispatch();
-  // const [logoutUser] = useLogoutMutation();
-  // const handleLogout = () => {
-  //   logoutUser(undefined);
-  //   dispatch(logout());
-  // };
+  const navigate = useNavigate()
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("You are successfully logged out.")
+    navigate("/login")
+  };
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -107,7 +107,7 @@ const Dropdown = () => {
                 <button
                   onClick={() => handleLogout()}
                   className={`${
-                    active ? "bg-violet-500 text-green" : "text-gray-900"
+                    active ? "text-green" : "text-gray-900"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                 >
                   {active ? (

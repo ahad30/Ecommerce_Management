@@ -45,7 +45,7 @@ const AddSlider = () => {
         description: data?.description || "",
         imageUrl: imageUrl || "",  // Use the uploaded URL or an empty string
         linkUrl: data?.linkUrl || "",
-        isActive: data?.isActive || true,
+        isActive: data?.isActive,
         // createdById: "64b8c4c8d4a7f3d9e0e6e1d4"
       };
 
@@ -118,7 +118,7 @@ const AddSlider = () => {
               { label: "Inactive", value: false },
             ]}
             placeholder="Select status"
-
+           required={1}
           />
         </div>
       </ZFormTwo>

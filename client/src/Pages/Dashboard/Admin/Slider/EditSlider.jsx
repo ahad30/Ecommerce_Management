@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useUpdateSliderMutation } from "../../../../redux/Feature/Admin/slider/sliderApi";
 
 const EditSlider = ({ selectedSlider }) => {
+  console.log(selectedSlider)
   const dispatch = useAppDispatch();
   const [updateSlider, { isLoading: SIsLoading, isError: SIsError, error: SError, isSuccess: SIsSuccess, data }] = useUpdateSliderMutation();
   
@@ -38,11 +39,11 @@ const EditSlider = ({ selectedSlider }) => {
       }
 
       const sliderData = {
-        title: formData?.title || "",
-        description: formData?.description || "",
-        imageUrl: imageUrl || "",
-        linkUrl: formData?.linkUrl || "",
-        isActive: formData?.isActive || true,
+        title: formData?.title,
+        description: formData?.description,
+        imageUrl: imageUrl,
+        linkUrl: formData?.linkUrl,
+        isActive: formData?.isActive,
         // createdById: "64b8c4c8d4a7f3d9e0e6e1d4"
       };
 
@@ -109,7 +110,7 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Link URL"
             placeholder={"Enter the link URL"}
-            required
+            
           />
 
           <ZSelect
@@ -120,7 +121,7 @@ const EditSlider = ({ selectedSlider }) => {
               { label: "Inactive", value: false },
             ]}
             placeholder="Select status"
-            value={selectedSlider?.status}
+            value={selectedSlider?.isActive}
           />
         </div>
       </ZFormTwo>

@@ -17,8 +17,8 @@ const DashboardSidebarTwo = ({ className, setIsSidebarOpen }) => {
   const sidebarData = sidebarGenerator(adminRoutes);
 
   const location = useLocation();
-  console.log(location);
-  console.log(sidebarData);
+  // console.log(location);
+  // console.log(sidebarData);
 
   useEffect(() => {
     if (localStorage.getItem("dropDown")) {
