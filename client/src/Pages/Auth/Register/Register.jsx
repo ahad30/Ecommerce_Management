@@ -1,13 +1,13 @@
 "use client";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegisterMutation } from "../../../redux/Feature/auth/authApi";
 import ZInputTwo from "../../../components/Form/ZInputTwo";
 import ZFormTwo from "../../../components/Form/ZFormTwo";
 import ZEmail from "../../../components/Form/ZEmail";
 import ZPhone from "../../../components/Form/ZPhone";
 import { FaGreaterThan, FaHome } from "react-icons/fa";
 import img from "../../../assets/banner/contact-banner.jpg";
+import { useRegisterMutation } from "../../../redux/Feature/auth/authApi";
 
 
 const Register = () => {  
@@ -25,7 +25,7 @@ const Register = () => {
   // console.log(rData)
 
   const handleSubmit = (data) => {
-    register(data);
+    register({...data , role:"user"});
   };
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const Register = () => {
         isSuccess={lIsSuccess}
         submit={handleSubmit}
         data={rData}
-        // buttonName={'Register'}
+        buttonName={'Register'}
       >
               <div>
                 <h1 className="text-2xl mt-2 text-center font-bold">Create an account</h1>
@@ -89,7 +89,7 @@ const Register = () => {
               <div className="relative">
                  
                   <ZInputTwo
-                    name="erpUserFullName"
+                    name="name"
                     type="text"
                     label="Full name"
                     required
@@ -98,15 +98,15 @@ const Register = () => {
                   />
                 </div>
                 <div className="relative mb-8">
-                  <ZEmail label={"Email"} name={"erpUserEmail"} />
+                  <ZEmail label={"Email"} name={"email"} />
                 </div>
                 <div className="relative mb-8">
-                  <ZPhone label={"Phone"} name={"erpUserPhone"} />
+                  <ZPhone label={"Phone"} name={"phone"} />
                 </div>
                 <div className="relative">
                   <ZInputTwo
                   required
-                    name="erpUserPassword"
+                    name="password"
                     type="password"
                     label="password"
                     defaultKey={""}
@@ -118,7 +118,7 @@ const Register = () => {
             </div>
 
  
-             <div className="flex items-center justify-between">
+             <div className="flex items-center justify-center mt-5">
                       <p className="text-sm text-gray-500">
                         Already have an account?
                       <Link to={"/login"}>
@@ -126,12 +126,12 @@ const Register = () => {
                       </Link>  
                       </p>
               
-                      <button
+                      {/* <button
                         type="submit"
                         className="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
                       >
                        Sign up
-                      </button>
+                      </button> */}
                     </div>
           </div>
         </div>

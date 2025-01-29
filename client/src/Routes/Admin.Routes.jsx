@@ -1,4 +1,4 @@
-import { MdOutlineShoppingCartCheckout } from "react-icons/md";
+import { MdContacts, MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { TfiLayoutSlider } from "react-icons/tfi";
 import DashboardStatistics from "../Pages/Dashboard/Admin/DashboardStatistics/DashboardStatistics";
@@ -10,6 +10,7 @@ import Brand from "../Pages/Dashboard/Admin/Brand/Brand";
 import Attribute from "../Pages/Dashboard/Admin/Attributes/Attribute";
 import Product from "../Pages/Dashboard/Admin/Product/Product";
 import AddProduct from "../Pages/Dashboard/Admin/Product/AddProduct/AddProduct";
+import { BiSolidPurchaseTag } from "react-icons/bi";
 // import { LuUserCog2 } from "react-icons/lu";
 // import Roles from "../Pages/Dashboard/Admin/UserManagement/Roles/Roles";
 // import Users from "../Pages/Dashboard/Admin/UserManagement/Users/Users";
@@ -22,6 +23,8 @@ import { IoConstructOutline } from "react-icons/io5";
 import Sliders from "../Pages/Dashboard/Admin/Slider/Sliders";
 import { CiShop } from "react-icons/ci";
 import { FaUser, FaUsers } from "react-icons/fa";
+import Subscription from "../Pages/Dashboard/Admin/Subscription/Subscription";
+import Contact from "../Pages/Dashboard/Admin/Contact/Contact";
 // import Packages from "../Pages/Dashboard/Admin/Package/Packages";
 // import AddProduct from "../Pages/Dashboard/Admin/Products/AddProduct";
 // import EditProduct from "../Pages/Dashboard/Admin/Products/EditProduct";
@@ -137,6 +140,20 @@ export const adminRoutes = [
     element: <Sliders></Sliders>,
     icon: <TfiLayoutSlider size={20}></TfiLayoutSlider>,
     permissionName: "view slider",
+  },
+  {
+    path: "subscriptions",
+    label: "Subscriptions",
+    element: <Subscription/>,
+    icon: <BiSolidPurchaseTag  size={20}/>,
+    permissionName: "view subscription",
+  },
+  {
+    path: "contacts",
+    label: "Contacts",
+    element: <Contact/>,
+    icon: <MdContacts  size={20}/>,
+    permissionName: "view contact",
   },
 
   // {

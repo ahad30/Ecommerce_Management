@@ -78,9 +78,8 @@ const Sliders = () => {
       dataIndex: "isActive",
       key: "isActive",
       render: (isActive) => (
-        <Tag color={isActive ? "green" : "red"}>
-          {isActive ? "Active" : "Inactive"}
-        </Tag>
+        <Tag color={isActive === true ? 'green' : 'red'}>
+          {isActive === true ? "Active" : "Inactive"}</Tag>
       ),
     },
     {
