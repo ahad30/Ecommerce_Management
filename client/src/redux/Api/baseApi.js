@@ -11,7 +11,7 @@ const baseQuery = fetchBaseQuery({
   // },
   prepareHeaders: (headers, { getState }) => {
     const state = getState();
-    const token = state?.auth?.token;
+    const token = state?.token;
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
@@ -34,7 +34,7 @@ const baseApi = createApi({
     "sliders",
     "products",
     "customers",
-    // "packages",
+    "subscriptions",
   ],
 });
 

@@ -9,7 +9,10 @@ import React from "react";
 import { IoMdCart } from "react-icons/io";
 import { NavLink } from "react-router-dom";
 
+
+
 const BottomHeader = () => {
+
   const [openNav, setOpenNav] = React.useState(false);
   React.useEffect(() => {
     window.addEventListener(
@@ -105,6 +108,10 @@ const BottomHeader = () => {
 
     </ul>
   );
+
+
+
+
 
   return (
     <div className="max-h-[768px]">
