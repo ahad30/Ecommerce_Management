@@ -7,13 +7,16 @@ import ZEmail from '../../../components/Form/ZEmail';
 import Cookies from "js-cookie";
 import { useLoginMutation } from '../../../redux/Feature/auth/authApi';
 import ZInputTwo from '../../../components/Form/ZInputTwo';
-import { useAppDispatch } from '../../../redux/Hook/Hook';
-import { setUser } from '../../../Redux/Feature/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/Hook/Hook';
+import { setUser, useCurrentToken, useCurrentUser } from '../../../redux/Feature/auth/authSlice';
 
 
 const Login = () => {
   const navigate = useNavigate();
- const dispatch = useAppDispatch()
+ const dispatch = useAppDispatch();
+ const user = useAppSelector(useCurrentUser);
+ const token = useAppSelector(useCurrentToken);
+
   const [
     login,
     {
@@ -27,12 +30,14 @@ const Login = () => {
 //  console.log(loginData)
 
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("authToken") && Cookies.get("authToken")
-  //   if (token) {
-  //     navigate("/admin/home");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (token && user?.role === "admin") {
+      navigate("/admin/home")
+    }
+    else if (token && user?.role === "user"){
+      navigate("/")
+    }
+  }, []);
 
 
   
@@ -122,6 +127,14 @@ const Login = () => {
                 </div>
               </div>
             </ZFormTwo>
+            <div className="flex items-center justify-center mt-5">
+              <p className="text-sm text-gray-500">
+                Don't have an account?
+                <Link to={"/register"}>
+                  <span className="underline text-blue-500">Sign up</span>
+                </Link>
+              </p>
+            </div>     
     </div>
   
     <div className="h-64 w-full sm:h-96 hidden lg:block lg:h-full lg:w-1/2 mt-16 mb-16">
