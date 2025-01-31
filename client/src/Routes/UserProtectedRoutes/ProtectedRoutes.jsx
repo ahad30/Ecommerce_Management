@@ -18,12 +18,13 @@ const ProtectedRoutes = ({
   const user = useAppSelector(useCurrentUser);
   const token = useAppSelector(useCurrentToken);
   const { data, isLoading, isFetching, refetch } = useGetUsersQuery();
-  
+
   useEffect(() => {
     if (user && token) {
       refetch();
       setLoading(false);
     }
+    
   }, [user, token, refetch]);
 
   if (!token || token == null || user == null) {
@@ -42,10 +43,6 @@ const ProtectedRoutes = ({
 
   return children;
 
-  // if (data?.data?.role !== role) {
-  //   dispatch(logout());
-  //   return <Navigate to={"/login"}></Navigate>;
-  // }
 
 };
 

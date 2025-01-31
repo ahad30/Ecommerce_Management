@@ -4,7 +4,7 @@ import {
   logout,
   useCurrentToken,
   useCurrentUser,
-} from "../../Redux/Feature/auth/authSlice";
+} from "../../redux/Feature/auth/authSlice";
 import { Navigate } from "react-router-dom";
 import { useGetUsersQuery } from "../../redux/Feature/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";

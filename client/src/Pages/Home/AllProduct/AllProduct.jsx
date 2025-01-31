@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Rating, Star } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { Button } from "@material-tailwind/react";
@@ -17,188 +17,92 @@ import img12 from "../../../assets/Product/product-11.webp";
 import { CiHeart, CiShoppingCart } from "react-icons/ci";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import SectionTitle from "../SectionTitle/SectionTitle";
-
-const productCard = [
-  {
-    id: 1,
-    img: img1,
-    title: "Men's Fashion",
-    price: "100",
-    discount: "Top Sale",
-    rating: 2,
-  },
-  { id: 2, img: img2, title: "Women's Casual", price: "120", rating: 3.5 },
-  {
-    id: 3,
-    img: img3,
-    title: "Electronics",
-    price: "80",
-    discount: "Feature",
-    rating: 5,
-  },
-  { id: 4, img: img4, title: "Kitchen ", price: "90", rating: 5 },
-  {
-    id: 5,
-    img: img4,
-    title: "Home Lamp",
-    price: "110",
-    discount: "New",
-    rating: 3.5,
-  },
-  { id: 6, img: img6, title: "Fitness Watch", price: "95", rating: 5 },
-  { id: 7, img: img7, title: "Travel Backpack", price: "150" },
-  {
-    id: 8,
-    img: img8,
-    title: "Men's Wallet",
-    price: "70",
-    discount: "Top Sale",
-    rating: 5,
-  },
-  { id: 9, img: img9, title: "Women's Designer", price: "130", rating: 5 },
-  {
-    id: 10,
-    img: img10,
-    title: "Smartphone Case",
-    price: "100",
-    discount: "Feature",
-    rating: 3.9,
-  },
-  { id: 11, img: img11, title: "Gaming Mouse", price: "85", rating: 4.8 },
-  {
-    id: 12,
-    img: img12,
-    title: "Portable Bluetooth",
-    price: "110",
-    discount: "New",
-    rating: 4,
-  },
-];
+import { useGetProductsQuery } from "../../../redux/Feature/Admin/product/productApi";
+import ProductsSkeleton from "../../../components/Skeleton/ProductsSkeleton";
 
 
 
 const AllProduct = () => {
-  // useEffect(() => {
-  //   const keenSlider = new KeenSlider("#keen-slider", {
-  //     loop: true,
-  //     slides: {
-  //       origin: "center",
-  //       perView: 1,
-  //       spacing: 16,
-  //     },
-  //     breakpoints: {
-  //       "(min-width: 1024px)": {
-  //         slides: {
-  //           origin: "auto",
-  //           perView: 4,
-  //           spacing: 30,
-  //         },
-  //       },
-  //       "(max-width: 600px)": {
-  //         slides: {
-  //           origin: "center",
-  //           perView: 1,
-  //           spacing: 0,
-  //         },
-  //       },
-  //     },
-  //   });
+  const { data, error, isLoading } = useGetProductsQuery();
+  const [showSkeleton, setShowSkeleton] = useState(true);
 
-  //   const keenSliderPrevious = document.getElementById("keen-slider-previous");
-  //   const keenSliderNext = document.getElementById("keen-slider-next");
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setShowSkeleton(false);
+      }, 3000); // 2 seconds delay
 
-  //   keenSliderPrevious?.addEventListener("click", () => keenSlider.prev());
-  //   keenSliderNext?.addEventListener("click", () => keenSlider.next());
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
-  //   // return () => {
-  //   //   keenSlider.destroy();
-  //   // };
-  // }, []);
-
-  const customStyles = {
-    itemShapes: Star,
-    activeFillColor: '#F6BC3E',
-    inactiveFillColor: '#BBF7D0',
-  };
+  if (isLoading || showSkeleton) {
+    return <ProductsSkeleton />;
+  }
 
   return (
     <div className="mt-16 mb-16">
       <SectionTitle title="Recommended For you" subTitle="Empowering everyone to express themselves through clothes." />
 
-
-      <div className="mt-16  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {productCard.map((item, index) => (
+      <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {data?.products?.slice(0,8).map((item, index) => (
           <div className="border border-gray-200 rounded-lg" key={index}>
             <div className="group h-[250px] relative block bg-black">
               <img
-                alt=""
-                src={item?.img}
+                alt={item?.name}
+                src={item?.imageUrl || "https://placehold.co/300x250"}
                 className="absolute inset-0 h-[250px] w-full object-cover transition-opacity group-hover:opacity-50"
               />
 
-              <div className="relative ">
+              <div className="relative">
                 <div className="flex justify-between p-4 sm:p-6 lg:p-2">
                   <div>
-                    {item?.discount && (
+                    {item?.topSale === true && (
                       <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-primary text-white">
-                        {item?.discount}
+                        {item?.topSale && "Top Sale"}
+                      </p>
+                    )}
+                    {item?.newArrival === true && (
+                      <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-primary text-white">
+                        {item?.newArrival && "Newest"}
                       </p>
                     )}
                   </div>
                   <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
-                    {/* <CiHeart size={30} /> */}
                     <MdOutlineRemoveRedEye size={28} />
                   </div>
                 </div>
-
-                {/* <div className="text-center translate-y-8 transform opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 mt-[155px] duration-700">
-                  <button
-                    className="bg-secondary text-white w-full font-Poppins font-medium py-2"
-                  >
-                   <p className="flex items-center justify-center">
-                   <CiShoppingCart className="me-2" size={30}/>
-                   Add to Cart
-                   </p>
-                  </button>
-                </div> */}
               </div>
             </div>
             <div className="p-2">
-            <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
-              <h2>{item?.title}</h2>
+              <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
+                <h2>{item?.name}</h2>
+              </div>
+              <div className="mt-2 text-base font-medium text-primary">
+                <h2>${item?.price}</h2>
+              </div>
             </div>
-            <div className="mt-2 text-base font-medium text-primary">
-              <h2>${item?.price}</h2>
-            </div>        
-              <Rating
-                style={{ maxWidth: 140 }}
-                value={item?.rating}
-                itemStyles={customStyles}
-                readOnly
-              />
-
-            
-            </div>
+             <Link to={`/product/${item?.id}`}>
             <div className="flex justify-center mt-10 mb-5">
-              <button
-                    className="bg-primary w-full font-Poppins font-medium py-2 px-1
-                    rounded-t-none rounded-b-lg -mb-5 text-white
-                    "                  
-                  >
-                 View Details
+             <button
+                className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white"
+              >
+                View Details
               </button>
-        </div>
+            </div>
+             </Link>
           </div>
         ))}
       </div>
-        <div className="flex justify-center mx-auto w-[200px] mt-10 mb-5">
-        <Button
-                    className="bg-[#3498DB] w-full font-Poppins font-medium py-2 px-1"
-                  >
-                 See More
-                  </Button>
-        </div>
+        <Link to={`/shop`}>
+      <div className="flex justify-center mx-auto w-[200px] mt-10 mb-5">
+          <Button className="bg-[#3498DB] w-full font-Poppins font-medium py-2 px-1">
+            See More
+          </Button>
+      </div>
+        </Link>
     </div>
   );
 };

@@ -4,10 +4,15 @@ import { FaGreaterThan, FaHome } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { Alert } from "antd";
+import { useEffect } from "react";
 
 const ProductDetails = () => {
   const singleProduct = useLoaderData();
   console.log(singleProduct)
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []); 
   return (
     <section className="py-5">
       <nav className="flex justify-start space-x-3 py-8 px-5">
@@ -30,7 +35,7 @@ const ProductDetails = () => {
           <FaGreaterThan size={15} />
         </span>
         <Link
-          to="/contact"
+        
           className="text-base font-medium hover:text-gray-300 transition-all duration-200"
         >
           {singleProduct.name}
@@ -124,7 +129,7 @@ const ProductDetails = () => {
             <li className="mb-5" key={index}>
              <Alert message= {`${tier.minQty || 1} pc-  ${
                 tier.maxQty || "No Max"
-              } pc    Price: $${tier.price.toFixed(2)}`}/>
+              } pc    Price: $${tier.price}`}/>
             </li>
           ))}
         </ul>
