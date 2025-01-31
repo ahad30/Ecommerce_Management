@@ -4,7 +4,7 @@ import {
   logout,
   useCurrentToken,
   useCurrentUser,
-} from "../../Redux/Feature/auth/authSlice";
+} from "../../redux/Feature/auth/authSlice";
 import { useGetUsersQuery } from "../../redux/Feature/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
 import LoadingPage from "../../components/LoadingPage";
@@ -18,6 +18,7 @@ const ProtectedRoutes = ({
   const user = useAppSelector(useCurrentUser);
   const token = useAppSelector(useCurrentToken);
   const { data, isLoading, isFetching, refetch } = useGetUsersQuery();
+  
   useEffect(() => {
     if (user && token) {
       refetch();
@@ -32,19 +33,20 @@ const ProtectedRoutes = ({
     return <LoadingPage></LoadingPage>;
   }
   // console.log(data?.data?.role)
-  if (data?.data?.role !== role) {
+  const loggedInUser = data?.data?.find((u) => u.email === user.email);
+
+    if (!loggedInUser || loggedInUser.role !== "user") {
     dispatch(logout());
     return <Navigate to={"/login"}></Navigate>;
   }
 
   return children;
 
-  // const loggedInUser = data?.data?.find((u) => u.email === user.email);
-
-  // if (!loggedInUser || loggedInUser.role !== "admin") {
+  // if (data?.data?.role !== role) {
   //   dispatch(logout());
   //   return <Navigate to={"/login"}></Navigate>;
   // }
+
 };
 
 export default ProtectedRoutes;
