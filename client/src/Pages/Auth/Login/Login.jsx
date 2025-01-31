@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import img from "../../../assets/banner/contact-banner.jpg";
 import { FaGreaterThan, FaHome } from 'react-icons/fa';
 import ZFormTwo from '../../../components/Form/ZFormTwo';
@@ -13,6 +13,7 @@ import { setUser, useCurrentToken, useCurrentUser } from '../../../redux/Feature
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
  const dispatch = useAppDispatch();
  const user = useAppSelector(useCurrentUser);
  const token = useAppSelector(useCurrentToken);
