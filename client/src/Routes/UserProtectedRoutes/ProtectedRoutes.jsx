@@ -1,13 +1,13 @@
 import { ReactNode, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../Redux/hook";
-import { useGetLoggedInUserQuery } from "../../Redux/Feature/auth/authApi";
 import { Navigate } from "react-router-dom";
-import LoadingPage from "../../Layout/Dashboard/LoadingPage";
 import {
   logout,
   useCurrentToken,
   useCurrentUser,
-} from "../../Redux/Feature/auth/authSlice";
+} from "../../redux/Feature/auth/authSlice";
+import { useGetUsersQuery } from "../../redux/Feature/auth/authApi";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
+import LoadingPage from "../../components/LoadingPage";
 
 const ProtectedRoutes = ({
   children,
@@ -17,17 +17,14 @@ const ProtectedRoutes = ({
   const [loading, setLoading] = useState(true);
   const user = useAppSelector(useCurrentUser);
   const token = useAppSelector(useCurrentToken);
-  const { data, isLoading, isFetching, refetch } = useGetLoggedInUserQuery(
-    undefined
-    // {
-    //   // skip: user == null ? true : false,
-    // }
-  );
+  const { data, isLoading, isFetching, refetch } = useGetUsersQuery();
+
   useEffect(() => {
     if (user && token) {
       refetch();
       setLoading(false);
     }
+    
   }, [user, token, refetch]);
 
   if (!token || token == null || user == null) {
@@ -37,12 +34,16 @@ const ProtectedRoutes = ({
     return <LoadingPage></LoadingPage>;
   }
   // console.log(data?.data?.role)
-  if (data?.data?.role !== role) {
+  const loggedInUser = data?.data?.find((u) => u.email === user.email);
+
+    if (!loggedInUser || loggedInUser.role !== "user") {
     dispatch(logout());
     return <Navigate to={"/login"}></Navigate>;
   }
 
   return children;
+
+
 };
 
 export default ProtectedRoutes;

@@ -1,18 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-
+import { Link, useLocation } from "react-router-dom";
 import { adminRoutes } from "../../Routes/Admin.Routes";
 import { sidebarGenerator } from "../../utils/sidebarGenerator";
-import { Link, useLocation } from "react-router-dom";
-
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 
-const DashboardSidebarTwo = ({
-  className,
-  setIsSidebarOpen,
-}) => {
+const DashboardSidebarTwo = ({ className, setIsSidebarOpen }) => {
   const [open, setOpen] = useState("");
 
   const handleOpen = (value) => {
@@ -22,6 +17,8 @@ const DashboardSidebarTwo = ({
   const sidebarData = sidebarGenerator(adminRoutes);
 
   const location = useLocation();
+  // console.log(location);
+  // console.log(sidebarData);
 
   useEffect(() => {
     if (localStorage.getItem("dropDown")) {
@@ -112,7 +109,7 @@ const DashboardSidebarTwo = ({
                     localStorage.removeItem("dropDown");
                   }}
                   className={`px-4 py-3 hover:px-4 hover:py-3 hover:rounded-r-full hover:bg-[#323F5D] hover:mr-4 hover:mb-1 mr-4 mb-1 ${
-                    location.pathname === item.key
+                    location.pathname === `/admin/${item.key}`
                       ? "bg-[#323F5D] rounded-r-full"
                       : ""
                   }`}
