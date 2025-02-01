@@ -1,204 +1,312 @@
-import { Link, useLoaderData, useParams } from "react-router-dom";
-import ProductImageSlider from "./ProductImageSlider";
-import { FaGreaterThan, FaHome } from "react-icons/fa";
-import { CiShoppingCart } from "react-icons/ci";
-import { HiOutlineShoppingBag } from "react-icons/hi2";
-import { Alert } from "antd";
-import { useEffect } from "react";
+  import { useEffect, useState } from "react";
+  import { Link, useLoaderData } from "react-router-dom";
+  import ProductImageSlider from "./ProductImageSlider";
+  import { FaGreaterThan, FaHome } from "react-icons/fa";
+  import { CiShoppingCart } from "react-icons/ci";
+  import { HiOutlineShoppingBag } from "react-icons/hi2";
+  import { useAppDispatch, useAppSelector } from "../../../redux/Hook/Hook";
+  import { addToCart } from "../../../redux/Cart/cartSlice";
+  import { toast } from "sonner";
+  import { Alert } from "antd";
 
-const ProductDetails = () => {
-  const singleProduct = useLoaderData();
-  console.log(singleProduct)
+  const ProductDetails = () => {
+    const singleProduct = useLoaderData();
+    const dispatch = useAppDispatch();
+    const [selectedAttributes, setSelectedAttributes] = useState({});
+    const [quantity, setQuantity] = useState(1);
+    const [price, setPrice] = useState(singleProduct?.variants[0]?.price || 0);
+    const [isAdded, setIsAdded] = useState(false);
+    const cartItems = useAppSelector((state) => state.cart?.items);
 
-  useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to the top of the page
-  }, []); 
-  return (
-    <section className="py-5">
-      <nav className="flex justify-start space-x-3 py-8 px-5">
-        <Link
-          to="/"
-          className="text-lg font-medium hover:text-gray-300 transition-all duration-200"
-        >
-          <FaHome className="text-blue-500" size={20} />
-        </Link>
-        <span className="text-lg text-gray-300 mt-1">
-          <FaGreaterThan size={15} />
-        </span>
-        <Link
-          to="/shop"
-          className="text-base font-medium hover:text-gray-300 transition-all duration-200 text-blue-500"
-        >
-          Shop
-        </Link>
-        <span className="text-lg text-gray-300 mt-1">
-          <FaGreaterThan size={15} />
-        </span>
-        <Link
-        
-          className="text-base font-medium hover:text-gray-300 transition-all duration-200"
-        >
-          {singleProduct.name}
-        </Link>
-      </nav>
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 ">
-        {/* Slider Section */}
-        <div>
-          <ProductImageSlider
-            images={singleProduct.variants.map((variant) => variant?.imageUrl)}
-          />
-        </div>
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
-        {/* Product Details Section */}
-        <div className="space-y-5">
-          <h1 className="text-4xl font-semibold">{singleProduct.name}</h1>
-          {/* <p className="text-sm text-gray-500">{singleProduct.description}</p> */}
-          <p className="font-bold">
-            Availability :
-            <span className="text-green-500 font-medium ms-2">
-            {/* {singleProduct.variants.reduce(
-              (totalStock, variant) => totalStock + variant.stock,
-              0
-            )} */}
-            {singleProduct.availability === true ? "In Stock" : "Out of Stock"}
-            </span>
-          </p>
-          {/* <p className="font-medium">SKU: {singleProduct.variants[0].sku}</p> */}
-          <p className="font-medium">
-            <span className="font-bold me-2">Category :</span>  {singleProduct?.category?.categoryName}
-          </p>
-          <p className="font-medium">
-            <span className="font-bold me-2">Brand : </span> {singleProduct?.brand?.brandName}
-          </p>
-          <div className="text-xl font-bold text-blue-500">
-            Price: ${singleProduct.price}
-          </div>
-          <p className="text-xl text-gray-500">{singleProduct?.productSubtitle}</p>
+    useEffect(() => {
+      const isProductInCart = cartItems.some(
+        (item) =>
+          item.id === singleProduct.id &&
+          JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes)
+      );
+      setIsAdded(isProductInCart);
+    }, [cartItems, singleProduct.id, selectedAttributes]); // Added selectedAttributes as a dependency
+    
 
-          {/* Size Selector */}
-          <div className="mt-4">
-            <span className="font-medium">Size:</span>
+    // Function to group attribute values by key across all variants
+      const groupAttributesByKey = () => {
+      const attributeMap = {};
+      singleProduct.variants.forEach((variant) => {
+        Object.keys(variant.attributes).forEach((key) => {
+          if (!attributeMap[key]) {
+            attributeMap[key] = new Set(); // Use a Set to avoid duplicate values
+          }
+          attributeMap[key].add(variant.attributes[key]);
+        });
+      });
+
+      return attributeMap;
+    };
+
+    // Function to handle attribute selection
+    const handleAttributeSelection = (key, value) => {
+      setSelectedAttributes((prev) => ({ ...prev, [key]: value }));
+      updatePriceBasedOnAttributes({ ...selectedAttributes, [key]: value });
+    };
+
+    // Function to update price based on selected attributes
+    const updatePriceBasedOnAttributes = (attributes) => {
+      const selectedVariant = singleProduct.variants.find((variant) =>
+        Object.keys(attributes).every(
+          (key) => variant.attributes[key] === attributes[key]
+        )
+      );
+      if (selectedVariant) {
+        setPrice(selectedVariant.price);
+      }
+    };
+
+    // Function to render attributes dynamically
+    const renderAttributes = () => {
+      const attributeMap = groupAttributesByKey();
+
+      return Object.keys(attributeMap).map((key) => {
+        const values = Array.from(attributeMap[key]); // Convert Set to Array
+
+        return (
+          <div key={key} className="mt-4">
+            <span className="font-medium capitalize">{key}:</span>
             <div className="flex gap-2 mt-2">
-              {singleProduct.variants.map((variant) => (
+              {values.map((value, index) => (
                 <button
-                  key={variant.id}
-                  className="border border-gray-300 px-4 py-2 rounded hover:border-blue-500"
+                  key={index}
+                  onClick={() => handleAttributeSelection(key, value)}
+                  className={`border border-gray-300 px-4 py-2 rounded hover:border-blue-500 
+                  ${selectedAttributes[key] === value ? 
+                  " border-2 border-blue-500 shadow-md"
+                  : "hover:bg-gray-100"
+                  }`}
+                  style={{
+                    backgroundColor:
+                      key === "color" ? value.toLowerCase() : "transparent",
+                    borderWidth: selectedAttributes[key] === value ? "5px" : "1px",
+                    color: selectedAttributes[key] === value ? "blueviolet" : "",
+                    borderColor: selectedAttributes[key] === value ? "blue" : ""
+                  }}
                 >
-                  {variant.attributes.size}
+                  {key !== "color" && value}
                 </button>
               ))}
             </div>
           </div>
+        );
+      });
+    };
 
-          {/* Color Selector */}
-          <div className="mt-4">
-            <span className="font-medium">Color:</span>
-            <div className="flex gap-2 mt-2">
-              {singleProduct.variants.map((variant) => (
+    // Function to handle quantity change
+    const handleQuantityChange = (type) => {
+      if (type === "increase") {
+        setQuantity((prev) => prev + 1);
+      } else if (type === "decrease" && quantity > 1) {
+        setQuantity((prev) => prev - 1);
+      }
+    };
+
+    // Function to handle adding to cart
+    const handleAddToCart = () => {
+      const existingItem = cartItems.find(
+        (item) =>
+          item.id === singleProduct.id &&
+          JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes)
+      );
+    
+      if (existingItem) {
+        toast.error("Product already added to cart!");
+        return;
+      }
+    
+      const item = {
+        ...singleProduct,
+        selectedAttributes,
+        quantity,
+        price: (price * quantity).toFixed(2),
+      };
+    
+      dispatch(addToCart(item));
+      toast.success("Added to cart successfully!");
+    };
+    
+
+    // Check if all required attributes are selected
+    const areAllAttributesSelected = Object.keys(groupAttributesByKey()).every(
+      (key) => selectedAttributes[key]
+    );
+
+    return (
+      <section className="py-5">
+        <nav className="flex justify-start space-x-3 py-8 px-5">
+          <Link
+            to="/"
+            className="text-lg font-medium hover:text-gray-300 transition-all duration-200"
+          >
+            <FaHome className="text-blue-500" size={20} />
+          </Link>
+          <span className="text-lg text-gray-300 mt-1">
+            <FaGreaterThan size={15} />
+          </span>
+          <Link
+            to="/shop"
+            className="text-base font-medium hover:text-gray-300 transition-all duration-200 text-blue-500"
+          >
+            Shop
+          </Link>
+          <span className="text-lg text-gray-300 mt-1">
+            <FaGreaterThan size={15} />
+          </span>
+          <Link className="text-base font-medium hover:text-gray-300 transition-all duration-200">
+            {singleProduct.name}
+          </Link>
+        </nav>
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Slider Section */}
+          <div>
+            <ProductImageSlider
+              images={singleProduct.variants.map((variant) => variant?.imageUrl[0])}
+            />
+          </div>
+
+          {/* Product Details Section */}
+          <div className="space-y-5">
+            <h1 className="text-4xl font-semibold">{singleProduct.name}</h1>
+            <p className="font-bold">
+              Availability:
+              <span className="text-green-500 font-medium ms-2">
+                {singleProduct.availability === true ? "In Stock" : "Out of Stock"}
+              </span>
+            </p>
+            <p className="font-medium">
+              <span className="font-bold me-2">Category:</span>{" "}
+              {singleProduct?.category?.categoryName}
+            </p>
+            <p className="font-medium">
+              <span className="font-bold me-2">Brand:</span>{" "}
+              {singleProduct?.brand?.brandName}
+            </p>
+            <div className="text-xl font-bold text-blue-500">
+              Price: ${price}
+            </div>
+            <p className="text-xl text-gray-500">{singleProduct?.productSubtitle}</p>
+
+            {/* Render Attributes Dynamically */}
+            {renderAttributes()}
+
+                    {/* Price Tiers */}
+                    <div className="mt-4">
+              <span className="font-medium">Unit Price:</span>
+              <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
+                {singleProduct?.priceTiers?.map((tier, index) => (
+                  <li className="mb-5" key={index}>
+                    <Alert
+                      message={`${tier.minQty || 1} pc- ${
+                        tier.maxQty || "No Max"
+                      } pc    Price: $${tier.price}`}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Quantity Selector */}
+            <div className="mt-4">
+              <span className="font-medium">Quantity:</span>
+              <div className="flex items-center gap-2 mt-2">
                 <button
-                  key={variant.id}
-                  className="w-8 h-8 border border-gray-300 rounded-full"
-                  style={{
-                    backgroundColor: variant.attributes.color.toLowerCase(),
-                  }}
-                ></button>
-              ))}
+                  onClick={() => handleQuantityChange("decrease")}
+                  className="px-4 py-2 border"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  value={quantity}
+                  readOnly
+                  className="w-12 text-center border py-2"
+                />
+                <button
+                  onClick={() => handleQuantityChange("increase")}
+                  className="px-4 py-2 border"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Add to Cart and Buy Now */}
+            <div className="flex space-x-4">
+              <button
+                onClick={handleAddToCart}
+                disabled={!areAllAttributesSelected || isAdded}
+                className="bg-blue-500 text-white px-7 py-2 rounded hover:bg-white hover:text-blue-500 transition-all border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <p className="flex items-center justify-center">
+                  <CiShoppingCart className="me-2" size={30} />
+                  {isAdded ? "Added" : "Add to cart"} 
+                </p>
+              </button>
+              <button className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all">
+                <p className="flex items-center justify-center">
+                  <HiOutlineShoppingBag className="me-2" size={24} />
+                  Buy Now
+                </p>
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Quantity Selector */}
-          <div className="mt-4">
-            <span className="font-medium">Quantity:</span>
-            <div className="flex items-center gap-2 mt-2">
-              <button className="px-4 py-2 border">-</button>
-              <input
-                type="text"
-                value={1}
-                readOnly
-                className="w-12 text-center border py-2"
-              />
-              <button className="px-4 py-2 border">+</button>
-            </div>
+        {/* Tabs Section */}
+        <div className="container mx-auto lg:mt-[50px] mb-16">
+          <div className="">
+            <ul className="flex justify-center space-x-8 text-2xl font-medium">
+              <li className="text-blue-500 border-b-2 border-blue-500">
+                Product Description
+              </li>
+            </ul>
           </div>
 
-        {/* Price Tiers */}
-<div className="mt-4">
-  <span className="font-medium">Unit Price:</span>
-  <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
-          {singleProduct?.priceTiers?.map((tier, index) => (
-            <li className="mb-5" key={index}>
-             <Alert message= {`${tier.minQty || 1} pc-  ${
-                tier.maxQty || "No Max"
-              } pc    Price: $${tier.price}`}/>
-            </li>
-          ))}
-        </ul>
-</div>
-
-
-          {/* Add to Cart and Buy Now */}
-          <div className="flex space-x-4">
-            <button className="bg-blue-500 text-white px-7 py-2 rounded hover:bg-white hover:text-blue-500 transition-all border border-blue-500">
-            <p className="flex items-center justify-center">
-                   <CiShoppingCart className="me-2" size={30}/>
-                   Add to Cart
-                   </p>
-            </button>
-            <button className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all">
-            <p className="flex items-center justify-center">
-                   <HiOutlineShoppingBag className="me-2" size={24}/>
-                   Buy Now
-                   </p>
-            </button>
+          {/* Tab Content */}
+          <div className="mt-6">
+            <p className="text-lg text-gray-500">{singleProduct?.description}</p>
+            <table className="mt-6 w-[50%] mx-auto border border-gray-300 text-left">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 border border-gray-300">Feature</th>
+                  <th className="px-4 py-2 border border-gray-300">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Weight</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {singleProduct.weight}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Material</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {singleProduct.material}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Thickness</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {singleProduct.thickness}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
+      </section>
+    );
+  };
 
-      {/* Tabs Section */}
-      <div className="container mx-auto lg:mt-[50px] mb-16">
-        <div className="">
-          <ul className="flex justify-center space-x-8 text-2xl font-medium">
-            <li className="text-blue-500 border-b-2 border-blue-500">
-              Product Description
-            </li>
-          </ul>
-        </div>
-
-        {/* Tab Content */}
-        <div className="mt-6">
-          <p className="text-lg text-gray-500">
-         {singleProduct?.description}
-          </p>
-          <table className="mt-6 w-[50%] mx-auto border border-gray-300 text-left">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 border border-gray-300">Feature</th>
-                <th className="px-4 py-2 border border-gray-300">Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Color</td>
-                <td className="px-4 py-2 border border-gray-300">
-                  Black, Brown, Red
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Material</td>
-                <td className="px-4 py-2 border border-gray-300">
-                  Artificial Leather
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Weight</td>
-                <td className="px-4 py-2 border border-gray-300">0.5kg</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default ProductDetails;
+  export default ProductDetails;
