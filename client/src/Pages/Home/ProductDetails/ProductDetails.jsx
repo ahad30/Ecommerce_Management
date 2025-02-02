@@ -113,9 +113,22 @@
 
     // Function to handle adding to cart
     const handleAddToCart = () => {
+      // Find the selected variant based on attributes
+      const selectedVariant = singleProduct.variants.find((variant) =>
+        Object.keys(selectedAttributes).every(
+          (key) => variant.attributes[key] === selectedAttributes[key]
+        )
+      );
+    
+      if (!selectedVariant) {
+        toast.error("Please select all attributes before adding to cart!");
+        return;
+      }
+    
       const existingItem = cartItems.find(
         (item) =>
           item.id === singleProduct.id &&
+          item.variantId === selectedVariant.id &&  // Compare variant ID as well
           JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes)
       );
     
@@ -126,14 +139,16 @@
     
       const item = {
         ...singleProduct,
+        variantId: selectedVariant.id, // Include the selected variant ID
         selectedAttributes,
         quantity,
-        price: (price * quantity).toFixed(2),
+        price: selectedVariant.price.toFixed(2), // Use the correct variant's price
       };
     
       dispatch(addToCart(item));
       toast.success("Added to cart successfully!");
     };
+    
     
 
     // Check if all required attributes are selected
@@ -252,7 +267,10 @@
                   {isAdded ? "Added" : "Add to cart"} 
                 </p>
               </button>
-              <button className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all">
+              <button
+                onClick={handleAddToCart}
+                disabled={!areAllAttributesSelected || isAdded}
+               className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <p className="flex items-center justify-center">
                   <HiOutlineShoppingBag className="me-2" size={24} />
                   Buy Now

@@ -14,6 +14,7 @@ import { setUser, useCurrentToken, useCurrentUser } from '../../../redux/Feature
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  console.log(location)
  const dispatch = useAppDispatch();
  const user = useAppSelector(useCurrentUser);
  const token = useAppSelector(useCurrentToken);
@@ -47,10 +48,11 @@ const Login = () => {
     if (loginData.success) {
       dispatch(setUser({ token: loginData.token, user: loginData.user }));
       if (loginData?.user?.role === "user") {
-        navigate("/");
+        navigate(location?.state.from ? location.state.from : "/");
+
       } else if (loginData?.user?.role === "admin") {
         localStorage.removeItem("dropDown");
-        navigate("/admin/home");
+        navigate(location?.state.from ? location.state.from : "/admin/home");
       }
     }
   };

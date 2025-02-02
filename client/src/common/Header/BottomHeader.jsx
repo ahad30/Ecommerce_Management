@@ -194,9 +194,9 @@ const BottomHeader = () => {
 
      
         </div>
-        <MobileNav open={openNav} className={`flex justify-start ms-3`}>
+        <Collapse open={openNav} className={`flex justify-start ms-3`}>
           {navList}
-        </MobileNav>
+        </Collapse>
       </Navbar>
     </div>
   );
