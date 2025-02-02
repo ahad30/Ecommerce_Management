@@ -48,11 +48,11 @@ const Login = () => {
     if (loginData.success) {
       dispatch(setUser({ token: loginData.token, user: loginData.user }));
       if (loginData?.user?.role === "user") {
-        navigate(location?.state.from ? location.state.from : "/");
+        navigate(location?.state || "/");
 
       } else if (loginData?.user?.role === "admin") {
         localStorage.removeItem("dropDown");
-        navigate(location?.state.from ? location.state.from : "/admin/home");
+        navigate(location?.state || "/admin/home");
       }
     }
   };
