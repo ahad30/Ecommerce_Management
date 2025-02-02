@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import {
   logout,
   useCurrentToken,
@@ -9,11 +9,9 @@ import { useGetUsersQuery } from "../../redux/Feature/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
 import LoadingPage from "../../components/LoadingPage";
 
-const ProtectedRoutes = ({
-  children,
-  role,
-}) => {
+const ProtectedRoutes = ({ children, role }) => {
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const user = useAppSelector(useCurrentUser);
   const token = useAppSelector(useCurrentToken);
@@ -24,26 +22,35 @@ const ProtectedRoutes = ({
       refetch();
       setLoading(false);
     }
-    
   }, [user, token, refetch]);
 
+  // Redirect to login if no token or user
   if (!token || token == null || user == null) {
-    return <Navigate to={"/login"}></Navigate>;
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: location.pathname }} // Pass the current path to redirect back after login
+        replace
+      />
+    );
   }
+
+  // Show loading spinner while fetching data
   if (isLoading || isFetching || loading) {
-    return <LoadingPage></LoadingPage>;
+    return <LoadingPage />;
   }
-  // console.log(data?.data?.role)
+
+  // Find the logged-in user from the fetched data
   const loggedInUser = data?.data?.find((u) => u.email === user.email);
 
-    if (!loggedInUser || loggedInUser.role !== "user") {
+  // Logout and redirect if the user role doesn't match
+  if (!loggedInUser || loggedInUser.role !== role) {
     dispatch(logout());
-    return <Navigate to={"/login"}></Navigate>;
+    return <Navigate to="/login" replace />;
   }
 
+  // Render the protected component
   return children;
-
-
 };
 
 export default ProtectedRoutes;
