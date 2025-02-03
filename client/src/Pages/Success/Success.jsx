@@ -1,7 +1,43 @@
-import React from 'react';
+
+import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Success = () => {
+  // const location = useLocation();
+  // const navigate = useNavigate();
+  // const queryParams = new URLSearchParams(location.search);
+  // const sessionId = queryParams.get("sessionId");
+  // const transactionId = queryParams.get("transactionId");
+  // console.log(sessionId)
+  // useEffect(() => {
+  //   const verifyPayment = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:5000/api/v1/success?sessionId=${sessionId}&transactionId=${transactionId}`
+  //       );
+  //       if (response.data.success) {
+  //         // Payment verified, show success message
+  //         console.log("Payment successful!");
+  //       } else {
+  //         // Payment failed, redirect to cancel page
+  //         navigate("/cancel");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error verifying payment:", error);
+  //       navigate("/cancel");
+  //     }
+  //   };
+
+  //   if (sessionId && transactionId) {
+  //     verifyPayment();
+  //   } else {
+  //     navigate("/cancel");
+  //   }
+  // }, [sessionId, transactionId, navigate]);
+
+
   return (
     <div>
       <section className="bg-gray-900 text-white -mb-8">
@@ -16,7 +52,7 @@ const Success = () => {
       </h1>
 
       <p className="mx-auto mt-4 max-w-xl sm:text-xl/relaxed">
-        Please check your email of your order confirmation.
+        Please check your order confirmation in your given email.
       </p>
 
       <div className="mt-8 flex flex-wrap justify-center gap-4">

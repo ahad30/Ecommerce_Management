@@ -262,14 +262,14 @@
 
                     {/* Price Tiers */}
                     <div className="mt-4">
-              <span className="font-medium">Unit Price:</span>
+              <span className="font-medium">Per Unit Price discount (according to quantity):</span>
               <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
                 {singleProduct?.priceTiers?.map((tier, index) => (
                   <li className="mb-5" key={index}>
                     <Alert
-                      message={`${tier.minQty || 1} pc- ${
+                      message={`${tier.minQty || "No Min"} pc- ${
                         tier.maxQty || "No Max"
-                      } pc    Price: $${tier.price}`}
+                      } pc    Price: $${tier.price || "Not available"}`}
                     />
                   </li>
                 ))}

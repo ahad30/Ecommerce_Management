@@ -4,12 +4,17 @@ import ZInputTwo from "../../components/Form/ZInputTwo";
 import ZEmail from "../../components/Form/ZEmail";
 import { useCreateOrderMutation } from "../../redux/Feature/Admin/order/orderApi";
 import { useCurrentUser } from "../../redux/Feature/auth/authSlice";
-import { useAppSelector } from "../../redux/Hook/Hook";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
 import { toast } from "sonner";
+import ZPhone from "../../components/Form/ZPhone";
+import { clearCart } from "../../redux/Cart/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const cartItems = useAppSelector((state) => state.cart?.items || []);
   const user = useAppSelector(useCurrentUser);
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch();
 
 
   useEffect(() => {
@@ -20,6 +25,8 @@ const Checkout = () => {
     addOrder,
     { isLoading, isError, error, isSuccess, data },
   ] = useCreateOrderMutation();
+ 
+
 
   const handleSubmit = async (formData) => {
     if (cartItems.length === 0) {
@@ -39,6 +46,9 @@ const Checkout = () => {
       orderTotal: Number(orderTotal), // Convert to number before sending
       paymentStatus: "pending",
       shippingAddress: formData.shippingAddress,
+      name:formData?.name,
+      email:formData?.email,
+      phone:formData?.phone,
       billingAddress: formData.billingAddress,
       orderStatus: "pending",
       deliveryFee,
@@ -54,13 +64,14 @@ const Checkout = () => {
     };
   
     try {
-      const result = await addOrder(orderData).unwrap(); // Unwrap the result from the mutation
+      const result = await addOrder(orderData).unwrap(); 
   
       console.log(result);
   
-      // Check if the backend returns a payment URL
+
       if (result?.data?.checkoutUrl) {
-        window.location.href = result.data.checkoutUrl; // Redirect user to the payment page
+      dispatch(clearCart()); // Clear the cart
+        window.location.href = result.data.checkoutUrl; 
       } else {
         toast.error("Order created, but payment URL not received!");
       }
@@ -69,7 +80,21 @@ const Checkout = () => {
     }
   };
   
-  
+  const renderSelectedAttributes = (selectedAttributes) => {
+    return Object.entries(selectedAttributes).map(([key, value]) => (
+      <div key={key} className="text-xs text-gray-600">
+        <span className="capitalize">{key}:</span> {value}
+      </div>
+    ));
+  };
+
+  // useEffect(() => {
+  //   if (isSuccess && data?.data?.order?.paymentStatus === "paid") {
+  //     dispatch(clearCart()); // Clear the cart
+  //     navigate("/success"); // Redirect to the success page
+  //   }
+  // }, [isSuccess, data, dispatch, navigate]);
+
 
   return (
     <>
@@ -95,18 +120,18 @@ const Checkout = () => {
         data={data}
       >
         <div className="bg-gray-100 py-10">
-          <div className="flex flex-col lg:flex-row gap-5 max-w-6xl mx-auto mb-10">
+          <div className="flex flex-col lg:flex-row  max-w-6xl mx-auto mb-10">
             {/* Form Section */}
-            <div className=" rounded-lg bg-white p-8 shadow-lg gap-3 w-[90%] mx-auto lg:w-[60%] lg:h-[550px] mt-5">
-              <p className="text-center lg:text-start text-sm lg:text-lg font-semibold">
-                Submit your Information here
+            <div className=" bg-white py-8 px-5 shadow-lg gap-3 w-[90%] mx-auto lg:w-[60%] lg:h-[570px] mt-5 border-r">
+              <p className="text-center lg:text-start text-sm lg:text-xl mb-5 font-semibold">
+                Submit your billing details here
               </p>
 
-              {/* <ZInputTwo name="name" type="text" label="Name" placeholder="Enter your name" required /> */}
-              {/* <ZEmail label="Email Address" name="email" /> */}
+              <ZInputTwo name="name" type="text" label="Name" placeholder="Enter your name" required />
+              <ZEmail label="Email Address" name="email" />
               <ZInputTwo name="shippingAddress" type="text" label="Shipping Address" placeholder="Enter shipping address" required />
               <ZInputTwo name="billingAddress" type="text" label="Billing Address" placeholder="Enter billing address" required />
-              {/* <ZInputTwo name="phone" type="number" label="Mobile Number" placeholder="Enter your mobile number" required /> */}
+              <ZPhone name="phone" type="number" label="Mobile Number" placeholder="Enter your mobile number" required />
 
              <button
                 disabled={isLoading}
@@ -118,34 +143,41 @@ const Checkout = () => {
             </div>
 
             {/* Order Summary */}
-            <div className="flex flex-col p-6 rounded-lg bg-white shadow-lg space-y-4 sm:w-96 w-[90%] mx-auto sm:p-10 lg:h-[550px] lg:mt-5">
+            <div className="flex flex-col p-6  bg-white shadow-lg space-y-4 sm:w-96 w-[90%] mx-auto sm:p-10 lg:h-[570px] lg:mt-5 lg:w-[40%]">
               <h2 className="text-lg font-semibold">Your Order Summary</h2>
 
-              <div className="pt-4 space-y-2">
+              <div className="pt-4 space-y-2 max-h-[300px] overflow-y-scroll scrollbar-0 mb-5">
                 {cartItems.map((item, index) => (
                   <div key={index} className="flex justify-between">
-                    <h3 className="font-bold lg:text-lg">{item.name} (x{item.quantity})</h3>
-                    <span className="lg:text-xl">{item.price * item.quantity} Tk/-</span>
+                    <div>
+                    <h3 className="font-bold text-sm lg:text-base">{item.name} (x{item.quantity})</h3>
+                    {item.selectedAttributes && (
+                      <div className="mt-1">
+                        {renderSelectedAttributes(item.selectedAttributes)}
+                      </div>
+                    )}
+                    </div>
+                    <span className="text-sm lg:text-base me-5">${item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>
 
               <div className="pt-4 space-y-2">
-                <div className="flex justify-between">
+                <div className="flex justify-between border-t border-dashed py-2">
                   <span>Subtotal</span>
-                  <span>{cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)} Tk/-</span>
+                  <span>${cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
-                  <span>{10} Tk/-</span>
+                  <span>${10}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between border-b border-dashed py-2">
                   <span>Tax</span>
-                  <span>{20} Tk/-</span>
+                  <span>${20}</span>
                 </div>
                 <div className="flex justify-between text-xl font-bold">
                   <span>Total</span>
-                  <span>{cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + 30} Tk/-</span>
+                  <span>${cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + 30}</span>
                 </div>
               </div>
 
