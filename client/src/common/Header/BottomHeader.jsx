@@ -5,15 +5,20 @@ import {
   Collapse,
   MobileNav,
 } from "@material-tailwind/react";
-import React from "react";
+import React, { useState } from "react";
 import { IoMdCart } from "react-icons/io";
 import { NavLink } from "react-router-dom";
-
+import { Sidebar } from 'primereact/sidebar';
+import { Button } from 'primereact/button';
+import Cart from "../Cart/Cart";
+import { useAppSelector } from "../../redux/Hook/Hook";
 
 
 const BottomHeader = () => {
 
   const [openNav, setOpenNav] = React.useState(false);
+  const [visibleRight, setVisibleRight] = useState(false);
+  const cartItems = useAppSelector(state => state.cart?.items);
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -178,17 +183,20 @@ const BottomHeader = () => {
            {/* cart */}
            <div className="border-[#092635] relative p-1 border-[1px] rounded-full bg-[#0926351f]">
              <div className="absolute text-[10px] md:text-[12px] px-[5px] top-[-6px] left-[17px] md:left-6 bg-red-400 text-white flex justify-center items-center rounded-full">
-               <span>0</span>
+               <span>{cartItems?.length}</span>
              </div>
+             <Button  onClick={() => setVisibleRight(true)} >
              <IoMdCart className="md:w-6 md:h-6 text-[#092635]" />
+             </Button>        
            </div>
+           <Cart visibleRight={visibleRight} setVisibleRight={setVisibleRight}/>
          </div>
 
      
         </div>
-        <MobileNav open={openNav} className={`flex justify-start ms-3`}>
+        <Collapse open={openNav} className={`flex justify-start ms-3`}>
           {navList}
-        </MobileNav>
+        </Collapse>
       </Navbar>
     </div>
   );
