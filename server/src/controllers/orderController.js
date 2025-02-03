@@ -46,6 +46,24 @@ class OrderCOntroller {
             next(error)
         }
     }
+
+    async getOrdersByUserId(req, res, next) {
+    try {
+      const userId = req.params.userId; // Extract userId from the request parameters
+      const order = await this.orderService.getOrdersByUserId(userId); // Fetch orders for the user
+      ResponseHandler.success(
+        res,
+        "Orders fetched successfully for the user",
+        order,
+        200
+      );
+    } catch (error) {
+      ResponseHandler.error(res, "Failed to fetch orders for the user", 500, error);
+      next(error);
+    }
+  }
+
+    
     async updateOrder(req, res, next) {
         try {
             const id = req.params.id;
@@ -67,6 +85,7 @@ class OrderCOntroller {
             next(error)
         }
     }
+    
     async paymentSuccess(req, res,next) {
         try {
             const result = await this.paymentService.paymentSuccess(req, res);
