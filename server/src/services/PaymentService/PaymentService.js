@@ -17,8 +17,13 @@ class PaymentService extends OrderService{
                 price_data: {
                     currency: "usd",
                     product_data: {
-                        name: item.name || "Unnamed Product",  // Use product name from order item, fallback to a default
-                    },
+            name: item.name || "Unnamed Product",
+            description: item.selectedAttributes
+                ? Object.entries(item.selectedAttributes)
+                      .map(([key, value]) => `${key}: ${value}`)
+                      .join(", ")
+                : "No attributes selected",
+        },
                     unit_amount: Math.round(item.price * 100) || 0,  // Convert price to cents
                 },
                 quantity: item.quantity || 1,

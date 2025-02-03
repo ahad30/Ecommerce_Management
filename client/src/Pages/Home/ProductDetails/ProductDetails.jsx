@@ -17,6 +17,7 @@
     const [price, setPrice] = useState(singleProduct?.variants[0]?.price || 0);
     const [isAdded, setIsAdded] = useState(false);
     const cartItems = useAppSelector((state) => state.cart?.items);
+    console.log(singleProduct)
 
     useEffect(() => {
       window.scrollTo(0, 0);
@@ -113,6 +114,11 @@
 
     // Function to handle adding to cart
     const handleAddToCart = () => {
+      if (Object.keys(selectedAttributes).length !== Object.keys(groupAttributesByKey()).length) {
+        toast.error("Please select all attributes before adding to cart!");
+        return;
+      }
+    
       // Find the selected variant based on attributes
       const selectedVariant = singleProduct.variants.find((variant) =>
         Object.keys(selectedAttributes).every(
@@ -120,15 +126,17 @@
         )
       );
     
+      console.log("Selected Variant:", selectedVariant);  
+    
       if (!selectedVariant) {
-        toast.error("Please select all attributes before adding to cart!");
+        toast.error("Invalid selection! No matching variant found.");
         return;
       }
     
       const existingItem = cartItems.find(
         (item) =>
           item.id === singleProduct.id &&
-          item.variantId === selectedVariant.id &&  // Compare variant ID as well
+          item.variantId === selectedVariant.id &&
           JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes)
       );
     
@@ -139,15 +147,53 @@
     
       const item = {
         ...singleProduct,
-        variantId: selectedVariant.id, // Include the selected variant ID
+        variantId: selectedVariant.id,
         selectedAttributes,
         quantity,
-        price: selectedVariant.price.toFixed(2), // Use the correct variant's price
+        price: selectedVariant.price.toFixed(2),
       };
     
       dispatch(addToCart(item));
       toast.success("Added to cart successfully!");
     };
+
+    // const handleAddToCart = () => {
+    //   // Find the selected variant based on attributes
+    //   const selectedVariant = singleProduct.variants.find((variant) =>
+    //     Object.keys(selectedAttributes).every(
+    //       (key) => variant.attributes[key] === selectedAttributes[key]
+    //     )
+    //   );
+    //  console.log(selectedVariant)
+    //   if (!selectedVariant) {
+    //     toast.error("Please select all attributes before adding to cart!");
+    //     return;
+    //   }
+    
+    //   const existingItem = cartItems.find(
+    //     (item) =>
+    //       item.id === singleProduct.id &&
+    //       item.variantId === selectedVariant.id &&  // Compare variant ID as well
+    //       JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes)
+    //   );
+    
+    //   if (existingItem) {
+    //     toast.error("Product already added to cart!");
+    //     return;
+    //   }
+    
+    //   const item = {
+    //     ...singleProduct,
+    //     variantId: selectedVariant.id, // Include the selected variant ID
+    //     selectedAttributes,
+    //     quantity,
+    //     price: selectedVariant.price.toFixed(2), // Use the correct variant's price
+    //   };
+    
+    //   dispatch(addToCart(item));
+    //   toast.success("Added to cart successfully!");
+    // };
+    
     
     
 
@@ -281,7 +327,7 @@
         </div>
 
         {/* Tabs Section */}
-        <div className="container mx-auto lg:mt-[50px] mb-16">
+        <div className="container break-words mx-auto lg:mt-[50px] mb-16">
           <div className="">
             <ul className="flex justify-center space-x-8 text-2xl font-medium">
               <li className="text-blue-500 border-b-2 border-blue-500">
