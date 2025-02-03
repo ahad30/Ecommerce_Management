@@ -52,9 +52,9 @@ export const routes = createBrowserRouter([
       {
         path: "/cancel",
         element: 
-      <ProtectedRoutes role={"user"}>
+      // <ProtectedRoutes role={"user"}>
         <PaymentError/>
-      </ProtectedRoutes>
+      // </ProtectedRoutes>
       },
       {
         path: "/product/:id",

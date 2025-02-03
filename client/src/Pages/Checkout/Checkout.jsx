@@ -39,7 +39,7 @@ const Checkout = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
     const deliveryFee = 10.0;
     const taxAmount = 20.0;
-    const orderTotal = Number(subtotal + deliveryFee + taxAmount).toFixed(2);
+    const orderTotal = Number(subtotal + deliveryFee + taxAmount);
 
     // Order payload
     const orderData = {
@@ -56,6 +56,7 @@ const Checkout = () => {
         variantId: item.variantId,
         quantity: item.quantity,
         price: item.price,
+        name: item?.name
       })),
     };
 
