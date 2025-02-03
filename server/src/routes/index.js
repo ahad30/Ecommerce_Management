@@ -181,6 +181,10 @@ router.delete("/attributes/:id", (req, res, next) => {
     const attributesController = new AttributesController(attributeService);
     attributesController.deleteAttribute(req, res, next)
 })
+
+
+
+
 //[route("/orders/create")]
 router.post("/orders/create", (req, res, next) => {
     const orderController = new OrderCOntroller(orderService);
@@ -190,10 +194,32 @@ router.get("/orders", (req, res, next) => {
     const orderController = new OrderCOntroller(orderService);
     orderController.getOrders(req, res, next);
 })
+router.get('/orders/:id', (req, res, next) => {
+  const orderController = new OrderCOntroller(orderService);
+  orderController.getOrderById(req, res, next);
+});
+
+router.get('/orders/user/:userId', (req, res, next) => {
+  const orderController = new OrderCOntroller(orderService);
+  orderController.getOrdersByUserId(req, res, next);
+});
+
+
+router.put('/orders/:id', (req, res, next) => {
+  const orderController = new OrderCOntroller(orderService);
+  orderController.updateOrder(req, res, next);
+});
+router.delete('/orders/:id', (req, res, next) => {
+  const orderController = new OrderCOntroller(orderService);
+  orderController.deleteOrder(req, res, next);
+});
 router.get("/success", (req, res, next) => {
     const orderController = new OrderCOntroller(orderService);
     orderController.paymentSuccess(req, res, next);
 })
+
+
+
 
 //slider routes
 //[route("/sliders/create")]
