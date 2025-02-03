@@ -9,8 +9,18 @@ const swaggerUi = require('swagger-ui-express');
 const port = process.env.PORT || 5000;
 const prisma = new PrismaClient();
 
+
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174"
+  ],
+  credentials: true,
+  optionSuccessStatus: 200,
+}
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

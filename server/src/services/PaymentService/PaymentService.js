@@ -17,7 +17,7 @@ class PaymentService extends OrderService{
                 price_data: {
                     currency: "usd",
                     product_data: {
-                        name: item.productName || "Unnamed Product",  // Use product name from order item, fallback to a default
+                        name: item.name || "Unnamed Product",  // Use product name from order item, fallback to a default
                     },
                     unit_amount: Math.round(item.price * 100) || 0,  // Convert price to cents
                 },

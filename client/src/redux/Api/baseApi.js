@@ -35,6 +35,7 @@ const baseApi = createApi({
     "products",
     "customers",
     "subscriptions",
+    "orders",
   ],
 });
 
