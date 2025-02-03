@@ -16,16 +16,27 @@ class OrderService {
     async getOrderById(id) {
         const order = await this.prisma.order.findUnique({
             where: {
-                id: parseInt(id)
+                id: id
             }
         })
         return order;
     }
 
+    async getOrdersByUserId(userId) {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        userId: userId, // Fetch orders for the specific user
+      },
+    });
+    return orders;
+  }
+
+    
+
     async updateOrder(id, postBody) {
         const order = await this.prisma.order.update({
             where: {
-                id: parseInt(id)
+                id: id
             },
             data: postBody
         })
@@ -34,7 +45,7 @@ class OrderService {
     async deleteOrder(id) {
         const order = await this.prisma.order.delete({
             where: {
-                id: parseInt(id)
+                id: id
             }
         })
         return order;

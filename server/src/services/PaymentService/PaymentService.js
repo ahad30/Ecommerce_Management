@@ -88,11 +88,13 @@ class PaymentService extends OrderService{
     
                 console.log(updatedOrder);
                 
-                // Redirect the user to the success page
+    
                 return res.redirect(`${process.env.CLIENT_URL}/success`);
+                // return res.status(200).json({ success: true, message: "Payment successful" });
             } else {
-                // If the payment was not successful, redirect to the cancel page
+   
                 return res.redirect(`${process.env.CLIENT_URL}/cancel`);
+                // return res.status(400).json({ success: false, message: "Payment failed" });
             }
         } catch (error) {
             console.error("Error processing payment success:", error);
