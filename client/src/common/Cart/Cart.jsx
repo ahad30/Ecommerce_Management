@@ -1,18 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Sidebar } from "primereact/sidebar";
 import { useAppSelector, useAppDispatch } from "../../redux/Hook/Hook";
 import { removeFromCart, updateQuantity } from "../../redux/Cart/cartSlice";
 import { toast } from "sonner";
 import { AiFillDelete } from "react-icons/ai";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Cart = ({ visibleRight, setVisibleRight }) => {
   const cartItems = useAppSelector((state) => state.cart?.items || []);
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const cartLength = cartItems.length === 0;
 
   console.log(cartItems)
+
+  useEffect(() => {
+    if (location.pathname === "/checkout") {
+      setVisibleRight(false);
+    }
+  }, [location, setVisibleRight]);
+
+  
   // Function to handle item deletion
   const handleDeleteItem = (item) => {
     dispatch(

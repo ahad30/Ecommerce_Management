@@ -17,7 +17,7 @@ class OrderCOntroller {
             })
             const paymentIntent = await this.paymentService.createPaymentIntent(order,transactionId);
             console.log(paymentIntent.url)
-            res.redirect(paymentIntent.url)
+            ResponseHandler.success(res, "Order placed successfully", { order, checkoutUrl: paymentIntent.url }, 201);
             // ResponseHandler.success(res, "order placed successfully", order, 201);
         } catch (error) {
 

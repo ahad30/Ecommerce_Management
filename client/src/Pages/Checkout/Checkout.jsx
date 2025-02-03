@@ -5,20 +5,12 @@ import ZEmail from "../../components/Form/ZEmail";
 import { useCreateOrderMutation } from "../../redux/Feature/Admin/order/orderApi";
 import { useCurrentUser } from "../../redux/Feature/auth/authSlice";
 import { useAppSelector } from "../../redux/Hook/Hook";
+import { toast } from "sonner";
 
 const Checkout = () => {
-  // const [cartItems, setCartItems] = useState([]);
   const cartItems = useAppSelector((state) => state.cart?.items || []);
-
   const user = useAppSelector(useCurrentUser);
 
-  // useEffect(() => {
-  //   // Retrieve cart data from localStorage
-  //   const storedCart = localStorage.getItem("selectedProduct");
-  //   if (storedCart) {
-  //     setCartItems(JSON.parse(storedCart));
-  //   }
-  // }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,20 +23,20 @@ const Checkout = () => {
 
   const handleSubmit = async (formData) => {
     if (cartItems.length === 0) {
-      alert("Your cart is empty!");
+      toast.error("Your cart is empty!");
       return;
     }
-
+  
     // Calculate total price
-    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryFee = 10.0;
     const taxAmount = 20.0;
-    const orderTotal = Number(subtotal + deliveryFee + taxAmount);
-
+    const orderTotal = (subtotal + deliveryFee + taxAmount).toFixed(2); // Ensure two decimal places
+  
     // Order payload
     const orderData = {
       userId: user?.id,
-      orderTotal,
+      orderTotal: Number(orderTotal), // Convert to number before sending
       paymentStatus: "pending",
       shippingAddress: formData.shippingAddress,
       billingAddress: formData.billingAddress,
@@ -56,17 +48,28 @@ const Checkout = () => {
         variantId: item.variantId,
         quantity: item.quantity,
         price: item.price,
-        name: item?.name
+        name: item?.name,
+        selectedAttributes: item?.selectedAttributes 
       })),
     };
-
+  
     try {
-      const result = await addOrder(orderData);
-      console.log(result)
+      const result = await addOrder(orderData).unwrap(); // Unwrap the result from the mutation
+  
+      console.log(result);
+  
+      // Check if the backend returns a payment URL
+      if (result?.data?.checkoutUrl) {
+        window.location.href = result.data.checkoutUrl; // Redirect user to the payment page
+      } else {
+        toast.error("Order created, but payment URL not received!");
+      }
     } catch (error) {
       console.error("Error occurred:", error);
     }
   };
+  
+  
 
   return (
     <>
