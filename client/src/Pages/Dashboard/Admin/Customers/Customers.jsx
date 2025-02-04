@@ -20,9 +20,9 @@ const Customers = () => {
   const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useAppSelector(
     (state) => state.modal
   );
-  const [selectedUser, setSelectedUser] = useState({});
-  const { data, error, isLoading: uLoading, isSuccess } = useGetUsersQuery();
-  const [deleteUser, { isLoading: dCIsloading, isError, isSuccess: uIsSuccess, data: dUdata, error: dError }] = useDeleteUserMutation();
+  const [selectedUser, setSelectedUser] = useState(null);
+  const { data, error, isLoading: uLoading } = useGetUsersQuery();
+  const [deleteUser, { isLoading, isError, isSuccess, data: dUdata, error: dError }] = useDeleteUserMutation();
 
 const userData = data?.data?.map((user, index) => ({
   id: user?.id,
@@ -116,8 +116,8 @@ const columns = [
       <DeleteModal
         data={dUdata}
         error={dError}
-        isLoading={dCIsloading}
-        isSuccess={uIsSuccess}
+        isLoading={isLoading}
+        isSuccess={isSuccess}
         title="Delete User"
         onDelete={handleDelete}
         isDeleteModalOpen={isDeleteModalOpen}
