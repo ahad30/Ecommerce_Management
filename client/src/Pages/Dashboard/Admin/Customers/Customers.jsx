@@ -39,13 +39,12 @@ const userData = data?.data?.map((user, index) => ({
     dispatch(setIsEditModalOpen());
   };
 
-  const handleDelete = (userData) => {
-    console.log(userData)
+  const handleDeleteUser = (userData) => {
     setSelectedUser(userData);
     dispatch(setIsDeleteModalOpen());
   };
 
-  const handleDeleteUser = () => {
+  const handleDelete = () => {
     deleteUser(selectedUser?.id);
   };
 
@@ -82,7 +81,7 @@ const columns = [
               <CiEdit size={20} />
             </Tooltip>
           </a>
-          <a onClick={() => handleDelete(record)}>
+          <a onClick={() => handleDeleteUser(record)}>
             <Tooltip title="Delete" placement="top">
               <AiOutlineDelete size={20} />
             </Tooltip>
@@ -120,7 +119,7 @@ const columns = [
         isLoading={dCIsloading}
         isSuccess={uIsSuccess}
         title="Delete User"
-        onDelete={handleDeleteUser}
+        onDelete={handleDelete}
         isDeleteModalOpen={isDeleteModalOpen}
         isError={isError}
         description={"Deleting this user will remove all associated data."}
