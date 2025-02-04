@@ -1,5 +1,4 @@
 import baseApi from '../../../Api/baseApi';
-import { getTagsByModuleName } from "@/redux/Tag/Tag";
 
 const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,7 +13,8 @@ const usersApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: getTagsByModuleName('User')
+      invalidatesTags: ['users'], // Invalidates subscription cache
+
     }),
 
     // Get Users
@@ -22,37 +22,39 @@ const usersApi = baseApi.injectEndpoints({
       query: () => ({
         url: "/users",
       }),
-      providesTags: getTagsByModuleName('User')
+      providesTags: ['users'], // Provides sliders cache
+
     }),
 
     // Get User by ID
     getUserById: builder.query({
       query: (id) => ({
-        url: `/users/user/${id}`,
+        url: `/users/${id}`,
       }),
-      providesTags: getTagsByModuleName('User'),
+      providesTags: ['users'], // Provides sliders cache
+
     }),
 
     // Update User
     updateUser: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/users/update/${id}`,
+        url: `/users/${id}`,
         headers: {
           'Content-Type': 'application/json',
         },
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
-      invalidatesTags: getTagsByModuleName('User')
+      invalidatesTags: ['users'],
     }),
 
     // Delete User
     deleteUser: builder.mutation({
       query: (id) => ({
-        url: `/users/delete/${id}`,
+        url: `/users/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: getTagsByModuleName('User')
+      invalidatesTags: ['users'],
     }),
 
   }),

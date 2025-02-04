@@ -81,6 +81,9 @@ const Orders = () => {
       title: "Order Total",
       dataIndex: "orderTotal",
       key: "orderTotal",
+      render: (orderTotal) => (
+        <Tag color="cyan">${orderTotal}</Tag>
+      )
     },
     {
       title: "Payment Status",
