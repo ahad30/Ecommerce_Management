@@ -87,15 +87,12 @@ export const adminRoutes = [
     label: "Orders",
     element: <Orders />,
     icon: <CiShop size={20}/>,
-
-    permissionName: "view customer",
   },
   {
     path: "customers",
     label: "Customers",
     element: <Customers />,
     icon: <FaUsers size={20}/>,
-    permissionName: "view customer",
   },
 
 
