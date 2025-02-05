@@ -1,6 +1,4 @@
 import React from "react";
-
-
 import { useAppDispatch } from "../../../../redux/Hook/Hook";
 import { setIsAddModalOpen } from "../../../../redux/Modal/ModalSlice";
 import axios from "axios";
@@ -14,7 +12,7 @@ import ZImageInput from "../../../../components/Form/ZImageInput";
 const AddSlider = () => {
   const dispatch = useAppDispatch();
   const [createSlider, { isLoading: SIsLoading, isError: SIsError, error: SError, isSuccess: SIsSuccess, data }] = useAddSliderMutation();
-
+  console.log(data)
   const handleSubmit = async (data) => {
     try {
       let imageUrl = '';
