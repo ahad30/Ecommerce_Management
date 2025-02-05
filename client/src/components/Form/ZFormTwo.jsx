@@ -1,6 +1,5 @@
-"use client"
-import { Form } from "antd";
 import { ReactNode, useEffect } from "react";
+import { Form } from "antd";
 import {
   FormProvider,
   useForm,
@@ -44,7 +43,7 @@ const ZFormTwo = ({
   const methods = useForm({mode:"all"});
 
   const onSubmit = (data) => {
-    // console.log(data)
+    console.log(data)
     submit(data);
   };
 

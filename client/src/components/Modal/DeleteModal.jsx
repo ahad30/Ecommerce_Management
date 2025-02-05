@@ -1,5 +1,3 @@
-
-"use client"
 import { Alert, Button, Flex, Modal } from "antd";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -36,7 +34,6 @@ const DeleteModal = ({
        toast.error(error?.data?.message, { id: 1 });
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isLoading, isError]);
   return (
     <>

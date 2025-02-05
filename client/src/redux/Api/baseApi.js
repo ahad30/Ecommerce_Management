@@ -26,8 +26,6 @@ const baseApi = createApi({
   endpoints: () => ({}),
   tagTypes: [
     "categories",
-    // "permissions",
-    // "roles",
     "brands",
     "users",
     "attributes",
