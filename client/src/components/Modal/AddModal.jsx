@@ -1,4 +1,3 @@
-"use client"
 import { Modal } from "antd";
 import { useAppDispatch } from "../../redux/Hook/Hook";
 import { setIsAddModalOpen } from "../../redux/Modal/ModalSlice";

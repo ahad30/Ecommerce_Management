@@ -1,5 +1,3 @@
-
-"use client"
 import { Card } from "@material-tailwind/react";
 import { useEffect } from "react";
 

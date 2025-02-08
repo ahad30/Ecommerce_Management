@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { Space, Tooltip, Modal, Button } from "antd";
 import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb";
