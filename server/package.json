@@ -6,8 +6,8 @@
   "scripts": {
     "start": "nodemon index.js",
     "seed": "node prisma/seed.js",
-    "vercel-build": "prisma generate && prisma db push",
-    "postinstall": "prisma generate && prisma db push",
+    "vercel-build": "prisma generate",
+    "postinstall": "prisma generate",
     "prisma:push": "prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,4 +1,4 @@
-"use client";
+
 import { Form, Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
