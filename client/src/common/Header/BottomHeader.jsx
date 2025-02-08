@@ -8,7 +8,6 @@ import {
 import React, { useState } from "react";
 import { IoMdCart } from "react-icons/io";
 import { NavLink } from "react-router-dom";
-import { Sidebar } from 'primereact/sidebar';
 import { Button } from 'primereact/button';
 import Cart from "../Cart/Cart";
 import { useAppSelector } from "../../redux/Hook/Hook";

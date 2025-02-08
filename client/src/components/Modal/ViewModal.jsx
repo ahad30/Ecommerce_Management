@@ -1,6 +1,6 @@
 import { Modal } from "antd";
-import { setIsViewModalOpen } from "@/redux/Modal/ModalSlice";
-import { useAppDispatch } from "@/redux/Hook/Hook";
+import { useAppDispatch } from "../../redux/Hook/Hook";
+import { setIsViewModalOpen } from "../../redux/Modal/ModalSlice";
 
 
 const ViewModal = ({ children, isViewModalOpen, title, width }) => {
@@ -14,6 +14,7 @@ const ViewModal = ({ children, isViewModalOpen, title, width }) => {
         title={title}
         centered
         open={isViewModalOpen}
+        style={``}
         width={width ? width : 500}
         onCancel={handleCancel}
         okButtonProps={{ style: { display: "none" } }}

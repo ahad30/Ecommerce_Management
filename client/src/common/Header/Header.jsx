@@ -17,7 +17,7 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logout());
     toast.success("You are successfully logged out.")
-    navigate("/")
+    navigate("/login")
   };
 
   const userMenu = (

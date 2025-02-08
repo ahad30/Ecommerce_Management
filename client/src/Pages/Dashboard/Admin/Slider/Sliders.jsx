@@ -26,6 +26,7 @@ const Sliders = () => {
     { isLoading: dSIsLoading, isError, isSuccess, data: dSData, error: dSError },
   ] = useDeleteSliderMutation();
 
+
   const sliderData = data?.data?.map((slider, index) => ({
     key: index,
     id: slider?.id,

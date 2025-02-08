@@ -3,7 +3,6 @@ import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { TfiLayoutSlider } from "react-icons/tfi";
 import DashboardStatistics from "../Pages/Dashboard/Admin/DashboardStatistics/DashboardStatistics";
 import Orders from "../Pages/Dashboard/Admin/Orders/Orders";
-import Customers from "../Pages/Dashboard/Admin/Customers/Customers";
 import Category from "../Pages/Dashboard/Admin/Category/Category";
 import { AiFillBoxPlot } from "react-icons/ai";
 import Brand from "../Pages/Dashboard/Admin/Brand/Brand";
@@ -25,6 +24,8 @@ import { CiShop } from "react-icons/ci";
 import { FaUser, FaUsers } from "react-icons/fa";
 import Subscription from "../Pages/Dashboard/Admin/Subscription/Subscription";
 import Contact from "../Pages/Dashboard/Admin/Contact/Contact";
+import Users from "../Pages/Dashboard/Admin/Customers/Users";
+import AddUser from "../Pages/Dashboard/Admin/Customers/AddUser/AddUser";
 // import Packages from "../Pages/Dashboard/Admin/Package/Packages";
 // import AddProduct from "../Pages/Dashboard/Admin/Products/AddProduct";
 // import EditProduct from "../Pages/Dashboard/Admin/Products/EditProduct";
@@ -51,6 +52,8 @@ export const adminRoutes = [
   //   path: "/admin/changePassword",
   //   element: <AdminChangePassword></AdminChangePassword>,
   // },
+
+  
 
   {
     label: "Products Management",
@@ -87,15 +90,12 @@ export const adminRoutes = [
     label: "Orders",
     element: <Orders />,
     icon: <CiShop size={20}/>,
-
-    permissionName: "view customer",
   },
   {
-    path: "customers",
-    label: "Customers",
-    element: <Customers />,
+    path: "users",
+    label: "Users",
+    element: <Users />,
     icon: <FaUsers size={20}/>,
-    permissionName: "view customer",
   },
 
 
@@ -147,6 +147,11 @@ export const adminRoutes = [
     element: <Subscription/>,
     icon: <BiSolidPurchaseTag  size={20}/>,
     permissionName: "view subscription",
+  },
+  {
+    path: "users/add-user",
+    element: <AddUser/>,
+  
   },
   {
     path: "contacts",

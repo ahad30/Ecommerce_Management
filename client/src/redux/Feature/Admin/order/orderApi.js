@@ -33,7 +33,7 @@ const orderApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ['orders'], // Invalidates orders cache
+      invalidatesTags: ['orders']
     }),
 
     // Delete Order
