@@ -6,15 +6,16 @@
   "scripts": {
     "start": "nodemon index.js",
     "seed": "node prisma/seed.js",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build",
-    "prisma:generate": "prisma generate",
+    "vercel-build": "prisma generate && prisma db push",
+    "postinstall": "prisma generate && prisma db push",
+    "prisma:push": "prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.3.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -28,6 +29,6 @@
     "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "prisma": "^6.1.0"
+    "prisma": "^6.3.1"
   }
 }
