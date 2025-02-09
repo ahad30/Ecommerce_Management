@@ -47,7 +47,7 @@ const AllProduct = () => {
       <SectionTitle title="Recommended For you" subTitle="Empowering everyone to express themselves through clothes." />
 
       <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {data?.products?.slice(0,8).map((item, index) => (
+        {data?.data?.slice(0,8).map((item, index) => (
           <div className="border border-gray-200 rounded-lg" key={index}>
             <div className="group h-[250px] relative block bg-black">
               <img

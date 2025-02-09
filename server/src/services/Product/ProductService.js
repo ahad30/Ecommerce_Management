@@ -61,6 +61,22 @@ console.log(error);
 
     }
 
+    async getAllProducts() {
+        try {
+            const products = await this.prisma.product.findMany({
+                include: {
+                    category: true,
+                    variants: true,
+                    brand: true,
+                }
+            });
+            return products;  // Return all categories
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            throw new Error('Failed to fetch products');
+        }
+    }
+
 
     // Get all products with optional filtering
     async getProducts(filters = {}, searchTerm = null,page=1,limit=10) {

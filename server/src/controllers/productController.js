@@ -53,6 +53,23 @@ class ProductController {
         }
     }
 
+
+    async getAllProducts(req, res, next) {
+    try {
+        const products = await this.productService.getAllProducts();
+        return res.status(200).json({
+            message: 'Products retrieved successfully',
+            data: products
+        });
+    } catch (error) {
+        console.error('Error retrieving products:', error);
+        return res.status(500).json({
+            message: 'Failed to retrieve products',
+            error: error.message
+        });
+    }
+}
+
     // Get a single product by ID
     async getProductById(req, res, next) {
         try {
