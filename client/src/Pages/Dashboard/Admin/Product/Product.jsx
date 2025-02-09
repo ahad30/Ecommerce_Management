@@ -26,7 +26,7 @@ const Product = () => {
   const navigate = useNavigate();
   console.log(data)
 
-  const productData = data?.products?.map((product, index) => ({
+  const productData = data?.data?.map((product, index) => ({
       key: index,
       id: product?.id,
       category: product?.category?.categoryName,
@@ -162,6 +162,7 @@ const Product = () => {
 
 
  if (error) return <p className="text-center text-red-500">Error loading products</p>;
+ console.log(data?.products?.length)
 
 
   return (
