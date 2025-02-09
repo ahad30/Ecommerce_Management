@@ -13,9 +13,9 @@ const NewProduct = () => {
   const { data, error, isLoading } = useGetProductsQuery();
   const [showSkeleton, setShowSkeleton] = useState(true);
   const sliderRef = useRef(null); // Ref to store the Keen Slider instance
-  console.log(data)
-  const products = data?.products?.filter((item) => item?.newArrival === true);
-  console.log(products);
+  
+  const products = data?.data?.filter((item) => item?.newArrival === true);
+
 
   useEffect(() => {
     if (isLoading || !products || products.length === 0) return;

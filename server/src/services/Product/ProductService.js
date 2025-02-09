@@ -63,7 +63,13 @@ console.log(error);
 
     async getAllProducts() {
         try {
-            const products = await this.prisma.product.findMany();
+            const products = await this.prisma.product.findMany({
+                include: {
+                    category: true,
+                    variants: true,
+                    brand: true,
+                }
+            });
             return products;  // Return all categories
         } catch (error) {
             console.error('Error fetching products:', error);
