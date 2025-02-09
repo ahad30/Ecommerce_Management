@@ -1,4 +1,4 @@
-"use client";
+
 import React from "react";
 import ZImageInput from "../../../../../components/Form/ZImageInput";
 import { useAppDispatch } from "../../../../../redux/Hook/Hook";

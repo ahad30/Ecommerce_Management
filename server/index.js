@@ -26,6 +26,13 @@ app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('Welcome to the Inkspire API!');
+});
+
+
+
 // Routes
 app.use("/api/v1", router);
 

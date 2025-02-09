@@ -1,4 +1,4 @@
-"use client";
+
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ZInputTwo from "../../../components/Form/ZInputTwo";

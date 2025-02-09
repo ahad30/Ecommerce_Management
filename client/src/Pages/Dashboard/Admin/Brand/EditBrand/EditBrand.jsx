@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import { useUpdateBrandMutation } from "../../../../../redux/Feature/Admin/brand/brandApi";
 import ZFormTwo from "../../../../../components/Form/ZFormTwo";

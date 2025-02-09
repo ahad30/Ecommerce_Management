@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import { Image, Tag } from "antd";
 import { Space, Tooltip } from "antd";
