@@ -1,4 +1,4 @@
-"use client";
+
 import React, { useState } from "react";
 import { useUpdateCategoryMutation } from "../../../../../redux/Feature/Admin/category/categoryApi";
 import ZFormTwo from "../../../../../components/Form/ZFormTwo";

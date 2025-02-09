@@ -1,4 +1,4 @@
-"use client";
+
 import { Checkbox } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-"use client";
+
 import React from "react";
 import ZFormTwo from "@/components/Form/ZFormTwo";
 import ZInputTwo from "@/components/Form/ZInputTwo";
