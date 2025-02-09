@@ -24,7 +24,7 @@ const Product = () => {
   const [selectedProduct, setSelectedProduct] = useState({});
   const [deleteProduct, { isLoading: dCIsloading, isError, isSuccess, data: dCData, error: dError }] = useDeleteProductMutation();
   const navigate = useNavigate();
-  console.log(data)
+ 
 
   const productData = data?.data?.map((product, index) => ({
       key: index,
@@ -40,7 +40,7 @@ const Product = () => {
       variants: product?.variants
   }));
 
-  // console.log(productData);
+
   const handledl = (productData) => {
     setSelectedProduct(productData);
     dispatch(setIsDeleteModalOpen());
