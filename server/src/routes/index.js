@@ -109,6 +109,10 @@ router.get("/product", (req, res, next) => {
     const productController = new ProductController(productService);
     productController.getProducts(req, res, next);
 })
+router.get("/allProduct", (req, res, next) => {
+    const productController = new ProductController(productService);
+    productController.getAllProducts(req, res, next);
+})
 //[route("/product/{id}")]
 router.get("/product/:id", (req, res, next) => {
     const productController = new ProductController(productService);

@@ -19,7 +19,23 @@ const productApi = baseApi.injectEndpoints({
     // Get Products
     getProducts: builder.query({
       query: () => ({
+        url: "/allProduct",
+      }),
+      providesTags: ['products']
+    }),
+
+
+     // Get Products with search, pagination, and price filtering
+     getProductsBySearch: builder.query({
+      query: ({ search = '', page = 1, limit = 1000, priceMin = 1, priceMax = 500 }) => ({
         url: "/product",
+        params: {
+          search,
+          page,
+          limit,
+          priceMin,
+          priceMax,
+        },
       }),
       providesTags: ['products']
     }),
@@ -60,6 +76,7 @@ const productApi = baseApi.injectEndpoints({
 export const {
   useAddProductMutation,
   useGetProductsQuery,
+  useGetProductsBySearchQuery,
   useGetProductsByIdQuery,
   useUpdateProductMutation,
   useDeleteProductMutation,

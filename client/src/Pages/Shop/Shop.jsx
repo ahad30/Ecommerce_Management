@@ -12,13 +12,31 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaAngleLeft, FaAngleRight, FaGripLinesVertical, FaListAlt } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import ProductsSkeleton from "../../components/Skeleton/ProductsSkeleton";
-import { useGetProductsQuery } from "../../redux/Feature/Admin/product/productApi";
+import { useGetProductsBySearchQuery, useGetProductsQuery } from "../../redux/Feature/Admin/product/productApi";
 import { Link } from "react-router-dom";
+import { Pagination } from 'antd';
 
 const Shop = () => {
   const dispatch = useAppDispatch();
   const { isHomeCategorySidebarOpen } = useAppSelector((state) => state.modal);
-  const { data, error, isLoading } = useGetProductsQuery();
+
+  // State for search, pagination, and filtering
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [priceMin, setPriceMin] = useState(1);
+  const [priceMax, setPriceMax] = useState(500);
+
+  // Fetch products with search, pagination, and filtering
+  const { data, error, isLoading } = useGetProductsBySearchQuery({
+    search: searchQuery,
+    page: currentPage,
+    limit: limit,
+    priceMin: priceMin,
+    priceMax: priceMax,
+  });
+  console.log(data)
+
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
@@ -31,6 +49,22 @@ const Shop = () => {
     }
   }, [isLoading]);
 
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page when searching
+  };
+
+  // Handle pagination change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Extract pagination metadata from the API response
+  const totalItems = data?.meta?.totalItems || 0;
+  const totalPages = data?.meta?.totalPages || 1;
+  const itemsPerPage = data?.meta?.itemsPerPage ;
+
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Search Bar */}
@@ -39,12 +73,14 @@ const Shop = () => {
           <label htmlFor="Search" className="sr-only">
             Search
           </label>
-          <form className="" action="">
+          <form className="" onSubmit={(e) => e.preventDefault()}>
             <input
               type="text"
               id="Search"
               name="search"
               placeholder="Search Products..."
+              value={searchQuery}
+              onChange={handleSearchChange}
               className="w-full px-2 md:px-4 outline-none py-[2px] md:py-2 border-gray-300 rounded-sm border-[0.5px] pe-10 shadow-sm sm:text-sm"
             />
           </form>
@@ -109,8 +145,6 @@ const Shop = () => {
           {(isLoading || showSkeleton) && <ProductsSkeleton />}
           {/* Product Cards */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          
-
             {/* Map Products Once Data is Loaded */}
             {!isLoading &&
               !showSkeleton &&
@@ -164,6 +198,15 @@ const Shop = () => {
               ))}
           </div>
         </div>
+      </div>
+      {/* Pagination */}
+      <div className="flex justify-center mt-10">
+        <Pagination
+          current={currentPage}
+          total={totalItems} // Use totalItems from the meta object
+          pageSize={itemsPerPage} // Use itemsPerPage from the meta object
+          onChange={handlePageChange}
+        />
       </div>
     </section>
   );
