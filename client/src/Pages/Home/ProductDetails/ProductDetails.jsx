@@ -313,7 +313,8 @@
                   {isAdded ? "Added" : "Add to cart"} 
                 </p>
               </button>
-              <button
+            <Link to={`/checkout`}>
+            <button
                 onClick={handleAddToCart}
                 disabled={!areAllAttributesSelected || isAdded}
                className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
@@ -322,6 +323,7 @@
                   Buy Now
                 </p>
               </button>
+            </Link>
             </div>
           </div>
         </div>

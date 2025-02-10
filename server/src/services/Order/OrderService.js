@@ -10,9 +10,14 @@ class OrderService {
 
     }
     async getOrders() {
-        const orders = await this.prisma.order.findMany();
-        return orders;
-    }
+    const orders = await this.prisma.order.findMany({
+        orderBy: {
+            createdAt: 'desc',  // Sorts orders from latest to earliest
+        },
+    });
+    return orders;
+}
+
     async getOrderById(id) {
         const order = await this.prisma.order.findUnique({
             where: {

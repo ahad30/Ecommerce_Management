@@ -10,6 +10,8 @@ import { useGetSingleOrderQuery } from "../../../../redux/Feature/Admin/order/or
 import ViewOrder from "./ViewOrder";
 import { useCurrentUser } from "../../../../redux/Feature/auth/authSlice";
 import moment from "moment";
+import { FaGreaterThan, FaHome } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 
 const OrderHistory = () => {
@@ -34,7 +36,7 @@ const OrderHistory = () => {
     orderItems: order?.orderItems,
     deliveryFee: order?.deliveryFee,
     taxAmount: order?.taxAmount,
-    createdAt: moment(order?.createdAt).format("MMM Do YY")
+    createdAt: moment(order?.createdAt).format('Do MMMM YYYY, h:mm:ss a')
   }));
 
   const handleViewOrder = (orderData) => {
@@ -98,7 +100,7 @@ const OrderHistory = () => {
       ),
     },
     {
-      title: "Action",
+      title: "View",
       key: "action",
       render: (_, record) => (
         <Space size="middle">
@@ -115,11 +117,37 @@ const OrderHistory = () => {
   return (
     <>
 
+    <div>
+    <nav className="flex justify-start space-x-3 py-8 px-5">
+          <Link
+            to="/"
+            className="text-lg font-medium hover:text-gray-300 transition-all duration-200"
+          >
+            <FaHome className="text-blue-500" size={20} />
+          </Link>
+          <span className="text-lg text-gray-300 mt-1">
+            <FaGreaterThan size={15} />
+          </span>
+          <Link
+            to="/edit-profile"
+            className="text-base font-medium hover:text-gray-300 transition-all duration-200 text-blue-500"
+          >
+            My Account
+          </Link>
+          <span className="text-lg text-gray-300 mt-1">
+            <FaGreaterThan size={15} />
+          </span>
+          <Link className="text-base font-medium hover:text-gray-300 transition-all duration-200">
+            Order History
+          </Link>
+        </nav>
+    </div>
+
 
 <div className="py-5">
 <DashboardTable columns={columns} data={ordersData} loading={isLoading} />
 
-<ViewModal width={600} isViewModalOpen={isViewModalOpen} title="View Order">
+<ViewModal width={800} isViewModalOpen={isViewModalOpen}>
   <ViewOrder selectedOrder={selectedOrder} />
 </ViewModal>
 </div>
