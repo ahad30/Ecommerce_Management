@@ -8,41 +8,73 @@ class PaymentService extends OrderService{
 
     }
     // Create payment intent for checkout session
-    async createPaymentIntent(order, transactionId,) {
-        try {
-            console.log(process.env.STRIPE_SECRETE_KEY)
-            console.log(order)
+    async createPaymentIntent(order, transactionId) {
+    try {
+        console.log(process.env.STRIPE_SECRET_KEY);
+        console.log(order);
 
-            const lineItems = order.orderItems.map(item => ({
+        // Map order items to line items
+        const lineItems = order.orderItems.map(item => ({
+            price_data: {
+                currency: "usd",
+                product_data: {
+                    name: item.name || "Unnamed Product",
+                    description: item.selectedAttributes
+                        ? Object.entries(item.selectedAttributes)
+                              .map(([key, value]) => `${key}: ${value}`)
+                              .join(", ")
+                        : "No attributes selected",
+                },
+                unit_amount: Math.round(parseFloat(item.price) * 100) || 0, // Convert price to cents
+            },
+            quantity: item.quantity || 1,
+        }));
+
+        // Add delivery fee as a line item
+        if (order.deliveryFee && order.deliveryFee > 0) {
+            lineItems.push({
                 price_data: {
                     currency: "usd",
                     product_data: {
-            name: item.name || "Unnamed Product",
-            description: item.selectedAttributes
-                ? Object.entries(item.selectedAttributes)
-                      .map(([key, value]) => `${key}: ${value}`)
-                      .join(", ")
-                : "No attributes selected",
-        },
-                    unit_amount: Math.round(item.price * 100) || 0,  // Convert price to cents
+                        name: "Delivery Fee",
+                        description: "Shipping and handling charges",
+                    },
+                    unit_amount: Math.round(parseFloat(order.deliveryFee) * 100) || 0, // Convert to cents
                 },
-                quantity: item.quantity || 1,
-            }));
-            const paymentIntent = await stripe.checkout.sessions.create({
-                client_reference_id: transactionId,
-                line_items:
-                    lineItems,
-                mode: "payment",
-                success_url: `http://localhost:5000/api/v1/success?sessionId={CHECKOUT_SESSION_ID}&&transactionId=${transactionId}`,
-                cancel_url: `${process.env.CLIENT_URL}/cancel`,
+                quantity: 1,
             });
-            return paymentIntent;
-        } catch (error) {
-            console.log(error);
-
-            throw new Error("Payment Intent creation failed");
         }
+
+        // Add tax amount as a line item
+        if (order.taxAmount && order.taxAmount > 0) {
+            lineItems.push({
+                price_data: {
+                    currency: "usd",
+                    product_data: {
+                        name: "Tax",
+                        description: "Tax charges",
+                    },
+                    unit_amount: Math.round(parseFloat(order.taxAmount) * 100) || 0, // Convert to cents
+                },
+                quantity: 1,
+            });
+        }
+
+        // Create Stripe Checkout Session
+        const session = await stripe.checkout.sessions.create({
+            client_reference_id: transactionId,
+            line_items: lineItems,
+            mode: "payment",
+            success_url: `http://localhost:5000/api/v1/success?sessionId={CHECKOUT_SESSION_ID}&&transactionId=${transactionId}`,
+            cancel_url: `${process.env.CLIENT_URL}/cancel`,
+        });
+
+        return session;
+    } catch (error) {
+        console.log(error);
+        throw new Error("Payment Intent creation failed");
     }
+}
 
     async paymentSuccess(req, res) {
         try {

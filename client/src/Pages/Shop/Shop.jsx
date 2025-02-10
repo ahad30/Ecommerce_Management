@@ -25,10 +25,10 @@ const Shop = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [priceMin, setPriceMin] = useState(1);
-  const [priceMax, setPriceMax] = useState(500);
+  const [priceMax, setPriceMax] = useState(100000000000000);
 
   // Fetch products with search, pagination, and filtering
-  const { data, error, isLoading } = useGetProductsBySearchQuery({
+  const { data, error, isLoading , isFetching } = useGetProductsBySearchQuery({
     search: searchQuery,
     page: currentPage,
     limit: limit,
@@ -40,14 +40,30 @@ const Shop = () => {
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (isFetching) {
+      setShowSkeleton(true); // Show skeleton while fetching data
+    } else {
+      // Add a delay before hiding the skeleton
       const timer = setTimeout(() => {
-        setShowSkeleton(false);
-      }, 3000); // 2 seconds delay
+        setShowSkeleton(false); // Hide skeleton after the delay
+      }, 3000); // Adjust the delay as needed (500ms in this case)
 
+      // Clean up the timer to prevent it from running after unmounting or state change
       return () => clearTimeout(timer);
     }
-  }, [isLoading]);
+  }, [isFetching]);
+
+
+
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     const timer = setTimeout(() => {
+  //       setShowSkeleton(false);
+  //     }, 3000); // 2 seconds delay
+
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isLoading]);
 
   // Handle search input change
   const handleSearchChange = (e) => {
@@ -146,8 +162,7 @@ const Shop = () => {
           {/* Product Cards */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Map Products Once Data is Loaded */}
-            {!isLoading &&
-              !showSkeleton &&
+            {!isLoading && !showSkeleton &&
               data?.products?.map((item, index) => (
                 <div className="border border-gray-200 rounded-lg" key={index}>
                   <div className="group h-[250px] relative block bg-black">
