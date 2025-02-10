@@ -38,7 +38,7 @@ const Checkout = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryFee = 10.0;
     const taxAmount = 20.0;
-    const orderTotal = (subtotal + deliveryFee + taxAmount).toFixed(2); // Ensure two decimal places
+    const orderTotal = (subtotal + deliveryFee + taxAmount).toFixed(2); 
   
     // Order payload
     const orderData = {
@@ -177,7 +177,8 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-xl font-bold">
                   <span>Total</span>
-                  <span>${cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + 30}</span>
+                  <span>${(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + 30).toFixed(2)}
+</span>
                 </div>
               </div>
 
