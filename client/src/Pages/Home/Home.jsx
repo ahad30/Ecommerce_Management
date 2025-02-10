@@ -1,4 +1,4 @@
-
+import { useEffect, useState } from "react";
 import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
 import AllProduct from "./AllProduct/AllProduct";
 import BannerSlider from "./BannerSlider/BannerSlider";
@@ -19,6 +19,12 @@ const Home = () => {
   //   loop: true,
   //   slides: { perView: 1, spacing: 15 },
   // });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+
   return (
     <div className="">
     <DashboardTitle windowTitle={"Home"}/>

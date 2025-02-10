@@ -12,6 +12,7 @@ import { useDeleteOrderMutation, useGetOrdersQuery } from "../../../../redux/Fea
 import ViewModal from "../../../../components/Modal/ViewModal";
 import EditOrders from "./EditOrders";
 import ViewOrders from "./ViewOrders";
+import moment from "moment";
 
 const Orders = () => {
   const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ const Orders = () => {
   const ordersData = data?.data?.map((order, index) => ({
     key: index + 1,
     id: order?.id,
+    createdAt: moment(order?.createdAt).format('Do MMMM YYYY, h:mm:ss a'),
     name: order?.name,
     email: order?.email,
     phone: order?.phone,
@@ -73,9 +75,9 @@ const Orders = () => {
       key: "email",
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Purchase Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
     },
     {
       title: "Order Total",
