@@ -23,6 +23,16 @@ const orderApi = baseApi.injectEndpoints({
       providesTags: ['orders'], // Provides orders cache
     }),
 
+      // Get Single User Order
+      getSingleOrder: builder.query({
+      query: (id) => ({
+        url: `/orders/user/${id}`,
+      }),
+      providesTags: ['orders'], // Provides orders cache
+    }),
+
+
+
     // Update Order
     updateOrder: builder.mutation({
       query: ({ id, data }) => ({
@@ -50,6 +60,7 @@ const orderApi = baseApi.injectEndpoints({
 export const {
   useCreateOrderMutation,
   useGetOrdersQuery,
+  useGetSingleOrderQuery,
   useUpdateOrderMutation,
   useDeleteOrderMutation,
 } = orderApi;
