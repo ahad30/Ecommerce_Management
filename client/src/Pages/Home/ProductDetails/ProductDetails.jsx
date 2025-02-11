@@ -262,19 +262,27 @@
 
                     {/* Price Tiers */}
                     <div className="mt-4">
-              <span className="font-medium">Per Unit Price discount (according to quantity):</span>
-              <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
-                {singleProduct?.priceTiers?.map((tier, index) => (
-                  <li className="mb-5" key={index}>
-                    <Alert
-                      message={`${tier.minQty || "No Min"} pc- ${
-                        tier.maxQty || "No Max"
-                      } pc    Price: $${tier.price || "Not available"}`}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
+  <span className="font-medium">Per Unit Price discount (according to quantity):</span>
+
+  {singleProduct?.priceTiers?.length === 0 ||
+  singleProduct?.priceTiers?.every(tier => !tier.minQty && !tier.maxQty && !tier.price) ? (
+    <p className="text-sm text-red-500">No price tiers available</p>
+  ) : (
+    <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
+      {singleProduct?.priceTiers?.map((tier, index) => (
+        <li className="mb-5" key={index}>
+          <Alert
+            message={`${tier.minQty ? `${tier.minQty} pc` : "≥"} - ${
+              tier.maxQty || "No Max"
+            } pc    Price: $${tier.price || "Not available"}`}
+          />
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+
+
 
             {/* Quantity Selector */}
             <div className="mt-4">

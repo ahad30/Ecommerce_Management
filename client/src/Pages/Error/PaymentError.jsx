@@ -26,7 +26,7 @@ const PaymentError = () => {
               Retry Payment
             </Link>
             <Link
-              to="/support" // Replace with your support page route
+              to="/contact" // Replace with your support page route
               className="w-full sm:w-auto px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700"
             >
               Contact Support

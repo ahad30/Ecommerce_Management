@@ -46,7 +46,7 @@ const Shop = () => {
       // Add a delay before hiding the skeleton
       const timer = setTimeout(() => {
         setShowSkeleton(false); // Hide skeleton after the delay
-      }, 3000); // Adjust the delay as needed (500ms in this case)
+      }, 2000); // Adjust the delay as needed (500ms in this case)
 
       // Clean up the timer to prevent it from running after unmounting or state change
       return () => clearTimeout(timer);
