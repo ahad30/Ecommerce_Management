@@ -10,7 +10,6 @@ class PaymentService extends OrderService{
     // Create payment intent for checkout session
     async createPaymentIntent(order, transactionId) {
     try {
-        console.log(process.env.STRIPE_SECRET_KEY);
         console.log(order);
 
         // Map order items to line items
@@ -65,7 +64,7 @@ class PaymentService extends OrderService{
             client_reference_id: transactionId,
             line_items: lineItems,
             mode: "payment",
-            success_url: `http://localhost:5000/api/v1/success?sessionId={CHECKOUT_SESSION_ID}&&transactionId=${transactionId}`,
+            success_url: `https://inkspire-server.vercel.app/api/v1/success?sessionId={CHECKOUT_SESSION_ID}&&transactionId=${transactionId}`,
             cancel_url: `${process.env.CLIENT_URL}/cancel`,
         });
 
