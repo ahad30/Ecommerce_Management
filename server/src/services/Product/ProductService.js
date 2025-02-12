@@ -64,6 +64,9 @@ console.log(error);
     async getAllProducts() {
         try {
             const products = await this.prisma.product.findMany({
+                orderBy: {
+                createdAt: 'desc'
+            },
                 include: {
                     category: true,
                     variants: true,
@@ -92,6 +95,9 @@ console.log(error);
                     variants: true,
                     brand: true,
                 },
+                orderBy: {
+            createdAt: 'desc',  // Sorts orders from latest to earliest
+              },
             });
 
             // Count total products for pagination meta

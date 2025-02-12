@@ -19,15 +19,12 @@ import { Pagination } from 'antd';
 const Shop = () => {
   const dispatch = useAppDispatch();
   const { isHomeCategorySidebarOpen } = useAppSelector((state) => state.modal);
-
-  // State for search, pagination, and filtering
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [priceMin, setPriceMin] = useState(1);
   const [priceMax, setPriceMax] = useState(100000000000000);
-
-  // Fetch products with search, pagination, and filtering
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const { data, error, isLoading , isFetching } = useGetProductsBySearchQuery({
     search: searchQuery,
     page: currentPage,
@@ -35,40 +32,25 @@ const Shop = () => {
     priceMin: priceMin,
     priceMax: priceMax,
   });
-  console.log(data)
 
-  const [showSkeleton, setShowSkeleton] = useState(true);
-
+  
   useEffect(() => {
     if (isFetching) {
-      setShowSkeleton(true); // Show skeleton while fetching data
+      setShowSkeleton(true); 
     } else {
-      // Add a delay before hiding the skeleton
-      const timer = setTimeout(() => {
-        setShowSkeleton(false); // Hide skeleton after the delay
-      }, 2000); // Adjust the delay as needed (500ms in this case)
 
-      // Clean up the timer to prevent it from running after unmounting or state change
+      const timer = setTimeout(() => {
+        setShowSkeleton(false); 
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [isFetching]);
 
 
-
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     const timer = setTimeout(() => {
-  //       setShowSkeleton(false);
-  //     }, 3000); // 2 seconds delay
-
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [isLoading]);
-
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
+    setCurrentPage(1);
   };
 
   // Handle pagination change
@@ -80,6 +62,10 @@ const Shop = () => {
   const totalItems = data?.meta?.totalItems || 0;
   const totalPages = data?.meta?.totalPages || 1;
   const itemsPerPage = data?.meta?.itemsPerPage ;
+
+    // Check if no products are found
+    const noProductsFound = !isLoading && !showSkeleton && data?.products?.length === 0 && searchQuery.trim() !== "";
+
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -159,6 +145,15 @@ const Shop = () => {
           </div>
           {/* Show Skeleton While Loading */}
           {(isLoading || showSkeleton) && <ProductsSkeleton />}
+
+         {/* Show "Product not found" message if no products match the search */}
+         {noProductsFound && (
+            <div className="text-center text-xl font-bold text-red-500 mt-10">
+              No products found for "{searchQuery}"
+            </div>
+          )}
+
+
           {/* Product Cards */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Map Products Once Data is Loaded */}
@@ -197,7 +192,7 @@ const Shop = () => {
                       <h2>{item?.name}</h2>
                     </div>
                     <div className="mt-2 text-base font-medium text-primary">
-                      <h2>${item?.price}</h2>
+                      <h2>From ${item.variants[0]?.price || 0}</h2>
                     </div>
                   </div>
                   <Link to={`/product/${item?.id}`}>

@@ -10,15 +10,6 @@ import Attribute from "../Pages/Dashboard/Admin/Attributes/Attribute";
 import Product from "../Pages/Dashboard/Admin/Product/Product";
 import AddProduct from "../Pages/Dashboard/Admin/Product/AddProduct/AddProduct";
 import { BiSolidPurchaseTag } from "react-icons/bi";
-// import { LuUserCog2 } from "react-icons/lu";
-// import Roles from "../Pages/Dashboard/Admin/UserManagement/Roles/Roles";
-// import Users from "../Pages/Dashboard/Admin/UserManagement/Users/Users";
-// import Permissions from "../Pages/Dashboard/Admin/UserManagement/Permissions/Permissions";
-// import Category from "../Pages/Dashboard/Admin/Category/Category";
-// import Brand from "../Pages/Dashboard/Admin/Brand/Brand";
-// import Attributes from "../Pages/Dashboard/Admin/Attributes/Attributes";
-// import Sliders from "../Pages/Dashboard/Admin/configuration/Sliders/Sliders";
-import { IoConstructOutline } from "react-icons/io5";
 import Sliders from "../Pages/Dashboard/Admin/Slider/Sliders";
 import { CiShop } from "react-icons/ci";
 import { FaUser, FaUsers } from "react-icons/fa";
@@ -26,15 +17,8 @@ import Subscription from "../Pages/Dashboard/Admin/Subscription/Subscription";
 import Contact from "../Pages/Dashboard/Admin/Contact/Contact";
 import Users from "../Pages/Dashboard/Admin/Customers/Users";
 import AddUser from "../Pages/Dashboard/Admin/Customers/AddUser/AddUser";
-// import Packages from "../Pages/Dashboard/Admin/Package/Packages";
-// import AddProduct from "../Pages/Dashboard/Admin/Products/AddProduct";
-// import EditProduct from "../Pages/Dashboard/Admin/Products/EditProduct";
-// import { FiBox } from "react-icons/fi";
-// import ViewProduct from "../Pages/Dashboard/Admin/Products/ViewProduct";
-// import { TfiPackage } from "react-icons/tfi";
-// import ExistProductPackages from "../Pages/Dashboard/Admin/ExistProductPacakge/ExistProductPackages";
-// import AdminProfile from "../Pages/Dashboard/Admin/AdminProfile/AdminProfile";
-// import AdminChangePassword from "../Pages/Dashboard/Admin/AdminProfile/AdminChangePassword";
+import ViewProduct from "../Pages/Dashboard/Admin/Product/ViewProduct/ViewProduct";
+
 
 export const adminRoutes = [
   {
@@ -129,10 +113,10 @@ export const adminRoutes = [
   //   path: "edit-product/:id",
   //   element: <EditProduct></EditProduct>,
   // },
-  // {
-  //   path: "view-product-details/:slug/:id",
-  //   element: <ViewProduct></ViewProduct>,
-  // },
+  {
+    path: "view-product-details/:id",
+    element: <ViewProduct></ViewProduct>,
+  },
 
   {
     path: "sliders",

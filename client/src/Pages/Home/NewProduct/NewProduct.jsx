@@ -166,7 +166,7 @@ const NewProduct = () => {
                 <h2>{item?.name}</h2>
               </div>
               <div className="mt-2 text-base font-medium text-primary">
-                <h2>${item?.price}</h2>
+                <h2>From ${item.variants[0]?.price || 0}</h2>
               </div>
             </div>
             <Link to={`/product/${item?.id}`}>
