@@ -6,10 +6,11 @@ import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import { Image } from "antd";
+import { useLocation } from "react-router-dom";
 
 export default function ProductImageSlider({ images }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-
+  const location = useLocation()
   return (
     <section>
       {/* Ant Design Preview Group for all images */}
@@ -40,27 +41,30 @@ export default function ProductImageSlider({ images }) {
         </Swiper>
 
         {/* Thumbnail Slider */}
-        <div className="mt-4 hidden lg:block">
-          <Swiper
-            onSwiper={setThumbsSwiper}
-            spaceBetween={10}
-            slidesPerView={4}
-            freeMode={true}
-            watchSlidesProgress={true}
-            modules={[FreeMode, Thumbs]}
-            className="w-full mySwiper"
-          >
-            {images.map((image, index) => (
-              <SwiperSlide key={index}>
-                <img
-                  src={image}
-                  alt={`Thumbnail ${index + 1}`}
-                  className="w-full h-20 object-cover cursor-pointer"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+        {location.pathname.includes("/admin/view-product-details/") ? null : (
+  <div className="mt-4 hidden lg:block">
+    <Swiper
+      onSwiper={setThumbsSwiper}
+      spaceBetween={10}
+      slidesPerView={4}
+      freeMode={true}
+      watchSlidesProgress={true}
+      modules={[FreeMode, Thumbs]}
+      className="w-full mySwiper"
+    >
+      {images.map((image, index) => (
+        <SwiperSlide key={index}>
+          <img
+            src={image}
+            alt={`Thumbnail ${index + 1}`}
+            className="w-full h-20 object-cover cursor-pointer"
+          />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </div>
+)}
+
       </Image.PreviewGroup>
     </section>
   );
