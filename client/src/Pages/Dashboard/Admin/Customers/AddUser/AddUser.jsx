@@ -31,7 +31,7 @@ const AddUser = () => {
     <div className="">
     <BreadCrumb/>
       <ZFormTwo
-        isLoading={CIsloading}
+        // isLoading={CIsloading}
         isSuccess={CIsSuccess}
         isError={CIsError}
         error={CError}

@@ -35,7 +35,6 @@ const Product = () => {
       description: product?.description,
       sku: product?.sku,
       brand: product?.brand?.brandName,
-      type: product?.productType,
       status: product?.status,
       variants: product?.variants
   }));
@@ -55,7 +54,7 @@ const Product = () => {
   };
 
   const handleViewProduct = (id) => {
-    navigate(`/Dashboard/Product/ViewProduct?id=${id}`);
+    navigate(`/admin/view-product-details/${id}`);
   };
 
 
