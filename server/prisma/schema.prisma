@@ -69,7 +69,6 @@ model Product {
   productSubtitle String
   price           Float
   imageUrl        Json
-  priceTiers      Json
   weight          String
   material        String
   thickness       String

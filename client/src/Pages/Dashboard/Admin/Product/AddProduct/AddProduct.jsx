@@ -147,7 +147,7 @@ const AddProduct = () => {
   const handleAddPerSkuInSkus = () => {
     const attributes = {};
     const valuesName = [];
-
+  
     if (perSku.length === 0) {
       toast.error("Select minimum an attribute value", {
         id: 2,
@@ -158,30 +158,14 @@ const AddProduct = () => {
     if (priceQuantityImage.stock === "") {
       toast.error("Enter variation stock", { id: 1 });
     }
-
     if (priceQuantityImage.price === "") {
-      toast.error("Enter variation  price", { id: 2 });
+      toast.error("Enter variation price", { id: 2 });
     }
-    // if (priceQuantityImage.imageUrl === "") {
-    //   toast.error("upload variation  image", { id: 3 });
-    // }
-    // if (priceQuantityImage.serialNo === "") {
-    //   toast.error("Enter variation serial number", { id: 5 });
-    // }
-
-    // if (priceQuantityImage.qrCode === "") {
-    //   toast.error("Enter variation qr Code", { id: 9 });
-    // }
-
+  
     if (
       perSku.length > 0 &&
       priceQuantityImage.stock &&
       priceQuantityImage.price
-      // &&
-      // priceQuantityImage.imageUrl
-      // &&
-      // priceQuantityImage.serialNo &&
-      // priceQuantityImage.qrCode
     ) {
       perSku.forEach((element) => {
         const proPertyKey = element.split("-")[0];
@@ -189,32 +173,40 @@ const AddProduct = () => {
         valuesName.push(proPertyValue);
         attributes[proPertyKey] = proPertyValue;
       });
-
+  
       const sku = {
         variationId: generateUniqueId(),
         sku: `${valuesName.join("-")}`,
         stock: priceQuantityImage.stock,
         price: priceQuantityImage.price,
         imageUrl: priceQuantityImage.imageUrl || "",
-        // serialNo: priceQuantityImage.serialNo,
-        // qrCode: priceQuantityImage.qrCode,
         attributes,
+        priceTiers: addonPages.map((page) => ({
+          minQty: page.minQty || "",
+          maxQty: page.maxQty || "",
+          price: page.price || "",
+        })),
       };
-
+  
       console.log(sku);
       if (skus.length === 0) {
         setSkus([...skus, { ...sku }]);
         handleRefreshVariantState();
+        // Reset priceTiers to default state (only the first field)
+        setAddonPages([{ minQty: "", maxQty: "", price: "" }]);
       } else if (skus.length > 0) {
         const skusAttributes = skus.map((sku) => sku.attributes);
         const exist = variantExists(skusAttributes, sku.attributes);
         if (!exist) {
           setSkus([...skus, { ...sku }]);
           handleRefreshVariantState();
+          // Reset priceTiers to default state (only the first field)
+          setAddonPages([{ minQty: "", maxQty: "", price: "" }]);
         } else {
           toast.error("Already exists the variant of the product", {
             duration: 2000,
           });
+          // Do not reset priceTiers if the variant already exists
         }
       }
     }
@@ -224,14 +216,8 @@ const AddProduct = () => {
     setPerSku([]);
     setPriceQuantityImage({
       stock: "",
-      min_stock: "",
-      max_stock: "",
-      salePrice: "",
-      serialNo: "",
-      purchasePrice: "",
-      wholeSalePrice: "",
-      retailPrice: "",
-      qrCode: "",
+      price: "",
+      imageUrl: "",
     });
     setRefresh(!refresh);
   };
@@ -262,11 +248,11 @@ const AddProduct = () => {
       }
     };
 
-    const priceTiers = addonPages.map((page) => ({
-      minQty: page.minQty || "",
-      maxQty: page.maxQty || "",
-      price: page.price || "",
-    }));
+    // const priceTiers = addonPages.map((page) => ({
+    //   minQty: page.minQty || "",
+    //   maxQty: page.maxQty || "",
+    //   price: page.price || "",
+    // }));
 
     const mainImageUrl = await uploadImage(data?.ImageUrl);
 
@@ -294,7 +280,7 @@ const AddProduct = () => {
       // Upload images for each variation
       const variantProductData = {
         ...modifiedData,
-        priceTiers,
+        // priceTiers,
         variants: await Promise.all(
           skus.map(async (sku) => {
             const uploadedImageUrl = await uploadImage(sku.imageUrl);
@@ -305,7 +291,7 @@ const AddProduct = () => {
               stock: sku.stock,
               price: sku.price,
               imageUrl: uploadedImageUrl || "",
-              priceTiers: [],
+              priceTiers: sku.priceTiers || [],
             };
           })
         ),
@@ -455,7 +441,7 @@ const AddProduct = () => {
               ]}
               placeholder="Select status"
             />
-            <div>
+            {/* <div>
               <h4 className="mb-3">Price Tiers</h4>
               <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
                 {addonPages.map((page, index) => (
@@ -514,7 +500,7 @@ const AddProduct = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* variant Product type start */}
@@ -587,6 +573,67 @@ const AddProduct = () => {
                     setPriceQuantityImage={setPriceQuantityImage}
                     refresh={refresh}
                   />
+
+<div>
+  <h4 className="mb-3">Price Tiers</h4>
+  <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
+    {addonPages.map((page, index) => (
+      <div key={index} className="flex gap-4">
+        <div className="w-[85%] flex items-center gap-2">
+          <ZInputTwo
+            name={`priceTiers.${index}.minQty`}
+            type="text"
+            label={""}
+            placeholder="Min Quantity"
+            value={page.minQty}
+            onChange={(e) =>
+              handleInputChange(index, "minQty", e.target.value)
+            }
+          />
+          <ZInputTwo
+            name={`priceTiers.${index}.maxQty`}
+            type="text"
+            label={""}
+            placeholder="Max Quantity"
+            value={page.maxQty}
+            onChange={(e) =>
+              handleInputChange(index, "maxQty", e.target.value)
+            }
+          />
+          <ZInputTwo
+            name={`priceTiers.${index}.price`}
+            type="text"
+            label={""}
+            placeholder="Price"
+            value={page.price}
+            onChange={(e) =>
+              handleInputChange(index, "price", e.target.value)
+            }
+          />
+        </div>
+        <div className="w-[15%]">
+          {index === 0 ? (
+            <button
+              type="button"
+              onClick={handleAddPage}
+              className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
+            >
+              <AiOutlinePlus size={15} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => handleRemovePage(page)}
+              className="bg-red-500 text-white rounded px-2 mt-1 py-1"
+            >
+              <AiOutlineMinus size={15} />
+            </button>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
                   {/* <ZNumber
                     name="serialNo"

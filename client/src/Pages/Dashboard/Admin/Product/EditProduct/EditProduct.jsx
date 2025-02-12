@@ -180,134 +180,88 @@ console.log(productData?.data)
   const handleAddVariant = async () => {
     const attributes = [];
     const valuesName = [];
-
+  
+    // Validate required fields
     if (perSku.length === 0) {
       toast.error("Select minimum an attribute value", {
         id: 2,
         duration: 1000,
         position: "top-right",
       });
+      return;
     }
-    if (priceQuantityImage.stock === "") {
-      toast.error("Enter variation stock", { id: 1 });
-    }
-    if (priceQuantityImage.min_stock === "") {
-      toast.error("Enter minimum variation stock", { id: 2 });
-    }
-    if (priceQuantityImage.max_stock === "") {
-      toast.error("Enter maximum variation stock", { id: 3 });
-    }
-    if (priceQuantityImage.salePrice === "") {
-      toast.error("Enter variation sale price", { id: 4 });
-    }
-    if (priceQuantityImage.serialNo === "") {
-      toast.error("Enter variation serial number", { id: 5 });
-    }
-    if (priceQuantityImage.purchasePrice === "") {
-      toast.error("Enter variation purchase price", { id: 6 });
-    }
-    if (priceQuantityImage.wholeSalePrice === "") {
-      toast.error("Enter variation wholesale price", { id: 7 });
-    }
-    if (priceQuantityImage.retailPrice === "") {
-      toast.error("Enter variation retail price", { id: 8 });
-    }
-    if (priceQuantityImage.qrCode === "") {
-      toast.error("Enter variation qr Code", { id: 9 });
-    }
-
-    if (
-      perSku.length > 0 &&
-      priceQuantityImage.stock &&
-      priceQuantityImage.min_stock &&
-      priceQuantityImage.max_stock &&
-      priceQuantityImage.salePrice &&
-      priceQuantityImage.serialNo &&
-      priceQuantityImage.purchasePrice &&
-      priceQuantityImage.wholeSalePrice &&
-      priceQuantityImage.retailPrice &&
-      priceQuantityImage.qrCode
-    ) {
-      perSku.forEach((element) => {
-        const [attributeName, attributeValue] = element.split("-");
-        valuesName.push(attributeValue);
-        attributes.push({ attributeName, attributeValue });
-      });
-
-      const sku = {
-        variationId: generateUniqueId(),
-        sku: `${valuesName.join("-")}`,
-        stock: priceQuantityImage.stock,
-        min_stock: priceQuantityImage.min_stock,
-        max_stock: priceQuantityImage.max_stock,
-        salePrice: priceQuantityImage.salePrice,
-        serialNo: String(priceQuantityImage.serialNo),
-        purchasePrice: priceQuantityImage.purchasePrice,
-        wholeSalePrice: priceQuantityImage.wholeSalePrice,
-        retailPrice: priceQuantityImage.retailPrice,
-        qrCode: String(priceQuantityImage.qrCode),
-        attributes,
-      };
-
-      if (skus.length === 0) {
-        try {
-          const response = await addVariation({
-            productID: productId,
-            sku: sku.sku,
-            stock: Number(sku.stock),
-            min_stock: Number(sku.min_stock),
-            max_stock: Number(sku.max_stock),
-            salePrice: Number(sku.salePrice),
-            serialNo: String(sku.serialNo),
-            purchasePrice: Number(sku.purchasePrice),
-            wholeSalePrice: Number(sku.wholeSalePrice),
-            retailPrice: Number(sku.retailPrice),
-            qrCode: sku.qrCode,
-            
-          }).unwrap();
-
-          if (response) {
-            setSkus([...skus, { ...sku, variationId: response.data.id }]);
-            handleRefreshVariantState();
-            toast.success("Variant added successfully");
-          }
-        } catch (error) {
-          toast.error(error?.data?.message || "Failed to add variant");
-          console.error(error);
-        }
-      } else if (skus.length > 0) {
-        const isDuplicate = skus.some(
-          (existingSku) => existingSku.sku === sku.sku
-        );
-        if (isDuplicate) {
-          toast.error("This variant has already been added.", { id: 9 });
-        } else {
-          try {
-            const response = await addVariation({
-              productID: productId,
-              sku: sku.sku,
-              stock: Number(sku.stock),
-              min_stock: Number(sku.min_stock),
-              max_stock: Number(sku.max_stock),
-              salePrice: Number(sku.salePrice),
-              serialNo: String(sku.serialNo),
-              purchasePrice: Number(sku.purchasePrice),
-              wholeSalePrice: Number(sku.wholeSalePrice),
-              retailPrice: Number(sku.retailPrice),
-              qrCode: sku.qrCode
-            }).unwrap();
-
-            if (response) {
-              setSkus([...skus, { ...sku, variationId: response.data.id }]);
-              handleRefreshVariantState();
-              toast.success("Variant added successfully");
-            }
-          } catch (error) {
-            toast.error(error?.data?.message || "Failed to add variant");
-            console.error(error);
-          }
-        }
+  
+    const requiredFields = [
+      { field: priceQuantityImage.stock, error: "Enter variation stock", id: 1 },
+      { field: priceQuantityImage.min_stock, error: "Enter minimum variation stock", id: 2 },
+      { field: priceQuantityImage.max_stock, error: "Enter maximum variation stock", id: 3 },
+      { field: priceQuantityImage.salePrice, error: "Enter variation sale price", id: 4 },
+      { field: priceQuantityImage.serialNo, error: "Enter variation serial number", id: 5 },
+      { field: priceQuantityImage.purchasePrice, error: "Enter variation purchase price", id: 6 },
+      { field: priceQuantityImage.wholeSalePrice, error: "Enter variation wholesale price", id: 7 },
+      { field: priceQuantityImage.retailPrice, error: "Enter variation retail price", id: 8 },
+      { field: priceQuantityImage.qrCode, error: "Enter variation qr Code", id: 9 },
+    ];
+  
+    for (const { field, error, id } of requiredFields) {
+      if (!field) {
+        toast.error(error, { id });
+        return; 
       }
+    }
+  
+    // Prepare attributes and SKU
+    perSku.forEach((element) => {
+      const [attributeName, attributeValue] = element.split("-");
+      valuesName.push(attributeValue);
+      attributes.push({ attributeName, attributeValue });
+    });
+  
+    const sku = {
+      variationId: generateUniqueId(),
+      sku: `${valuesName.join("-")}`,
+      stock: priceQuantityImage.stock,
+      min_stock: priceQuantityImage.min_stock,
+      max_stock: priceQuantityImage.max_stock,
+      salePrice: priceQuantityImage.salePrice,
+      serialNo: String(priceQuantityImage.serialNo),
+      purchasePrice: priceQuantityImage.purchasePrice,
+      wholeSalePrice: priceQuantityImage.wholeSalePrice,
+      retailPrice: priceQuantityImage.retailPrice,
+      qrCode: String(priceQuantityImage.qrCode),
+      attributes,
+    };
+  
+    // Check for duplicate SKU
+    if (skus.length > 0 && skus.some((existingSku) => existingSku.sku === sku.sku)) {
+      toast.error("This variant has already been added.", { id: 9 });
+      return;
+    }
+  
+    // Add variant to the list
+    try {
+      const response = await addVariation({
+        productID: productId,
+        sku: sku.sku,
+        stock: Number(sku.stock),
+        min_stock: Number(sku.min_stock),
+        max_stock: Number(sku.max_stock),
+        salePrice: Number(sku.salePrice),
+        serialNo: String(sku.serialNo),
+        purchasePrice: Number(sku.purchasePrice),
+        wholeSalePrice: Number(sku.wholeSalePrice),
+        retailPrice: Number(sku.retailPrice),
+        qrCode: sku.qrCode,
+      }).unwrap();
+  
+      if (response) {
+        setSkus([...skus, { ...sku, variationId: response.data.id }]);
+        handleRefreshVariantState();
+        toast.success("Variant added successfully");
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to add variant");
+      console.error(error);
     }
   };
 
