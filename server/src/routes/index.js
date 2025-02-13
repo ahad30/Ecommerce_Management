@@ -56,6 +56,11 @@ router.put('/users/:id', (req, res, next) => {
     userController.updateUser(req, res, next);
 });
 
+// Route to update a user's password
+router.put("/users/password/:id", (req, res, next) => {
+  userController.updatePassword(req, res, next);
+});
+
 // Route to delete a user by ID
 router.delete('/users/:id', (req, res, next) => {
     userController.deleteUser(req, res, next);

@@ -169,42 +169,6 @@ const ProductDetails = () => {
     toast.success("Added to cart successfully!");
   };
 
-  // const handleAddToCart = () => {
-  //   // Find the selected variant based on attributes
-  //   const selectedVariant = singleProduct.variants.find((variant) =>
-  //     Object.keys(selectedAttributes).every(
-  //       (key) => variant.attributes[key] === selectedAttributes[key]
-  //     )
-  //   );
-  //  console.log(selectedVariant)
-  //   if (!selectedVariant) {
-  //     toast.error("Please select all attributes before adding to cart!");
-  //     return;
-  //   }
-
-  //   const existingItem = cartItems.find(
-  //     (item) =>
-  //       item.id === singleProduct.id &&
-  //       item.variantId === selectedVariant.id &&  // Compare variant ID as well
-  //       JSON.stringify(item.selectedAttributes) === JSON.stringify(selectedAttributes)
-  //   );
-
-  //   if (existingItem) {
-  //     toast.error("Product already added to cart!");
-  //     return;
-  //   }
-
-  //   const item = {
-  //     ...singleProduct,
-  //     variantId: selectedVariant.id, // Include the selected variant ID
-  //     selectedAttributes,
-  //     quantity,
-  //     price: selectedVariant.price.toFixed(2), // Use the correct variant's price
-  //   };
-
-  //   dispatch(addToCart(item));
-  //   toast.success("Added to cart successfully!");
-  // };
 
   // Check if all required attributes are selected
   const areAllAttributesSelected = Object.keys(groupAttributesByKey()).every(
@@ -274,30 +238,30 @@ const ProductDetails = () => {
           {renderAttributes()}
 
           {/* Price Tiers */}
-<div className="mt-4">
-  <span className="font-medium">
-    Per Unit Price discount (according to quantity):
-  </span>
+          <div className="mt-4">
+            <span className="font-medium">
+              Per Unit Price discount (according to quantity):
+            </span>
 
-  {selectedVariant?.priceTiers?.length === 0 ||
-  selectedVariant?.priceTiers?.every(
-    (tier) => !tier.minQty && !tier.maxQty && !tier.price
-  ) ? (
-    <p className="text-sm text-red-500">No price tiers available</p>
-  ) : (
-    <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
-      {selectedVariant?.priceTiers?.map((tier, index) => (
-        <li className="mb-5" key={index}>
-          <Alert
-            message={`${tier.minQty ? `${tier.minQty} pc -` : "≥"}  ${
-              tier.maxQty || "No Max"
-            } pc Price: $${tier.price || "Not available"}`}
-          />
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
+            {selectedVariant?.priceTiers?.length === 0 ||
+            selectedVariant?.priceTiers?.every(
+              (tier) => !tier.minQty && !tier.maxQty && !tier.price
+            ) ? (
+              <p className="text-sm text-red-500">No price tiers available</p>
+            ) : (
+              <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
+                {selectedVariant?.priceTiers?.map((tier, index) => (
+                  <li className="mb-5" key={index}>
+                    <Alert
+                      message={`${tier.minQty ? `${tier.minQty} pc -` : "≥"}  ${
+                        tier.maxQty || "No Max"
+                      } pc Price: $${tier.price || "Not available"}`}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           {/* Quantity Selector */}
           <div className="mt-4">
             <span className="font-medium">Quantity:</span>
@@ -375,19 +339,51 @@ const ProductDetails = () => {
               <tr>
                 <td className="px-4 py-2 border border-gray-300">Weight</td>
                 <td className="px-4 py-2 border border-gray-300">
-                  {singleProduct.weight}
+                {singleProduct.weight && (
+              <p className="font-medium">
+                    {singleProduct.weight}
+              </p>
+            )}
                 </td>
               </tr>
               <tr>
                 <td className="px-4 py-2 border border-gray-300">Material</td>
                 <td className="px-4 py-2 border border-gray-300">
-                  {singleProduct.material}
+                {singleProduct.material && (
+              <p className="font-medium">
+                     {singleProduct.material}
+              </p>
+            )}
                 </td>
               </tr>
               <tr>
                 <td className="px-4 py-2 border border-gray-300">Thickness</td>
                 <td className="px-4 py-2 border border-gray-300">
-                  {singleProduct.thickness}
+                {singleProduct.thickness && (
+              <p className="font-medium">
+                   {singleProduct.thickness}
+              </p>
+            )}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 border border-gray-300">Elasticity</td>
+                <td className="px-4 py-2 border border-gray-300">
+                {singleProduct.elasticity && (
+              <p className="font-medium">
+                   {singleProduct.elasticity}
+              </p>
+            )}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 border border-gray-300">Breathability</td>
+                <td className="px-4 py-2 border border-gray-300">
+                {singleProduct.breathability && (
+              <p className="font-medium">
+                   {singleProduct.breathability}
+              </p>
+            )}
                 </td>
               </tr>
             </tbody>
