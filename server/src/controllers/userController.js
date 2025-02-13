@@ -60,6 +60,34 @@ class UserController {
         next(error);
       }
     }
+
+
+    async updatePassword(req, res, next) {
+    try {
+      const userId = req.params.id;
+      const { newPassword, confirmPassword } = req.body;
+
+      // Validate that newPassword and confirmPassword are provided
+      if (!newPassword || !confirmPassword) {
+        throw new Error("New password and confirm password are required.");
+      }
+
+      // Call the service to update the password
+      const result = await this.userService.updatePassword(
+        userId,
+        newPassword,
+        confirmPassword
+      );
+
+      res.status(200).json({
+        success: true,
+        message: `Password for user with ID ${userId} updated successfully`,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   
     // Delete a user by ID
     async deleteUser(req, res, next) {

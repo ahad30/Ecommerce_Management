@@ -2,7 +2,6 @@ import baseApi from '../../../Api/baseApi';
 
 const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
     // Add User
     addUser: builder.mutation({
       query: (data) => ({
@@ -13,8 +12,7 @@ const usersApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ['users'], // Invalidates subscription cache
-
+      invalidatesTags: ['users'], // Invalidates users cache
     }),
 
     // Get Users
@@ -22,8 +20,7 @@ const usersApi = baseApi.injectEndpoints({
       query: () => ({
         url: "/users",
       }),
-      providesTags: ['users'], // Provides sliders cache
-
+      providesTags: ['users'], // Provides users cache
     }),
 
     // Get User by ID
@@ -31,8 +28,7 @@ const usersApi = baseApi.injectEndpoints({
       query: (id) => ({
         url: `/users/${id}`,
       }),
-      providesTags: ['users'], // Provides sliders cache
-
+      providesTags: ['users'], // Provides users cache
     }),
 
     // Update User
@@ -57,6 +53,18 @@ const usersApi = baseApi.injectEndpoints({
       invalidatesTags: ['users'],
     }),
 
+    // Update Password
+    updatePassword: builder.mutation({
+      query: ({ id, newPassword, confirmPassword }) => ({
+        url: `/users/password/${id}`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: "PUT",
+        body: { newPassword, confirmPassword },
+      }),
+      invalidatesTags: ['users'], // Invalidates users cache
+    }),
   }),
 });
 
@@ -66,4 +74,5 @@ export const {
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useUpdatePasswordMutation,
 } = usersApi;
