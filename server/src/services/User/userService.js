@@ -90,6 +90,29 @@ class UserService extends BcryptHasher {
     }
   }
 
+  async updatePassword(userId, newPassword, confirmPassword) {
+    try {
+      // Validate that newPassword and confirmPassword match
+      if (newPassword !== confirmPassword) {
+        throw new Error("New password and confirm password do not match.");
+      }
+
+      // Hash the new password
+      const hashedPassword = await this.hash(newPassword, 10);
+
+      // Update the user's password in the database
+      const updatedUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword },
+      });
+
+      return updatedUser;
+    } catch (error) {
+      console.error("Error updating password:", error);
+      throw new Error(`Failed to update password: ${error.message}`);
+    }
+  }
+
   async deleteUser(userId) {
     try {
       await this.prisma.user.delete({

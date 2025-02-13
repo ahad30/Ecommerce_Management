@@ -1,16 +1,17 @@
 import React  from "react";
+import { Skeleton } from "antd";
+import { toast } from "sonner";
+import ChangePassword from "../../User/Password/ChangePassword";
 import { useGetUserByIdQuery, useUpdateUserMutation } from "../../../../redux/Feature/Admin/usersmanagement/userApi";
-import { useCurrentUser } from "../../../../redux/Feature/auth/authSlice";
 import { useAppSelector } from "../../../../redux/Hook/Hook";
+import { useCurrentUser } from "../../../../redux/Feature/auth/authSlice";
+import ZFormTwo from "../../../../components/Form/ZFormTwo";
 import ZInputTwo from "../../../../components/Form/ZInputTwo";
 import ZEmail from "../../../../components/Form/ZEmail";
-import { Skeleton } from "antd";
 import ZPhone from "../../../../components/Form/ZPhone";
-import ZFormTwo from "../../../../components/Form/ZFormTwo";
-import { toast } from "sonner";
-import ChangePassword from "../Password/ChangePassword";
 
-const EditProfile = () => {
+
+const EditAdminProfile = () => {
   const user = useAppSelector(useCurrentUser);
 
   const {
@@ -93,7 +94,7 @@ const EditProfile = () => {
                 />
               </div>
               <div className="relative">
-                <ZEmail readOnly={1} label={"Email"} name={"email"} value={userData?.data?.email} />
+                <ZEmail  label={"Email"} name={"email"} value={userData?.data?.email} />
               </div>
               <div className="relative">
                 <ZPhone label={"Phone"} name={"phone"} value={userData?.data?.phone} />
@@ -103,7 +104,7 @@ const EditProfile = () => {
 
         </div>
       </div>
-          <div className="lg:flex justify-end mb-10">
+          <div className="lg:flex justify-end mb-10 -mt-10 bg-white py-5">
            <div className="lg:w-[68%] px-4">
            <ChangePassword/>
            </div>
@@ -112,4 +113,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default EditAdminProfile;
