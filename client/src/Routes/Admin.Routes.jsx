@@ -18,6 +18,7 @@ import Contact from "../Pages/Dashboard/Admin/Contact/Contact";
 import Users from "../Pages/Dashboard/Admin/Customers/Users";
 import AddUser from "../Pages/Dashboard/Admin/Customers/AddUser/AddUser";
 import ViewProduct from "../Pages/Dashboard/Admin/Product/ViewProduct/ViewProduct";
+import EditAdminProfile from "../Pages/Dashboard/Admin/Profile/EditAdminProfile";
 
 
 export const adminRoutes = [
@@ -28,10 +29,10 @@ export const adminRoutes = [
     icon: <MdOutlineDashboardCustomize size={20}></MdOutlineDashboardCustomize>,
     permissionName: "view dashboard",
   },
-  // {
-  //   path: "/admin/profile",
-  //   element: <AdminProfile></AdminProfile>,
-  // },
+  {
+    path: "/admin/profile",
+    element: <EditAdminProfile/>,
+  },
   // {
   //   path: "/admin/changePassword",
   //   element: <AdminChangePassword></AdminChangePassword>,

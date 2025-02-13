@@ -7,11 +7,12 @@ import {
   IoPersonOutline,
   IoPersonSharp,
 } from "react-icons/io5";
-import { useAppDispatch } from "../../redux/Hook/Hook";
-import { logout } from "../../redux/Feature/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
+import { logout, useCurrentUser } from "../../redux/Feature/auth/authSlice";
 import { toast } from "sonner";
 
 const Dropdown = () => {
+  const user = useAppSelector(useCurrentUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const handleLogout = () => {
@@ -26,7 +27,7 @@ const Dropdown = () => {
           <div className="flex justify-center  items-center gap-x-3">
             <img
               className="w-8 h-8 rounded-full"
-              src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+              src={`https://ui-avatars.com/api/?name=${user?.name?.charAt(0) || "A"}`}
               alt="user photo"
             />
           </div>
@@ -73,7 +74,7 @@ const Dropdown = () => {
               )}
             </MenuItem>
 
-            <Menu.Item>
+            {/* <Menu.Item>
               {({ active }) => (
                    <NavLink
                    style={({ isActive, isTransitioning }) => {
@@ -97,7 +98,7 @@ const Dropdown = () => {
                      </button>
                    </NavLink>
               )}
-            </Menu.Item>
+            </Menu.Item> */}
 
 
 

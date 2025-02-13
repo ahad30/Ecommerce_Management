@@ -179,7 +179,7 @@ const Cart = ({ visibleRight, setVisibleRight }) => {
                           onChange={(e) =>
                             handleQuantityChange(item, parseInt(e.target.value))
                           }
-                          className="w-[25px] lg:w-12  text-center border rounded"
+                          className="w-[25px] lg:w-12 shadow-sm sm:text-sm text-center border rounded"
                         />
                         <button
                           onClick={() => handleIncrease(item)}
