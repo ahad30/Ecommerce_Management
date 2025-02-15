@@ -76,6 +76,7 @@ model Product {
   breathability   String
   categoryId      String    @db.ObjectId
   brandId         String    @db.ObjectId
+  referenceId    String
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   topSale         Boolean   @default(false)
