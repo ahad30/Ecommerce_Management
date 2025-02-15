@@ -64,6 +64,13 @@ const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['users'],
     }),
+
+    // Verify email
+    verifyEmail: builder.mutation({
+      query: (token) => ({
+        url: `/users/verify/${token}`,
+      }),
+    }),
   }),
 });
 
@@ -73,5 +80,6 @@ export const {
   useGetUsersQuery, 
   useGetUserByIdQuery, 
   useUpdateUserMutation, 
-  useDeleteUserMutation 
+  useDeleteUserMutation,
+  useVerifyEmailMutation 
 } = authApi;

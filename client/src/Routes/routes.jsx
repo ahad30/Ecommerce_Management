@@ -18,6 +18,7 @@ import Success from "../Pages/Success/Success";
 import PaymentError from "../Pages/Error/PaymentError";
 import OrderHistory from "../Pages/Dashboard/User/OrderHistory/OrderHistory";
 import EditProfile from "../Pages/Dashboard/User/EditProfile/EditProfile";
+import Verify from "../Pages/Verify/Verify";
 
 export const routes = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ export const routes = createBrowserRouter([
       {
         path: "/register",
         element: <Register/>,
+      },
+      {
+        path: "/verify/:token",
+        element: <Verify/>,
       },
     ],
   },
