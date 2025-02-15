@@ -104,23 +104,26 @@ class UserController {
     }
 
     async verifyUser(req, res, next) {
-    try {
-      const { token } = req.params;
-      const result = await this.userService.verifyUser(token);
-      if(!result) {
-        res.status(400).json({
-          success: false,
-          message: "Invalid or expired token",
-        });}
-      res.status(200).json({
-        success: true,
-        message: "User verified successfully",
-        data: result,
+  try {
+    const { token } = req.params;
+    const result = await this.userService.verifyUser(token);
+
+    if (!result) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired token",
       });
-    } catch (error) {
-      next(error);
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "User verified successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
   }
+}
   } 
   
   module.exports = UserController;

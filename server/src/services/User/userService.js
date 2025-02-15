@@ -47,7 +47,7 @@ class UserService extends BcryptHasher {
         },
       });
 
-      const verificationLink = `http://localhost:3000/verify/${verificationToken}`;
+      const verificationLink = `http://localhost:5173/verify/${verificationToken}`;
       
       await SendEmailUtility
       .sendEmail(
@@ -145,27 +145,30 @@ class UserService extends BcryptHasher {
     }
   }
   async verifyUser(verificationToken) {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        verificationToken: verificationToken,
-        tokenExpiresAt: { gte: new Date() }, 
-      },
-    });
+  const user = await this.prisma.user.findFirst({
+    where: {
+      verificationToken: verificationToken,
+      tokenExpiresAt: { gte: new Date() },
+    },
+  });
 
-    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
-
-    // Mark user as verified
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        isVerified: true,
-        verificationToken: null,
-        tokenExpiresAt: null,
-      },
-    });
-
-    return true;
+  if (!user) {
+    return { success: false, message: "Invalid or expired token" };
   }
+
+  // Mark user as verified
+  await this.prisma.user.update({
+    where: { id: user.id },
+    data: {
+      isVerified: true,
+      verificationToken: null,
+      tokenExpiresAt: null,
+    },
+  });
+
+  return { success: true, message: "User verified successfully" };
+}
+
 }
 
 module.exports = UserService;
