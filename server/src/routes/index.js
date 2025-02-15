@@ -67,6 +67,10 @@ router.delete('/users/:id', (req, res, next) => {
 });
 
 
+router.get('/users/verify/:token',(req,res,next)=>{
+    userController.verifyUser(req,res,next);
+})
+
 
 // Define routes
 router.post('/admin/create', (req, res, next) => adminController.createAdmin(req, res, next));
@@ -227,6 +231,12 @@ router.get("/success", (req, res, next) => {
     orderController.paymentSuccess(req, res, next);
 })
 
+
+
+router.get("/orders/trace/:trackingNumber",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.getOrderByTrackingNumber(req,res,next);
+})
 
 
 

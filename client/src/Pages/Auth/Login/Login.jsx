@@ -14,7 +14,6 @@ import { setUser, useCurrentToken, useCurrentUser } from '../../../redux/Feature
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location)
  const dispatch = useAppDispatch();
  const user = useAppSelector(useCurrentUser);
  const token = useAppSelector(useCurrentToken);

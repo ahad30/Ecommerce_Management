@@ -55,6 +55,17 @@ class OrderService {
         })
         return order;
     }
+
+    async getOrderByTrackingNumber(trackingNumber) {
+
+        const order = await this.prisma.order.findUnique({
+            where:{
+                transactionId:trackingNumber
+            }
+        })
+
+        return order
+    }
 }
 
 module.exports = OrderService;

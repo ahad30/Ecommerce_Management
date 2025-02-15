@@ -97,6 +97,18 @@ class OrderCOntroller {
         }
 
     }
+
+    async getOrderByTrackingNumber(req,res,next){
+
+        try {
+            const trackingNumber = req.params.trackingNumber;
+            const order = await this.orderService.getOrderByTrackingNumber(trackingNumber);
+            ResponseHandler.success(res, "order fetched successfully", order, 200);
+        } catch (error) {
+            ResponseHandler.error(res, "order not fetched", 500, error);
+            next(error)
+    }
+}
 }
 
 module.exports = OrderCOntroller

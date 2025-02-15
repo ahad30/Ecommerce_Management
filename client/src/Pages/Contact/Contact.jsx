@@ -2,7 +2,7 @@ import React from 'react'
 import { FaArrowRight, FaEnvelope, FaGreaterThan, FaHome, FaMapMarkerAlt, FaPhoneAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import img from "../../assets/banner/contact-banner.jpg";
-
+            
 const Contact = () => {
   return (
 

@@ -1,5 +1,6 @@
+const SendEmailUtility = require("../../shared/SendEmailUtility ");
 const BcryptHasher = require("../../utility/BcryptPasswordHasher");
-
+const crypto = require("crypto")
 class UserService extends BcryptHasher {
   constructor(prismaClient) {
     super();
@@ -29,16 +30,34 @@ class UserService extends BcryptHasher {
       // Hash the password
       const hashedPassword = await this.hash(data.password, 10);
 
+
+
+
+      const verificationToken = crypto.randomBytes(32).toString("hex");
       // Create the user
-      return await this.prisma.user.create({
+      const user= await this.prisma.user.create({
         data: {
           email: data.email,
           password: hashedPassword,
           phone: data.phone,
           role: data.role,
           name: data.name,
+          verificationToken,
+          tokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), 
         },
       });
+
+      const verificationLink = `http://localhost:5173/verify/${verificationToken}`;
+      
+      await SendEmailUtility
+      .sendEmail(
+        user.email,
+        `<p>Click <a href="${verificationLink}">here</a> to verify your account.</p>`,
+        "Verify Your Account"
+      );
+
+      return { message: "Account created. Please verify your email." };
+
     } catch (error) {
       console.error(error);
       throw new Error(`${error.message}`);
@@ -125,6 +144,31 @@ class UserService extends BcryptHasher {
       throw new Error("Database error: Unable to delete user");
     }
   }
+  async verifyUser(verificationToken) {
+  const user = await this.prisma.user.findFirst({
+    where: {
+      verificationToken: verificationToken,
+      tokenExpiresAt: { gte: new Date() },
+    },
+  });
+
+  if (!user) {
+    return { success: false, message: "Invalid or expired token" };
+  }
+
+  // Mark user as verified
+  await this.prisma.user.update({
+    where: { id: user.id },
+    data: {
+      isVerified: true,
+      verificationToken: null,
+      tokenExpiresAt: null,
+    },
+  });
+
+  return { success: true, message: "User verified successfully" };
+}
+
 }
 
 module.exports = UserService;
