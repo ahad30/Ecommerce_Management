@@ -3,7 +3,12 @@ class ProductService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-
+     generateReferenceId() {
+        const date = new Date();
+        const formattedDate = date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14); 
+        const randomNum = Math.floor(1000 + Math.random() * 9000); 
+        return `PROD-${formattedDate}-${randomNum}`;
+    }
     buildWhereClause(filters, searchTerm) {
         const searchCondition = searchTerm
             ? {
@@ -25,10 +30,13 @@ class ProductService {
         try {
             const { variants, ...productData } = data;
 
-        console.log(productData);
+        // console.log(productData);
+
         
+
+        let referenceId= this.generateReferenceId();
             const product = await this.prisma.product.create({
-              data: productData, 
+              data: {...productData,referenceId}, 
             });
         
             console.log('Finding product with ID:', product.id); // Check the ID used for lookup
@@ -142,6 +150,7 @@ console.log(error);
     // Update a product by ID
     async updateProduct(id, data) {
         try {
+            // Update product details
             const product = await this.prisma.product.update({
                 where: { id },
                 data: {
@@ -151,22 +160,69 @@ console.log(error);
                     imageUrl: data.imageUrl,
                     categoryId: data.categoryId,
                     updatedAt: new Date(),
-                    variants: {
-                        deleteMany: {},
-                        create: data.variants || [],
-                    },
                 },
                 include: {
                     category: true,
                     variants: true,
                 },
             });
-            return product;
+    
+            // Extract variant IDs from the request
+            const variantIds = data.variants?.map((variant) => variant.id).filter(Boolean) || [];
+    
+            // Remove variants not in the update request
+            await this.prisma.variant.deleteMany({
+                where: {
+                    productId: id,
+                    NOT: { id: { in: variantIds } },
+                },
+            });
+    
+            // Handle Variants
+            if (data.variants && data.variants.length > 0) {
+                await Promise.all(
+                    data.variants.map(async (variant) => {
+                        await this.prisma.variant.upsert({
+                            where: { id: variant.id || "new_id_placeholder" }, // Prevents Prisma error for new variants
+                            update: {
+                                attributes: variant.attributes,
+                                stock: variant.stock,
+                                price: variant.price,
+                                priceTiers: variant.priceTiers,
+                                imageUrl: variant.imageUrl,
+                                sku: variant.sku,
+                                updatedAt: new Date(),
+                            },
+                            create: {
+                                productId: id,
+                                attributes: variant.attributes,
+                                stock: variant.stock,
+                                price: variant.price,
+                                priceTiers: variant.priceTiers,
+                                imageUrl: variant.imageUrl,
+                                sku: variant.sku,
+                            },
+                        });
+                    })
+                );
+            }
+    
+            // Fetch updated product with variants
+            const updatedProduct = await this.prisma.product.findUnique({
+                where: { id },
+                include: {
+                    category: true,
+                    variants: true,
+                },
+            });
+    
+            return updatedProduct;
         } catch (error) {
             console.error("Error updating product:", error);
             throw new Error("Product update failed");
         }
     }
+    
 
     // Delete a product by ID
     async deleteProduct(id) {

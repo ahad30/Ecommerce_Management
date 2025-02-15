@@ -26,6 +26,9 @@ model User {
   phone     String?  @unique
   role      Role
   name      String
+  isVerified        Boolean  @default(false)
+  verificationToken String?  @unique
+  tokenExpiresAt   DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -76,6 +79,7 @@ model Product {
   breathability   String
   categoryId      String    @db.ObjectId
   brandId         String    @db.ObjectId
+  referenceId    String
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   topSale         Boolean   @default(false)
