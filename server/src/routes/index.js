@@ -67,6 +67,10 @@ router.delete('/users/:id', (req, res, next) => {
 });
 
 
+router.get('/users/verify/:token',(req,res,next)=>{
+    userController.verifyUser(req,res,next);
+})
+
 
 // Define routes
 router.post('/admin/create', (req, res, next) => adminController.createAdmin(req, res, next));
