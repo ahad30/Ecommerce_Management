@@ -229,6 +229,12 @@ router.get("/success", (req, res, next) => {
 
 
 
+router.get("/orders/trace/:trackingNumber",(req,res,next)=>{
+    const orderController = new OrderCOntroller(orderService);
+    orderController.getOrderByTrackingNumber(req,res,next);
+})
+
+
 
 //slider routes
 //[route("/sliders/create")]
