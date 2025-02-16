@@ -67,27 +67,7 @@ const BottomHeader = () => {
         </NavLink>
       </Typography>
 
-      {/* <Typography
-       
-        as="li"
-        color="blue-gray"
-        className={`px-2 text-sm underline lg:no-underline`}
-      >
-        <NavLink
-          style={({ isActive, isTransitioning }) => {
-            return {
-              fontWeight: isActive ? "bold" : "",
-              color: isActive ? "red" : "black",
-              viewTransitionName: isTransitioning ? "slide" : "",
-            };
-          }}
-          to="/myList"
-          className="flex items-center text-[#150B2BB3]"
-        >
-          About
-        </NavLink>
-      </Typography> */}
-
+   
       <Typography
        
         as="li"
@@ -106,6 +86,26 @@ const BottomHeader = () => {
           className="flex items-center text-[#150B2BB3]"
         >
           Contact
+        </NavLink>
+      </Typography>
+      <Typography
+       
+        as="li"
+        color="blue-gray"
+        className={`px-2 text-sm underline lg:no-underline`}
+      >
+        <NavLink
+          style={({ isActive, isTransitioning }) => {
+            return {
+              fontWeight: isActive ? "bold" : "",
+              color: isActive ? "red" : "black",
+              viewTransitionName: isTransitioning ? "slide" : "",
+            };
+          }}
+          to="/order-track"
+          className="flex items-center text-[#150B2BB3]"
+        >
+          Track Order
         </NavLink>
       </Typography>
 
