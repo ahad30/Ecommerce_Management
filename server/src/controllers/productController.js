@@ -87,7 +87,10 @@ class ProductController {
         try {
             const productId = req.params.id;
             const result = await this.productService.updateProduct(productId, req.body);
-            res.status(200).json(result);
+            res.status(200).json({
+                message: 'Products updated successfully',
+                result
+            });
         } catch (error) {
             console.error(error);
             next(error);

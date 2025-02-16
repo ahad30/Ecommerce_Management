@@ -1,25 +1,25 @@
-
 import React, { useEffect, useState } from "react";
+import { Button, Spin } from "antd";
+import { toast } from "sonner";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   useGetProductsByIdQuery,
   useUpdateProductMutation,
-} from "@/redux/Feature/Admin/product/productApi";
-import { useRouter, useSearchParams } from "next/navigation";
-import ZFormTwo from "@/components/Form/ZFormTwo";
-import ZNumber from "@/components/Form/ZNumber";
-import ZSelect from "@/components/Form/ZSelect";
-import ZInputTextArea from "@/components/Form/ZInputTextArea";
-import ZInputTwo from "@/components/Form/ZInputTwo";
-import { Button, Spin } from "antd";
-import { VariantProductTable } from "@/components/VariantProductTable";
-import { useGetErpCategoryQuery } from "@/redux/Feature/Admin/erpcategory/erpcategory";
-import { useGetBrandQuery } from "@/redux/Feature/Admin/brand/brandApi";
-import { useGetBusinessesQuery } from "@/redux/Feature/Admin/businesses/businesses";
-import { useGetBranchesQuery } from "@/redux/Feature/Admin/branch/branchesApi";
-import { useGetAttributesQuery } from "@/redux/Feature/Admin/product/attributesApi";
-import BreadCrumb from "@/components/BreadCrumb/BreadCrumb";
-import { toast } from "sonner";
-import { useAddProductVariationApiMutation } from "@/redux/Feature/Admin/product/productVariationApi";
+} from "../../../../../redux/Feature/Admin/product/productApi";
+import { useGetAttributesQuery } from "../../../../../redux/Feature/Admin/attribute/attributesApi";
+import { useGetCategoryQuery } from "../../../../../redux/Feature/Admin/category/categoryApi";
+import { useGetBrandQuery } from "../../../../../redux/Feature/Admin/brand/brandApi";
+import ZImageInput from "../../../../../components/Form/ZImageInput";
+import ZInputTwo from "../../../../../components/Form/ZInputTwo";
+import ZNumber from "../../../../../components/Form/ZNumber";
+import ZSelect from "../../../../../components/Form/ZSelect";
+import ZFormTwo from "../../../../../components/Form/ZFormTwo";
+import BreadCrumb from "../../../../../components/BreadCrumb/BreadCrumb";
+import { VariantProductTable } from "../../../../../components/VariantProductTable";
+import ZInputTextArea from "../../../../../components/Form/ZInputTextArea";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import { variantExists } from "../../../../../components/helper/SameVariantExist";
+import axios from "axios";
 
 function generateUniqueId(length = 2) {
   const chars = "123456789";
@@ -31,10 +31,12 @@ function generateUniqueId(length = 2) {
 }
 
 const EditProduct = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const productId = searchParams.get("id");
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [updateProductData, setUpdateProductData] = useState({});
+  const [addonPages, setAddonPages] = useState([
+    { minQty: "", maxQty: "", price: "" },
+  ]);
   // attribute State - 1 from db
   const [attributeValue, setAttributeValue] = useState([]);
 
@@ -43,7 +45,7 @@ const EditProduct = () => {
   // attribute options for selected options state-3
   const [attributeOptions, setAttributeOptions] = useState([]);
   //  product type state - 4
-  const [typeProduct, setProductType] = useState("");
+
   // selectedAttribute UnderTheValue - 5
   const [selectedAttributeUnderTheValue, setSelectedAttributeUnderTheValue] =
     useState([]);
@@ -57,49 +59,24 @@ const EditProduct = () => {
 
   // image file , price , quantity - 8 for vairant product
   const [priceQuantityImage, setPriceQuantityImage] = useState({
-    // productImage:"",
+    imageUrl: "",
     stock: "",
-    min_stock: "",
-    max_stock: "",
-    salePrice: "",
-    serialNo: "",
-    purchasePrice: "",
-    wholeSalePrice: "",
-    retailPrice: "",
-    qrCode: "",
-  });
-
-  // single -----> image file , price , quantity - 9
-  const [singlePriceQuantityImage, singleSetPriceQuantityImage] = useState({
-    // images:"",
-    // salePrice: "",
+    price: "",
     // serialNo: "",
-    productInitialQty: "",
-    productMinQty: "",
-    productMaxQty: "",
-    productPurchasePrice: "",
-    productWholeSalesPrice: "",
-    productRetailPrice: "",
+    // qrCode: "",
   });
 
-  
-
-  const { data: eData, isLoading: eLoading } = useGetErpCategoryQuery();
+  const { data: eData, isLoading: eLoading } = useGetCategoryQuery();
   const { data: bData, isLoading: bLoading } = useGetBrandQuery();
-  const { data: businessData, isLoading: businessLoading } =
-    useGetBusinessesQuery();
-  const {
-    data: allBranchData,
-    error,
-    isLoading: branchIsLoading,
-  } = useGetBranchesQuery();
   const { data: attributeWithValue, isLoading: attributeIsLoading } =
     useGetAttributesQuery();
   const {
     data: productData,
-    isLoading, 
-    isSuccess
-  } = useGetProductsByIdQuery(productId);
+    isSuccess,
+    isLoading,
+    error,
+  } = useGetProductsByIdQuery(id);
+
   const [
     updateProduct,
     {
@@ -110,35 +87,29 @@ const EditProduct = () => {
       error: pError,
     },
   ] = useUpdateProductMutation();
-  const [addVariation, { isLoading: addVariationLoading }] = useAddProductVariationApiMutation();
 
-console.log(productData?.data)
+//  console.log(productData)
+ console.log(skus)
+
+
   useEffect(() => {
-    const product = productData?.data;
-    if (isSuccess &&  product) {
+    const product = productData;
+    if (isSuccess && product) {
       setUpdateProductData(product);
-      setProductType(product.productType);
-      if (product.productType === "0") {
-        setSkus(
-          product.productVariant.map((variant) => ({
-            variationId: variant.productVariantID,
-            sku: variant.sku,
-            stock: variant.stock,
-            min_stock: variant.min_stock,
-            max_stock: variant.max_stock,
-            salePrice: variant.salePrice,
-            serialNo: variant.serialNo,
-            purchasePrice: variant.purchasePrice,
-            wholeSalePrice: variant.wholeSalePrice,
-            retailPrice: variant.retailPrice,
-            qrCode: variant.qrCode,
-            attributes: variant.attribute_combination,
-          }))
-        );
-      }
+      setSkus(
+        product.variants.map((variant) => ({
+          variationId: variant.id,
+          productId: variant.productId,
+          sku: variant.sku,
+          stock: variant.stock,
+          price: variant?.price,
+          priceTiers: variant?.priceTiers,
+          imageUrl: variant?.imageUrl,
+          attributes: variant.attributes,
+        }))
+      );
     }
-  }, [isSuccess , productData?.data]);
-
+  }, [isSuccess, productData]);
 
   useEffect(() => {
     if (
@@ -146,8 +117,8 @@ console.log(productData?.data)
       attributeWithValue?.data?.length > 0
     ) {
       const attributeOptions = attributeWithValue?.data?.map((item) => ({
-        label: item.attributeName,
-        value: item.attributeName,
+        label: item.name,
+        value: item.name,
       }));
       setAttributeOptions([...attributeOptions]);
       setAttributeValue([...attributeWithValue.data]);
@@ -160,7 +131,7 @@ console.log(productData?.data)
       for (let index = 0; index < selectedAttribute.length; index++) {
         const element = selectedAttribute[index];
         const findTheAttributeWithValue = attributeValue?.find(
-          (item) => item.attributeName == element
+          (item) => item.name == element
         );
 
         if (findTheAttributeWithValue) {
@@ -171,97 +142,93 @@ console.log(productData?.data)
     }
   }, [selectedAttribute.length, selectedAttribute, attributeValue]);
 
-  // useEffect(() => {
-  //   setSkus([]);
-  // }, [typeProduct]);
+  useEffect(() => {
+   
+    if (pIsSuccess) {
+      navigate("/admin/products")
+    }
+  }, [pIsSuccess]);
 
+  const handleAddPage = () => {
+    setAddonPages([...addonPages, { minQty: "", maxQty: "", price: "" }]);
+  };
 
+  const handleRemovePage = (itemValue) => {
+    const filterData = addonPages.filter((item) => item !== itemValue);
+    setAddonPages([...filterData]);
+  };
 
-  const handleAddVariant = async () => {
-    const attributes = [];
+  const handleInputChange = (index, field, value) => {
+    const updatedPages = [...addonPages];
+    updatedPages[index][field] = value;
+    setAddonPages(updatedPages);
+  };
+
+  const handleAddPerSkuInSkus = () => {
+    const attributes = {};
     const valuesName = [];
-  
-    // Validate required fields
+
     if (perSku.length === 0) {
       toast.error("Select minimum an attribute value", {
         id: 2,
         duration: 1000,
         position: "top-right",
       });
-      return;
     }
-  
-    const requiredFields = [
-      { field: priceQuantityImage.stock, error: "Enter variation stock", id: 1 },
-      { field: priceQuantityImage.min_stock, error: "Enter minimum variation stock", id: 2 },
-      { field: priceQuantityImage.max_stock, error: "Enter maximum variation stock", id: 3 },
-      { field: priceQuantityImage.salePrice, error: "Enter variation sale price", id: 4 },
-      { field: priceQuantityImage.serialNo, error: "Enter variation serial number", id: 5 },
-      { field: priceQuantityImage.purchasePrice, error: "Enter variation purchase price", id: 6 },
-      { field: priceQuantityImage.wholeSalePrice, error: "Enter variation wholesale price", id: 7 },
-      { field: priceQuantityImage.retailPrice, error: "Enter variation retail price", id: 8 },
-      { field: priceQuantityImage.qrCode, error: "Enter variation qr Code", id: 9 },
-    ];
-  
-    for (const { field, error, id } of requiredFields) {
-      if (!field) {
-        toast.error(error, { id });
-        return; 
-      }
+    if (priceQuantityImage.stock === "") {
+      toast.error("Enter variation stock", { id: 1 });
     }
-  
-    // Prepare attributes and SKU
-    perSku.forEach((element) => {
-      const [attributeName, attributeValue] = element.split("-");
-      valuesName.push(attributeValue);
-      attributes.push({ attributeName, attributeValue });
-    });
-  
-    const sku = {
-      variationId: generateUniqueId(),
-      sku: `${valuesName.join("-")}`,
-      stock: priceQuantityImage.stock,
-      min_stock: priceQuantityImage.min_stock,
-      max_stock: priceQuantityImage.max_stock,
-      salePrice: priceQuantityImage.salePrice,
-      serialNo: String(priceQuantityImage.serialNo),
-      purchasePrice: priceQuantityImage.purchasePrice,
-      wholeSalePrice: priceQuantityImage.wholeSalePrice,
-      retailPrice: priceQuantityImage.retailPrice,
-      qrCode: String(priceQuantityImage.qrCode),
-      attributes,
-    };
-  
-    // Check for duplicate SKU
-    if (skus.length > 0 && skus.some((existingSku) => existingSku.sku === sku.sku)) {
-      toast.error("This variant has already been added.", { id: 9 });
-      return;
+    if (priceQuantityImage.price === "") {
+      toast.error("Enter variation price", { id: 2 });
     }
-  
-    // Add variant to the list
-    try {
-      const response = await addVariation({
-        productID: productId,
-        sku: sku.sku,
-        stock: Number(sku.stock),
-        min_stock: Number(sku.min_stock),
-        max_stock: Number(sku.max_stock),
-        salePrice: Number(sku.salePrice),
-        serialNo: String(sku.serialNo),
-        purchasePrice: Number(sku.purchasePrice),
-        wholeSalePrice: Number(sku.wholeSalePrice),
-        retailPrice: Number(sku.retailPrice),
-        qrCode: sku.qrCode,
-      }).unwrap();
-  
-      if (response) {
-        setSkus([...skus, { ...sku, variationId: response.data.id }]);
+
+    if (
+      perSku.length > 0 &&
+      priceQuantityImage.stock &&
+      priceQuantityImage.price
+    ) {
+      perSku.forEach((element) => {
+        const proPertyKey = element.split("-")[0];
+        const proPertyValue = element.split("-")[1];
+        valuesName.push(proPertyValue);
+        attributes[proPertyKey] = proPertyValue;
+      });
+
+      const sku = {
+        // variationId: generateUniqueId(),
+        sku: `${valuesName.join("-")}`,
+        stock: priceQuantityImage.stock,
+        price: priceQuantityImage.price,
+        imageUrl: priceQuantityImage.imageUrl || "",
+        attributes,
+        priceTiers: addonPages.map((page) => ({
+          minQty: page.minQty || "",
+          maxQty: page.maxQty || "",
+          price: page.price || "",
+        })),
+      };
+
+      console.log(sku);
+      if (skus.length === 0) {
+        setSkus([...skus, { ...sku }]);
         handleRefreshVariantState();
-        toast.success("Variant added successfully");
+        // Reset priceTiers to default state (only the first field)
+        setAddonPages([{ minQty: "", maxQty: "", price: "" }]);
+      } else if (skus.length > 0) {
+        const skusAttributes = skus.map((sku) => sku.attributes);
+        const exist = variantExists(skusAttributes, sku.attributes);
+        if (!exist) {
+          setSkus([...skus, { ...sku }]);
+          handleRefreshVariantState();
+          // Reset priceTiers to default state (only the first field)
+          setAddonPages([{ minQty: "", maxQty: "", price: "" }]);
+        } else {
+          toast.error("Already exists the variant of the product", {
+            duration: 2000,
+          });
+          // Do not reset priceTiers if the variant already exists
+        }
       }
-    } catch (error) {
-      toast.error(error?.data?.message || "Failed to add variant");
-      console.error(error);
     }
   };
 
@@ -269,113 +236,137 @@ console.log(productData?.data)
     setPerSku([]);
     setPriceQuantityImage({
       stock: "",
-      min_stock: "",
-      max_stock: "",
-      salePrice: "",
-      serialNo: "",
-      purchasePrice: "",
-      wholeSalePrice: "",
-      retailPrice: "",
-      qrCode: "",
+      price: "",
+      imageUrl: "",
     });
     setRefresh(!refresh);
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (data) => {
+  const uploadImage = async (file) => {
+    if (!file) return "";
+
     try {
-      const formData = {
-        productTitle: values.productTitle,
-        productSubtitle: values.productSubtitle,
-        productDescription: values.productDescription,
-        businessID: values.businessID,
-        branchIDs: values.branchIDs,
-        notAvailableBranchIDs: values.notAvailableBranchIDs,
-        brandID: values.brandID,
-        erpCategoryID: values.erpCategoryID,
-        isActive: values.isActive,
-        productType: typeProduct,
-      };
-                         
-      // For single product
-      if (typeProduct === "1") {
-        formData.sku = values.sku;
-        formData.productInitialQty = Number(values.productInitialQty);
-        formData.productMinQty = Number(values.productMinQty);
-        formData.productMaxQty = Number(values.productMaxQty);
-        formData.productPurchasePrice = Number(values.productPurchasePrice);
-        formData.productWholeSalesPrice = Number(values.productWholeSalesPrice);
-        formData.productRetailPrice = Number(values.productRetailPrice);
-        formData.productVariant = [];
-      }
-      // For variant product
-      else if (typeProduct === "0") {
-        // if (skus.length === 0) {
-        //   toast.error("At least one variant is required");
-        //   return;
-        // }
+      const imageHostingKey = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+      const imageHostingApi = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
 
-        formData.productVariant = skus.map(sku => ({
-          productVariantID: sku.variationId || null,
-          sku: sku.sku,
-          stock: Number(sku.stock),
-          min_stock: Number(sku.min_stock),
-          max_stock: Number(sku.max_stock),
-          salePrice: Number(sku.salePrice),
-          serialNo: sku.serialNo,
-          purchasePrice: Number(sku.purchasePrice),
-          wholeSalePrice: Number(sku.wholeSalePrice),
-          retailPrice: Number(sku.retailPrice),
-          qrCode: sku.qrCode,
-          attribute_combination: sku.attributes
-        }));
-      }
+      const imageFile = new FormData();
+      imageFile.append("image", file);
 
-      console.log(formData);
+      const res = await axios.post(imageHostingApi, imageFile, {
+        headers: { "content-type": "multipart/form-data" },
+      });
 
-      const response = await updateProduct({
-        id: productId,
-        data: formData
-      }).unwrap();
-
-      if (response) {
-        router.push("/Dashboard/Product");
+      if (res?.data?.success) {
+        return res.data.data.display_url;
+      } else {
+        throw new Error("Image upload failed");
       }
     } catch (error) {
-      console.error("Update error:", error);
+      console.error("Error uploading image:", error.message);
+      return ""; // Return an empty string if the upload fails
     }
   };
 
+  const mainImageUrl = await uploadImage(data?.ImageUrl);
 
+  // Prepare the main product data
+  const modifiedData = {
+    brandId: data?.brandId || "",
+    categoryId: data?.categoryId || "",
+    status: data?.status || true,
+    topSale: data?.topSale || false,
+    availability: data?.availability || true,
+    newArrival: data?.newArrival || false,
+    description: data.description || "",
+    productSubtitle: data.productSubtitle || "",
+    name: data.name || "",
+    material: data.material || "",
+    thickness: data.thickness || "",
+    elasticity: data.elasticity || "",
+    breathability: data.breathability || "",
+    weight: data?.weight || "",
+    imageUrl: mainImageUrl || updateProductData?.imageUrl,
+    price: parseFloat(data?.Price),
+  };
 
-  if(isLoading){
-    return <div className="min-h-screen flex justify-center items-center">
-      <p>
-        <Spin size="large" />
-      </p>
-    
-    </div>
+  if (skus.length > 0) {
+    // Upload images for each variation
+    const variantProductData = {
+      ...modifiedData,
+      variants: await Promise.all(
+        skus.map(async (sku) => {
+          const uploadedImageUrl = await uploadImage(sku.imageUrl);
+
+          // For new variants, exclude variationId and productId
+          if (!sku.variationId) {
+            return {
+              attributes: sku.attributes,
+              sku: sku.sku,
+              stock: sku.stock,
+              price: sku.price,
+              imageUrl: uploadedImageUrl || sku?.imageUrl,
+              priceTiers: sku.priceTiers || [],
+            };
+          }
+
+          // For existing variants, include variationId and productId
+          return {
+            id: sku.variationId,
+            productId: sku.productId,
+            attributes: sku.attributes,
+            sku: sku.sku,
+            stock: sku.stock,
+            price: sku.price,
+            imageUrl: uploadedImageUrl || sku?.imageUrl,
+            priceTiers: sku.priceTiers || [],
+          };
+        })
+      ),
+    };
+
+    console.log("Final Product Data:", variantProductData);
+    updateProduct({ data: variantProductData, id: id });
+  }
+};
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p>
+          <Spin size="large" />
+        </p>
+      </div>
+    );
   }
   return (
     <div>
-      <BreadCrumb/>
-      <p className="text-2xl font-bold text-center mt-5 mb-5">Type: {typeProduct === "0" ? "Variant" : "Single"}</p>
+   <Link to={`/admin/products`}>
+        <div className="flex flex-col lg:flex-row items-center gap-x-2 justify-end my-5">
+          <button className="bg-primary font-Poppins font-medium py-2 px-5 rounded-lg text-white">
+            Back
+          </button>
+        </div>
+      </Link>
+
       <ZFormTwo
         isLoading={pIsLoading}
         isSuccess={pIsSuccess}
         isError={pIsError}
         error={pError}
         submit={handleSubmit}
-        formType="create"
+        formType="edit"
         data={pData}
         buttonName="Submit"
       >
         <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-10">
           <ZInputTwo
-            name="productTitle"
+            name="name"
             type="text"
-            label="Product Title"
+            label="Product Name"
             placeholder="Enter product title"
-            value={updateProductData?.productTitle}
+            required={1}
+            value={updateProductData?.name}
           />
           <ZInputTwo
             name="productSubtitle"
@@ -385,347 +376,316 @@ console.log(productData?.data)
             value={updateProductData?.productSubtitle}
           />
 
-          {typeProduct == 1 && (
-            <ZInputTwo
-              name="sku"
-              type="text"
-              label="SKU"
-              placeholder="Enter SKU"
-              required
-              value={updateProductData?.sku}  
-            />
-          )}
+          <ZNumber 
+           name="Price"
+           label="Price"
+           placeholder="Enter Price" 
+           value={updateProductData?.price}
+
+           />
+
           <ZSelect
-            name="erpCategoryID"
+            name="categoryId"
             isLoading={eLoading}
             label="Product Category"
-            options={
-              eData?.data?.map((eCategory) => ({
-                label: eCategory.erpCategoryName,
-                value: eCategory.erpCategoryID,
-              }))
-            }
+            options={eData?.data?.map((eCategory) => ({
+              label: eCategory.categoryName,
+              value: eCategory.id,
+            }))}
             placeholder="Select category"
-            value={Number(updateProductData?.erpCategoryID)}
+            required={1}
+            value={updateProductData?.categoryId}
           />
 
           <ZSelect
-            name="brandID"
+            name="brandId"
             isLoading={bLoading}
             label="Product Brand"
-            options={
-              bData?.data?.map((brand) => ({
-                label: brand.brandName,
-                value: brand.brandID,
-              }))
-            }
+            options={bData?.data?.map((brand) => ({
+              label: brand.brandName,
+              value: brand.id,
+            }))}
             placeholder="Select brand"
-            value={Number(updateProductData?.brandID)}
+            value={updateProductData?.brandId}
           />
 
-          <ZSelect
-            name="businessID"
-            label="Business Name"
-            placeholder="Select business"
-            options={
-              businessData?.data?.map((business) => ({
-                label: business.businessName,
-                value: business.businessID,
-              }))
-            }
-            isLoading={businessLoading}
-            value={Number(updateProductData?.businessID)} 
-          />
+          <ZImageInput name="ImageUrl" label="Thumbnail Image" 
+          defaultValue={updateProductData?.imageUrl ? [
+              {
+                uid: '-1',
+                name: 'Current Image',
+                status: 'done',
+                url: updateProductData?.imageUrl,
+              },
+            ] : []}
 
-          <ZSelect
-            name="branchIDs"
-            mode={"multiple"}
-            label="Branch Name"
-            placeholder="Select Available Branch"
-            options={
-              allBranchData?.data?.map((branch) => ({
-                label: branch.branchName,
-                value: branch.branchID,
-              }))
-            }
-            isLoading={branchIsLoading}
-            value={updateProductData?.branchIDs ? JSON.parse(updateProductData.branchIDs) : []}
           />
 
           <div className="lg:col-span-2">
             <ZInputTextArea
-              name="productDescription"
+              name="description"
               type="text"
               label="Description"
               placeholder="Enter product description"
-              value={updateProductData?.productDescription}
+            value={updateProductData?.description}
+
+
             />
           </div>
-
-          <ZSelect
-            name="notAvailableBranchIDs"
-            mode={"multiple"}
-            label="Not available Branch Name"
-            placeholder="Select Not Available Branch"
-            options={
-              allBranchData?.data?.map((branch) => ({
-                label: branch.branchName,
-                value: branch.branchID,
-              }))
-            }
-            isLoading={branchIsLoading}
-            value={updateProductData?.notAvailableBranchIDs ? JSON.parse(updateProductData.notAvailableBranchIDs) : []}  
+          <ZInputTwo
+            name="weight"
+            type="text"
+            label="Weight(gm) (optional)"
+            placeholder="Enter weight"
+            value={updateProductData?.weight}
 
           />
 
-          {/* <ZInputTwo
-                name="expiryDate"
-                type="date"
-                label="Expiry Date"
-                placeholder="Enter Expiry Date"
-              />
+          <ZInputTwo
+            name="material"
+            type="text"
+            label="Material(optional)"
+            placeholder="Enter material"
+            value={updateProductData?.material}
 
-              <ZImageInput
-                label="Product Image"
-                name="productImage"
-              ></ZImageInput> */}
+          />
+
+          <ZInputTwo
+            name="thickness"
+            type="text"
+            label="Thickness(optional)"
+            placeholder="Enter thickness"
+            value={updateProductData?.thickness}
+
+          />
+
+          <ZInputTwo
+            name="elasticity"
+            type="text"
+            label="Elasticity(optional)"
+            placeholder="Enter elasticity"
+            value={updateProductData?.elasticity}
+
+          />
+
+          <ZInputTwo
+            name="breathability"
+            type="text"
+            label="Breathability(optional)"
+            placeholder="Enter breathability"
+            value={updateProductData?.breathability}
+
+          />
 
           <ZSelect
-            name="isActive"
+            name="status"
             label="Status"
             options={[
               { label: "Active", value: true },
               { label: "Inactive", value: false },
             ]}
             placeholder="Select status"
-            value={updateProductData?.isActive}
+            value={updateProductData?.status}
+
+          />
+          <ZSelect
+            name="topSale"
+            label="Top Sale"
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+            placeholder="Select Topsale Status"
+            value={updateProductData?.topSale}
+
+          />
+          <ZSelect
+            name="newArrival"
+            label="New Arrival"
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+            placeholder="Select Arrival Status"
+            value={updateProductData?.newArrival}
+
+          />
+          <ZSelect
+            name="availability"
+            label="Availability"
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+            placeholder="Select Availability Status"
+            value={updateProductData?.availability}
+
           />
 
-          {/* single Product type start */}
+        </div>
 
-          {typeProduct === "1" && (
-            <>
-              <ZNumber
-                name="productInitialQty"
-                label="Stock Quantity"
-                placeholder="Enter Stock Quantity"
-                refresh={refresh}
-                defaultKey="singleProduct"
-                setPriceQuantityImage={singleSetPriceQuantityImage}
-                value={productData?.data?.productInitialQty}
-              />
+        <div className="mb-3">
+          {/* per sku  */}
 
-              <ZNumber
-                name="productMinQty"
-                label="Minimum Stock"
-                placeholder="Enter Minimum Stock"
-                refresh={refresh}
-                defaultKey="singleProduct"
-                setPriceQuantityImage={singleSetPriceQuantityImage}
-                value={productData?.data?.productMinQty}
-                
-              />
-              <ZNumber
-                name="productMaxQty"
-                label="Maximum Stock"
-                placeholder="Enter Maximum Stock"
-                refresh={refresh}
-                defaultKey="singleProduct"
-                setPriceQuantityImage={singleSetPriceQuantityImage}
-                value={productData?.data?.productMaxQty}
-                
-              />
-              {/* <ZNumber
-                    name="salePrice"
-                    label="Sale Price"
-                    placeholder="Enter Sale Price"
+          {/* multiple attribute */}
+          <ZSelect
+            setSelectedAttributes={setSelectedAttribute}
+            options={attributeOptions}
+            isLoading={attributeIsLoading}
+            mode={"multiple"}
+            label={"Select Variations (if any)"}
+            name={"attribute-selected"}
+            defaultKey="product"
+            placeholder={"Select Variant Name"}
+            refresh={refresh}
+          ></ZSelect>
+
+          {/* selected attribute underTheValue */}
+          <div className="border border-gray-400 p-3">
+            {/* attribute value */}
+            <div className="mt-12 grid lg:grid-cols-5 gap-5">
+              {selectedAttributeUnderTheValue.map((item) => {
+                return (
+                  <ZSelect
+                    key={item?.id}
+                    options={item?.value?.map((option) => ({
+                      value: `${item?.name}-${option?.name}`,
+                      label: option?.name,
+                    }))}
+                    isLoading={attributeIsLoading}
+                    mode={undefined}
+                    label={`${item.name} value`}
+                    name={`${item.name}`}
+                    setPerSku={setPerSku}
+                    defaultKey="product"
+                    selectedAttribute={selectedAttribute}
                     refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
-                  />
+                    placeholder={`Select ${item.name} value`}
+                  ></ZSelect>
+                );
+              })}
+            </div>
+            {/* image, quantity, price*/}
+            <div className="grid grid-cols-1 items-center gap-x-2 lg:grid-cols-3">
+              <>
+                <ZImageInput
+                  defaultKey="product"
+                  setPriceQuantityImage={setPriceQuantityImage}
+                  label="Picture"
+                  name="imageUrl"
+                  refresh={refresh}
+                ></ZImageInput>
+                <ZNumber
+                  name="stock"
+                  label="Stock Quantity"
+                  placeholder="Enter Stock Quantity"
+                  defaultKey="product"
+                  setPriceQuantityImage={setPriceQuantityImage}
+                  refresh={refresh}
+                />
 
-                  <ZNumber
+                <ZNumber
+                  name="price"
+                  label="Price"
+                  placeholder="Enter Price"
+                  defaultKey="product"
+                  setPriceQuantityImage={setPriceQuantityImage}
+                  refresh={refresh}
+                />
+
+                <div>
+                  <h4 className="mb-3">Price Tiers</h4>
+                  <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
+                    {addonPages.map((page, index) => (
+                      <div key={index} className="flex gap-4">
+                        <div className="w-[85%] flex items-center gap-2">
+                          <ZInputTwo
+                            name={`priceTiers.${index}.minQty`}
+                            type="text"
+                            label={""}
+                            placeholder="Min Quantity"
+                            value={page.minQty}
+                            onChange={(e) =>
+                              handleInputChange(index, "minQty", e.target.value)
+                            }
+                          />
+                          <ZInputTwo
+                            name={`priceTiers.${index}.maxQty`}
+                            type="text"
+                            label={""}
+                            placeholder="Max Quantity"
+                            value={page.maxQty}
+                            onChange={(e) =>
+                              handleInputChange(index, "maxQty", e.target.value)
+                            }
+                          />
+                          <ZInputTwo
+                            name={`priceTiers.${index}.price`}
+                            type="text"
+                            label={""}
+                            placeholder="Price"
+                            value={page.price}
+                            onChange={(e) =>
+                              handleInputChange(index, "price", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="w-[15%]">
+                          {index === 0 ? (
+                            <button
+                              type="button"
+                              onClick={handleAddPage}
+                              className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
+                            >
+                              <AiOutlinePlus size={15} />
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePage(page)}
+                              className="bg-red-500 text-white rounded px-2 mt-1 py-1"
+                            >
+                              <AiOutlineMinus size={15} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* <ZNumber
                     name="serialNo"
                     label="Serial No"
                     placeholder="Enter Serial No"
+                    defaultKey="product"
+                    setPriceQuantityImage={setPriceQuantityImage}
                     refresh={refresh}
-                    defaultKey="singleProduct"
-                    setPriceQuantityImage={singleSetPriceQuantityImage}
+                  />
+                  <ZNumber
+                    name="qrCode"
+                    label="Qr Code No"
+                    placeholder="Enter Qr code"
+                    defaultKey="product"
+                    setPriceQuantityImage={setPriceQuantityImage}
+                    refresh={refresh}
                   /> */}
+              </>
+            </div>
 
-              <ZNumber
-                name="productPurchasePrice"
-                label="Purchase Price"
-                placeholder="Enter Purchase Price"
-                refresh={refresh}
-                defaultKey="singleProduct"
-                setPriceQuantityImage={singleSetPriceQuantityImage}
-                value={productData?.data?.productPurchasePrice}
-
-              />
-              <ZNumber
-                name="productWholeSalesPrice"
-                label="Wholesale Price"
-                placeholder="Enter Wholesale Price"
-                refresh={refresh}
-                defaultKey="singleProduct"
-                setPriceQuantityImage={singleSetPriceQuantityImage}
-                value={productData?.data?.productWholeSalesPrice}
-
-              />
-              <ZNumber
-                name="productRetailPrice"
-                label="Retail Price"
-                placeholder="Enter Retail Price"
-                refresh={refresh}
-                defaultKey="singleProduct"
-                setPriceQuantityImage={singleSetPriceQuantityImage}
-                value={productData?.data?.productRetailPrice}
-
-              />
-            </>
-          )}
+            {/* button */}
+            <div className="flex justify-end">
+              <Button
+                htmlType="button"
+                onClick={() => handleAddPerSkuInSkus()}
+                style={{ backgroundColor: "#162447", color: "white" }}
+              >
+                + Add Variant
+              </Button>
+            </div>
+          </div>
+          {/* per sku end */}
         </div>
-
-                    {/* variant Product type start */}
-                    {typeProduct === "0" && (
-              <div className="mb-3">
-                {/* per sku  */}
-
-                {/* multiple attribute */}
-                <ZSelect
-                  setSelectedAttributes={setSelectedAttribute}
-                  options={attributeOptions}
-                  isLoading={attributeIsLoading}
-                  mode={"multiple"}
-                  label={"Select Variations"}
-                  name={"attribute-selected"}
-                  defaultKey="product"
-                  placeholder={"Select Variant Name"}
-                  refresh={refresh}
-                ></ZSelect>
-
-                {/* selected attribute underTheValue */}
-                <div className="border border-gray-400 p-3">
-                  {/* attribute value */}
-                  <div className="mt-12 grid lg:grid-cols-5 gap-5">
-                    {selectedAttributeUnderTheValue.map((item) => {
-                      return (
-                        <ZSelect
-                          key={item?.id}
-                          options={item?.values?.map((option) => ({
-                            value: `${item?.attributeName}-${option?.attributeValue}`,
-                            label: option?.attributeValue,
-                          }))}
-                          isLoading={attributeIsLoading}
-                          mode={undefined}
-                          label={`${item.attributeName} value`}
-                          name={`${item.attributeName}`}
-                          setPerSku={setPerSku}
-                          defaultKey="product"
-                          selectedAttribute={selectedAttribute}
-                          refresh={refresh}
-                          placeholder={`Select ${item.attributeName} value`}
-                        ></ZSelect>
-                      );
-                    })}
-                  </div>
-                  {/* image, quantity, price*/}
-                  <div className="grid grid-cols-1 items-center gap-x-2 lg:grid-cols-3">
-                    <>
-                      <ZNumber
-                        name="stock"
-                        label="Stock Quantity"
-                        placeholder="Enter Stock Quantity"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-
-                      <ZNumber
-                        name="min_stock"
-                        label="Minimum Stock"
-                        placeholder="Enter Minimum Stock"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-                      <ZNumber
-                        name="max_stock"
-                        label="Maximum Stock"
-                        placeholder="Enter Maximum Stock"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-                      <ZNumber
-                        name="salePrice"
-                        label="Sale Price"
-                        placeholder="Enter Sale Price"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-
-                      <ZNumber
-                        name="serialNo"
-                        label="Serial No"
-                        placeholder="Enter Serial No"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-                      <ZNumber
-                        name="qrCode"
-                        label="Qr Code No"
-                        placeholder="Enter Qr code"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-                      <ZNumber
-                        name="purchasePrice"
-                        label="Purchase Price"
-                        placeholder="Enter Purchase Price"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-                      <ZNumber
-                        name="wholeSalePrice"
-                        type="number"
-                        label="Wholesale Price"
-                        placeholder="Enter Wholesale Price"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-                      <ZNumber
-                        name="retailPrice"
-                        type="number"
-                        label="Retail Price"
-                        placeholder="Enter Retail Price"
-                        defaultKey="product"
-                        setPriceQuantityImage={setPriceQuantityImage}
-                        refresh={refresh}
-                      />
-                    </>
-                  </div>
-
-                  {/* button */}
-                  <div className="flex justify-end">
-                    <Button
-                      htmlType="button"
-                      onClick={() => handleAddVariant()}
-                      style={{ backgroundColor: "#162447", color: "white" }}
-                    >
-                      + Add Variant
-                    </Button>
-                  </div>
-                </div>
-                {/* per sku end */}
-              </div>
-            )}
       </ZFormTwo>
       <VariantProductTable skus={skus} setSkus={setSkus}></VariantProductTable>
     </div>

@@ -71,7 +71,7 @@ model Product {
   description     String
   productSubtitle String
   price           Float
-  imageUrl        Json
+  imageUrl        String
   weight          String
   material        String
   thickness       String
@@ -100,7 +100,7 @@ model Variant {
   stock      Int
   price      Float?
   priceTiers Json
-  imageUrl   Json
+  imageUrl   String
 
   sku       String
   createdAt DateTime @default(now())

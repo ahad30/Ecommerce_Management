@@ -13,6 +13,8 @@ const ZInputTwo = ({
   required,
   reset,
   onChange,
+  readOnly,
+  disabled
 }) => {
   const { control, setValue, resetField } = useFormContext();
   const { isEditModalOpen } = useAppSelector((state) => state.modal);
@@ -48,7 +50,9 @@ const ZInputTwo = ({
             className={defaultKey ? `${defaultKey}` : ``}
             {...field}
             type={type}
+            disabled={disabled}
             placeholder={placeholder}
+            readOnly={readOnly}
             onChange={(e) => {
               // Merge custom onChange with field's default onChange
               field.onChange(e);

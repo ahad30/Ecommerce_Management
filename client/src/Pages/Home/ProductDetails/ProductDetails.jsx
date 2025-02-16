@@ -205,7 +205,7 @@ const ProductDetails = () => {
         <div>
           <ProductImageSlider
             images={singleProduct.variants.map(
-              (variant) => variant?.imageUrl[0]
+              (variant) => variant?.imageUrl
             )}
           />
         </div>
@@ -349,7 +349,7 @@ const ProductDetails = () => {
               <tr>
                 <td className="px-4 py-2 border border-gray-300">Material</td>
                 <td className="px-4 py-2 border border-gray-300">
-                {singleProduct.material && (
+                {singleProduct.material !== "" && (
               <p className="font-medium">
                      {singleProduct.material}
               </p>
