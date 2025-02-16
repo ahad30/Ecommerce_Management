@@ -56,7 +56,7 @@ const productApi = baseApi.injectEndpoints({
         headers: {
           "Content-Type": "application/json",
         },
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: ['products']

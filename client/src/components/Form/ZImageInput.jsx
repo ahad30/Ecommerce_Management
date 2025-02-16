@@ -11,21 +11,23 @@ const ZImageInput = ({
   onRemove,
   defaultKey,
   setPriceQuantityImage,
-  refresh
+  refresh,
 }) => {
   const [imageList, setImageList] = useState([]);
   const { control, resetField } = useFormContext();
-  const { isAddModalOpen, isEditModalOpen } = useAppSelector(
+  const { isAddModalOpen, isEditModalOpen , isVariantModalOpen} = useAppSelector(
     (state) => state.modal
   );
 
+  // Reset imageList when modal is closed
   useEffect(() => {
-    if (!isAddModalOpen || !isEditModalOpen) {
+    if (!isAddModalOpen || !isEditModalOpen || !isVariantModalOpen) {
       setImageList([]);
       resetField(name);
     }
-  }, [isAddModalOpen, isEditModalOpen]);
+  }, [isAddModalOpen, isEditModalOpen , isVariantModalOpen]);
 
+  // Update imageList when defaultValue changes
   useEffect(() => {
     if (defaultValue && defaultValue[0]?.url) {
       setImageList([
@@ -36,9 +38,12 @@ const ZImageInput = ({
           url: defaultValue[0].url,
         },
       ]);
+    } else {
+      setImageList([]); // Clear imageList if defaultValue is empty
     }
   }, [defaultValue]);
 
+  // Handle refresh (if needed)
   useEffect(() => {
     if (defaultKey === "product") {
       setImageList([]);

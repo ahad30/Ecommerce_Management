@@ -96,7 +96,7 @@ const ViewProduct = () => {
           </h2>
           <div className="lg:w-[50%] lg:mx-auto">
             <ProductImageSlider
-              images={product.variants.map((variant) => variant?.imageUrl[0])}
+              images={product.variants.map((variant) => variant?.imageUrl)}
             />
           </div>
 
