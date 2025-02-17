@@ -8,6 +8,7 @@ import { useTraceOrderQuery } from "../../redux/Feature/Admin/order/orderApi";
 import { toast } from "sonner";
 import moment from "moment";
 import Image from "../../assets/complete.png";
+import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
 
 const { Title, Text } = Typography;
 
@@ -127,6 +128,7 @@ export default function OrderTrack() {
 
   return (
     <div className="card py-5">
+    <DashboardTitle windowTitle={"Track"}/>
    
     
       <h1 className="text-center lg:text-2xl underline font-bold mb-5">Track Your Order Status Here</h1>
