@@ -1,75 +1,115 @@
-import React, { useState, useEffect } from "react";
-import { useUpdateProductVariationApiMutation } from "@/redux/Feature/Admin/product/productVariationApi";
-import ZFormTwo from "@/components/Form/ZFormTwo";
-import ZNumber from "@/components/Form/ZNumber";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { useAppDispatch } from "@/redux/Hook/Hook";
-import { setIsVariantModalOpen } from "@/redux/Modal/ModalSlice";
-import ZInputTwo from "@/components/Form/ZInputTwo";
+import ZFormTwo from "../../../../../components/Form/ZFormTwo";
+import ZInputTwo from "../../../../../components/Form/ZInputTwo";
+import ZNumber from "../../../../../components/Form/ZNumber";
+import ZImageInput from "../../../../../components/Form/ZImageInput";
+import { useAppDispatch } from "../../../../../redux/Hook/Hook";
+import axios from "axios";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 
-const EditVariation = ({ selectedVariant, setSkus, skus }) => {
-  const dispatch = useAppDispatch();
-  const [updateVariation, { isLoading, data, isSuccess, isError, error }] =
-    useUpdateProductVariationApiMutation();
+const EditVariation = ({ selectedVariant, setSkus, skus, closeModal , setSelectedVariant}) => {
+  const [priceTiers, setPriceTiers] = useState(
+    selectedVariant?.priceTiers || [{ minQty: "", maxQty: "", price: "" }]
+  );
+  const [isImageRemoved, setIsImageRemoved] = useState(false);
 
-  const handleSubmit = async (values) => {
+  // Reset priceTiers and isImageRemoved when selectedVariant changes
+  useEffect(() => {
+    setPriceTiers(selectedVariant?.priceTiers || [{ minQty: "", maxQty: "", price: "" }]);
+    setIsImageRemoved(false);
+  }, [selectedVariant]);
+
+  // Handle Price Tier Updates
+  const handlePriceTierChange = (index, field, value) => {
+    const updatedTiers = [...priceTiers];
+    updatedTiers[index] = { ...updatedTiers[index], [field]: value };
+    setPriceTiers(updatedTiers);
+  };
+
+  // Add new price tier
+  const handleAddTier = () => {
+    setPriceTiers([...priceTiers, { minQty: "", maxQty: "", price: "" }]);
+  };
+
+  // Remove a price tier
+  const handleRemoveTier = (index) => {
+    const updatedTiers = priceTiers.filter((_, i) => i !== index);
+    setPriceTiers(updatedTiers);
+  };
+
+  const handleSubmit = async (data) => {
     try {
-      const formData = {
-        sku: values.sku,
-        stock: Number(values.stock),
-        min_stock: Number(values.min_stock),
-        max_stock: Number(values.max_stock),
-        salePrice: Number(values.salePrice),
-        serialNo: values.serialNo,
-        purchasePrice: Number(values.purchasePrice),
-        wholeSalePrice: Number(values.wholeSalePrice),
-        retailPrice: Number(values.retailPrice),
-        qrCode: values.qrCode,
+      let imageUrl = selectedVariant?.imageUrl;
+
+      // Upload image if a new file is selected
+      if (data.imageUrl && !isImageRemoved) {
+        const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+        const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
+
+        const imageFile = new FormData();
+        imageFile.append("image", data.imageUrl);
+
+        const res = await axios.post(image_hosting_api, imageFile);
+
+        if (res?.data?.success) {
+          imageUrl = res.data.data.display_url;
+        } else {
+          throw new Error("Image upload failed");
+        }
+      }
+
+      if (isImageRemoved) {
+        imageUrl = ""; // Set imageUrl to empty if the image was removed
+      }
+
+      // Create updated variant object
+      const updatedVariant = {
+        ...data,
+        price: parseFloat(data.price),
+        stock: parseInt(data.stock),
+        priceTiers,
+        imageUrl, // Updated imageUrl
       };
 
-      const response = await updateVariation({
-        id: selectedVariant.variationId,
-        data: formData,
-      }).unwrap();
+      // Update the skus array with the new variant data
+      const updatedSkus = skus.map((item) =>
+        item.variationId === selectedVariant.variationId
+          ? { ...item, ...updatedVariant }
+          : item
+      );
 
-      if (response) {
-        const updatedSkus = skus.map((sku) =>
-          sku.variationId === selectedVariant.variationId
-            ? { ...sku, ...formData }
-            : sku
-        );
-        setSkus(updatedSkus);
-      }
-    } catch (err) {
-      toast.error("Failed to update variant");
-      console.error(err);
+      setSkus(updatedSkus);
+
+      // Update the selectedVariant state with the new imageUrl
+      setSelectedVariant((prev) => ({
+        ...prev,
+        imageUrl, // Ensure the selectedVariant is updated
+      }));
+
+      toast.success("Changes applied successfully! Don't forget to submit your updates.");
+      closeModal();
+    } catch (error) {
+      console.error("Error updating variant:", error);
+      toast.error("Failed to update variant. Please try again.");
     }
   };
 
-  const handleCloseAndOpen = () => {
-    dispatch(setIsVariantModalOpen());
-  };
-
-  console.log(selectedVariant);
   return (
     <ZFormTwo
       submit={handleSubmit}
-      isLoading={isLoading}
-      isSuccess={isSuccess}
-      data={data}
-      isError={isError}
-      error={error}
       formType="edit"
-      closeModal={handleCloseAndOpen}
-      buttonName="Update Variant"
+      closeModal={closeModal}
+      buttonName="Make Changes"
     >
       <div className="grid grid-cols-2 gap-4">
         <ZInputTwo
-          readOnly={true}
+          readOnly
           name="sku"
           label="SKU"
           placeholder="Enter SKU"
           value={selectedVariant?.sku}
+          disabled={1}
         />
         <ZNumber
           name="stock"
@@ -78,53 +118,85 @@ const EditVariation = ({ selectedVariant, setSkus, skus }) => {
           value={selectedVariant?.stock}
         />
         <ZNumber
-          name="min_stock"
-          label="Minimum Stock"
-          placeholder="Enter Minimum Stock"
-          value={selectedVariant?.min_stock}
-        />
-        <ZNumber
-          name="max_stock"
-          label="Maximum Stock"
-          placeholder="Enter Maximum Stock"
-          value={selectedVariant?.max_stock}
-        />
-        <ZNumber
-          name="salePrice"
+          name="price"
           label="Sale Price"
           placeholder="Enter Sale Price"
-          value={selectedVariant?.salePrice}
+          value={parseFloat(selectedVariant?.price).toFixed(2)}
         />
-        <ZNumber
-          name="serialNo"
-          label="Serial No"
-          placeholder="Enter Serial No"
-          value={selectedVariant?.serialNo}
+        <ZImageInput
+          name="imageUrl"
+          label="Product Image"
+          onRemove={() => setIsImageRemoved(true)}
+          defaultValue={
+            selectedVariant?.imageUrl
+              ? [
+                  {
+                    uid: "-1",
+                    name: "Current Image",
+                    status: "done",
+                    url: selectedVariant?.imageUrl,
+                  },
+                ]
+              : []
+          }
         />
-        <ZNumber
-          name="qrCode"
-          label="QR Code"
-          placeholder="Enter QR Code"
-          value={selectedVariant?.qrCode}
-        />
-        <ZNumber
-          name="purchasePrice"
-          label="Purchase Price"
-          placeholder="Enter Purchase Price"
-          value={selectedVariant?.purchasePrice}
-        />
-        <ZNumber
-          name="wholeSalePrice"
-          label="Wholesale Price"
-          placeholder="Enter Wholesale Price"
-          value={selectedVariant?.wholeSalePrice}
-        />
-        <ZNumber
-          name="retailPrice"
-          label="Retail Price"
-          placeholder="Enter Retail Price"
-          value={selectedVariant?.retailPrice}
-        />
+      </div>
+
+      {/* Price Tiers */}
+      <div className="mt-6">
+        <h4 className="mb-3">Price Tiers</h4>
+        <div className="max-h-[400px] overflow-y-auto scrollbar-0 mb-5">
+          {priceTiers.map((tier, index) => (
+            <div key={index} className="flex gap-4">
+              <div className="w-[85%] flex items-center gap-2">
+                <ZInputTwo
+                  name={`priceTiers.${index}.minQty`}
+                  type={"text"}
+                  placeholder="Min Quantity"
+                  value={tier.minQty}
+                  onChange={(e) =>
+                    handlePriceTierChange(index, "minQty", e.target.value)
+                  }
+                />
+                <ZInputTwo
+                  name={`priceTiers.${index}.maxQty`}
+                  placeholder="Max Quantity"
+                  value={tier.maxQty}
+                  onChange={(e) =>
+                    handlePriceTierChange(index, "maxQty", e.target.value)
+                  }
+                />
+                <ZInputTwo
+                  name={`priceTiers.${index}.price`}
+                  placeholder="Price"
+                  value={tier.price}
+                  onChange={(e) =>
+                    handlePriceTierChange(index, "price", e.target.value)
+                  }
+                />
+              </div>
+              <div className="w-[15%]">
+                {index === 0 ? (
+                  <button
+                    type="button"
+                    onClick={handleAddTier}
+                    className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
+                  >
+                    <AiOutlinePlus size={15} />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTier(index)}
+                    className="bg-red-500 text-white rounded px-2 mt-1 py-1"
+                  >
+                    <AiOutlineMinus size={15} />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </ZFormTwo>
   );

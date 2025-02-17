@@ -1,3 +1,4 @@
+// VariantProductTable.js
 import { CiEdit, CiTrash } from "react-icons/ci";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -5,6 +6,7 @@ import { Modal } from "antd";
 import { IoMdClose } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../redux/Hook/Hook";
 import { setIsVariantModalOpen } from "../redux/Modal/ModalSlice";
+import EditVariation from "../Pages/Dashboard/Admin/Product/EditVariation/EditVariation";
 
 export const VariantProductTable = ({ skus, setSkus }) => {
   const dispatch = useAppDispatch();
@@ -14,13 +16,8 @@ export const VariantProductTable = ({ skus, setSkus }) => {
 
   const handleDeleteTheVariant = async (id) => {
     try {
-      const filterTheVariant = skus.filter((item) => item.variationId !== id);
-      setSkus([...filterTheVariant]);
-
-      // if (id && pathname !== "/admin/add-product") {
-      //   await deleteVariation(id).unwrap();
-      //   toast.success("Variant deleted successfully");
-      // }
+      const filteredVariants = skus.filter((item) => item.variationId !== id);
+      setSkus(filteredVariants);
     } catch (error) {
       toast.error("Failed to delete variant");
       console.error(error);
@@ -29,11 +26,12 @@ export const VariantProductTable = ({ skus, setSkus }) => {
 
   const handleEditVariant = (variant) => {
     setSelectedVariant(variant);
-    dispatch(setIsVariantModalOpen());
+    dispatch(setIsVariantModalOpen()); // Open modal
   };
 
-  const handleCancel = () => {
-    dispatch(setIsVariantModalOpen());
+  const handleCloseModal = () => {
+    setSelectedVariant(null); // Reset selectedVariant
+    dispatch(setIsVariantModalOpen()); // Close modal
   };
 
   return (
@@ -46,72 +44,32 @@ export const VariantProductTable = ({ skus, setSkus }) => {
           <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
             <table className="w-full text-center table-auto min-w-max">
               <thead>
-                <tr>
-                  <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                      Serial
-                    </p>
-                  </th>
-                  <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                      Attributes Value
-                    </p>
-                  </th>
-                  <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                       Price
-                    </p>
-                  </th>
-                  <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                      Stock
-                    </p>
-                  </th>
-                  <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                      Action
-                    </p>
-                  </th>
+                <tr className="bg-gray-100">
+                  <th className="p-4 border-b">Serial</th>
+                  <th className="p-4 border-b">Attributes Value</th>
+                  <th className="p-4 border-b">Price</th>
+                  <th className="p-4 border-b">Stock</th>
+                  <th className="p-4 border-b">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {skus.map((item, index) => (
-                  <tr key={item?.variationId} className="">
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        {index + 1}
-                      </p>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        {item?.sku}
-                      </p>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        {item?.price}
-                      </p>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        {item?.stock}
-                      </p>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
+                  <tr key={item?.variationId} className="border-b">
+                    <td className="p-4">{index + 1}</td>
+                    <td className="p-4">{item?.sku}</td>
+                    <td className="p-4">{item?.price}</td>
+                    <td className="p-4">{item?.stock}</td>
+                    <td className="p-4">
                       <div className="flex gap-2 justify-center">
                         <button
                           onClick={() => handleEditVariant(item)}
-                          className={`cursor-pointer bg-blue-500 text-white px-3 py-2 rounded-md ${
-                            pathname === "/admin/add-product" ? "hidden" : ""
-                          }`}
+                          className="cursor-pointer bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-all"
                         >
                           <CiEdit size={20} />
                         </button>
                         <button
-                          onClick={() =>
-                            handleDeleteTheVariant(item.variationId)
-                          }
-                          className="cursor-pointer bg-red-500 text-white px-3 py-2 rounded-md"
+                          onClick={() => handleDeleteTheVariant(item.variationId)}
+                          className="cursor-pointer bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-all"
                         >
                           <CiTrash size={20} />
                         </button>
@@ -125,21 +83,34 @@ export const VariantProductTable = ({ skus, setSkus }) => {
         </div>
       )}
 
-      {/* <Modal
+      {/* Edit Variant Modal */}
+      <Modal
         centered
         open={isVariantModalOpen}
         width={700}
-        onCancel={handleCancel}
-        closeIcon={<IoMdClose  style={{ fontSize: '24px', color: 'white' , backgroundColor:"red", padding:"2px" ,borderRadius:"100%"}} />}
-        okButtonProps={{ style: { display: "none" , color:"white" } }}
+        onCancel={handleCloseModal}
+        closeIcon={
+          <IoMdClose
+            style={{
+              fontSize: "24px",
+              color: "white",
+              backgroundColor: "red",
+              padding: "2px",
+              borderRadius: "100%",
+            }}
+          />
+        }
+        okButtonProps={{ style: { display: "none", color: "white" } }}
         cancelButtonProps={{ style: { display: "none" } }}
       >
         <EditVariation
           selectedVariant={selectedVariant}
+          setSelectedVariant={setSelectedVariant}
           setSkus={setSkus}
           skus={skus}
+          closeModal={handleCloseModal} // Pass function to close modal
         />
-      </Modal> */}
+      </Modal>
     </>
   );
 };

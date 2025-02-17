@@ -50,7 +50,7 @@ const Product = () => {
   };
 
   const handleEditProduct = (id) => {
-    navigate(`/Dashboard/Product/EditProduct?id=${id}`);
+    navigate(`/admin/edit-product/${id}`);
   };
 
   const handleViewProduct = (id) => {
@@ -161,7 +161,7 @@ const Product = () => {
 
 
  if (error) return <p className="text-center text-red-500">Error loading products</p>;
- console.log(data?.products?.length)
+
 
 
   return (

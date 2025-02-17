@@ -19,6 +19,7 @@ import Users from "../Pages/Dashboard/Admin/Customers/Users";
 import AddUser from "../Pages/Dashboard/Admin/Customers/AddUser/AddUser";
 import ViewProduct from "../Pages/Dashboard/Admin/Product/ViewProduct/ViewProduct";
 import EditAdminProfile from "../Pages/Dashboard/Admin/Profile/EditAdminProfile";
+import EditProduct from "../Pages/Dashboard/Admin/Product/EditProduct/EditProduct";
 
 
 export const adminRoutes = [
@@ -110,10 +111,10 @@ export const adminRoutes = [
     path: "add-product",
     element: <AddProduct></AddProduct>,
   },
-  // {
-  //   path: "edit-product/:id",
-  //   element: <EditProduct></EditProduct>,
-  // },
+  {
+    path: "edit-product/:id",
+    element: <EditProduct></EditProduct>,
+  },
   {
     path: "view-product-details/:id",
     element: <ViewProduct></ViewProduct>,

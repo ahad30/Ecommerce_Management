@@ -147,7 +147,7 @@ const AddProduct = () => {
   const handleAddPerSkuInSkus = () => {
     const attributes = {};
     const valuesName = [];
-  
+
     if (perSku.length === 0) {
       toast.error("Select minimum an attribute value", {
         id: 2,
@@ -161,7 +161,7 @@ const AddProduct = () => {
     if (priceQuantityImage.price === "") {
       toast.error("Enter variation price", { id: 2 });
     }
-  
+
     if (
       perSku.length > 0 &&
       priceQuantityImage.stock &&
@@ -173,7 +173,7 @@ const AddProduct = () => {
         valuesName.push(proPertyValue);
         attributes[proPertyKey] = proPertyValue;
       });
-  
+
       const sku = {
         variationId: generateUniqueId(),
         sku: `${valuesName.join("-")}`,
@@ -187,7 +187,7 @@ const AddProduct = () => {
           price: page.price || "",
         })),
       };
-  
+
       console.log(sku);
       if (skus.length === 0) {
         setSkus([...skus, { ...sku }]);
@@ -248,12 +248,6 @@ const AddProduct = () => {
       }
     };
 
-    // const priceTiers = addonPages.map((page) => ({
-    //   minQty: page.minQty || "",
-    //   maxQty: page.maxQty || "",
-    //   price: page.price || "",
-    // }));
-
     const mainImageUrl = await uploadImage(data?.ImageUrl);
 
     // Prepare the main product data
@@ -280,7 +274,6 @@ const AddProduct = () => {
       // Upload images for each variation
       const variantProductData = {
         ...modifiedData,
-        // priceTiers,
         variants: await Promise.all(
           skus.map(async (sku) => {
             const uploadedImageUrl = await uploadImage(sku.imageUrl);
@@ -574,66 +567,78 @@ const AddProduct = () => {
                     refresh={refresh}
                   />
 
-<div>
-  <h4 className="mb-3">Price Tiers</h4>
-  <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
-    {addonPages.map((page, index) => (
-      <div key={index} className="flex gap-4">
-        <div className="w-[85%] flex items-center gap-2">
-          <ZInputTwo
-            name={`priceTiers.${index}.minQty`}
-            type="text"
-            label={""}
-            placeholder="Min Quantity"
-            value={page.minQty}
-            onChange={(e) =>
-              handleInputChange(index, "minQty", e.target.value)
-            }
-          />
-          <ZInputTwo
-            name={`priceTiers.${index}.maxQty`}
-            type="text"
-            label={""}
-            placeholder="Max Quantity"
-            value={page.maxQty}
-            onChange={(e) =>
-              handleInputChange(index, "maxQty", e.target.value)
-            }
-          />
-          <ZInputTwo
-            name={`priceTiers.${index}.price`}
-            type="text"
-            label={""}
-            placeholder="Price"
-            value={page.price}
-            onChange={(e) =>
-              handleInputChange(index, "price", e.target.value)
-            }
-          />
-        </div>
-        <div className="w-[15%]">
-          {index === 0 ? (
-            <button
-              type="button"
-              onClick={handleAddPage}
-              className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
-            >
-              <AiOutlinePlus size={15} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => handleRemovePage(page)}
-              className="bg-red-500 text-white rounded px-2 mt-1 py-1"
-            >
-              <AiOutlineMinus size={15} />
-            </button>
-          )}
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+                  <div>
+                    <h4 className="mb-3">Price Tiers</h4>
+                    <div className="max-h-[400px] overflow-y-scroll scrollbar-0 mb-5">
+                      {addonPages.map((page, index) => (
+                        <div key={index} className="flex gap-4">
+                          <div className="w-[85%] flex items-center gap-2">
+                            <ZInputTwo
+                              name={`priceTiers.${index}.minQty`}
+                              type="text"
+                              label={""}
+                              placeholder="Min Quantity"
+                              value={page.minQty}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  index,
+                                  "minQty",
+                                  e.target.value
+                                )
+                              }
+                            />
+                            <ZInputTwo
+                              name={`priceTiers.${index}.maxQty`}
+                              type="text"
+                              label={""}
+                              placeholder="Max Quantity"
+                              value={page.maxQty}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  index,
+                                  "maxQty",
+                                  e.target.value
+                                )
+                              }
+                            />
+                            <ZInputTwo
+                              name={`priceTiers.${index}.price`}
+                              type="text"
+                              label={""}
+                              placeholder="Price"
+                              value={page.price}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  index,
+                                  "price",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                          <div className="w-[15%]">
+                            {index === 0 ? (
+                              <button
+                                type="button"
+                                onClick={handleAddPage}
+                                className="bg-blue-500 text-white py-1 mt-1 px-2 rounded"
+                              >
+                                <AiOutlinePlus size={15} />
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleRemovePage(page)}
+                                className="bg-red-500 text-white rounded px-2 mt-1 py-1"
+                              >
+                                <AiOutlineMinus size={15} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* <ZNumber
                     name="serialNo"
