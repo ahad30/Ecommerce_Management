@@ -54,7 +54,6 @@ const ZInputTwo = ({
             placeholder={placeholder}
             readOnly={readOnly}
             onChange={(e) => {
-              // Merge custom onChange with field's default onChange
               field.onChange(e);
               if (onChange) {
                 onChange(e);

@@ -9,7 +9,9 @@ const initialState = {
   isProductModalOpen: false,
   isCalculatorModalOpen: false,
   isVariantModalOpen: false,
-  isHomeCategorySidebarOpen: false
+  isHomeCategorySidebarOpen: false,
+  priceMin: 1,
+  priceMax: 9999,
 };
 
 const ModalSlice = createSlice({
@@ -45,6 +47,12 @@ const ModalSlice = createSlice({
     setIsHomeCategorySidebarOpen: (state) => {
       state.isHomeCategorySidebarOpen = !state.isHomeCategorySidebarOpen;
     },
+    setPriceMin: (state, action) => {
+      state.priceMin = action.payload;
+    },
+    setPriceMax: (state, action) => {
+      state.priceMax = action.payload;
+    },
   },
 });
 
@@ -58,6 +66,8 @@ export const {
   setIsCalculatorModalOpen,
   setIsVariantModalOpen,
   setIsHomeCategorySidebarOpen,
+  setPriceMin, 
+  setPriceMax
 } = ModalSlice.actions;
 
 export default ModalSlice.reducer;

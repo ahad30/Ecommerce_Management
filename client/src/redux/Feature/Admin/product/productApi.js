@@ -27,7 +27,7 @@ const productApi = baseApi.injectEndpoints({
 
      // Get Products with search, pagination, and price filtering
      getProductsBySearch: builder.query({
-      query: ({ search = '', page, limit, priceMin, priceMax}) => ({
+      query: ({ search = '', page, limit, priceMin, priceMax , category , brand}) => ({
         url: "/product",
         params: {
           search,
@@ -35,6 +35,8 @@ const productApi = baseApi.injectEndpoints({
           limit,
           priceMin,
           priceMax,
+          category,
+          brand
         },
       }),
       providesTags: ['products']

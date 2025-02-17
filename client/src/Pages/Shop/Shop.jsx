@@ -1,3 +1,4 @@
+// src/components/Shop/Shop.js
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
 import { setIsHomeCategorySidebarOpen } from "../../redux/Modal/ModalSlice";
@@ -12,60 +13,69 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaAngleLeft, FaAngleRight, FaGripLinesVertical, FaListAlt } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import ProductsSkeleton from "../../components/Skeleton/ProductsSkeleton";
-import { useGetProductsBySearchQuery, useGetProductsQuery } from "../../redux/Feature/Admin/product/productApi";
+import { useGetProductsBySearchQuery } from "../../redux/Feature/Admin/product/productApi";
 import { Link } from "react-router-dom";
 import { Pagination } from 'antd';
+import { useGetCategoryQuery } from "../../redux/Feature/Admin/category/categoryApi";
+import { useGetBrandQuery } from "../../redux/Feature/Admin/brand/brandApi";
 
 const Shop = () => {
   const dispatch = useAppDispatch();
-  const { isHomeCategorySidebarOpen } = useAppSelector((state) => state.modal);
+  const { isHomeCategorySidebarOpen, priceMin, priceMax } = useAppSelector((state) => state.modal);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [priceMin, setPriceMin] = useState(1);
-  const [priceMax, setPriceMax] = useState(100000000000000);
   const [showSkeleton, setShowSkeleton] = useState(true);
-  const { data, error, isLoading , isFetching } = useGetProductsBySearchQuery({
+  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [selectedBrand, setSelectedBrand] = useState(""); 
+
+  // Fetch categories and brands
+  const { data: categories, isLoading: isCategoriesLoading } = useGetCategoryQuery();
+  const { data: brands, isLoading: isBrandsLoading } = useGetBrandQuery();
+
+  // Fetch products with filters
+  const { data, error, isLoading, isFetching } = useGetProductsBySearchQuery({
     search: searchQuery,
     page: currentPage,
     limit: limit,
     priceMin: priceMin,
     priceMax: priceMax,
+    category: selectedCategory, // Pass selected category
+    brand: selectedBrand, // Pass selected brand
   });
 
-  
+
+
   useEffect(() => {
     if (isFetching) {
-      setShowSkeleton(true); 
+      setShowSkeleton(true);
     } else {
-
       const timer = setTimeout(() => {
-        setShowSkeleton(false); 
+        setShowSkeleton(false);
       }, 2000);
       return () => clearTimeout(timer);
     }
   }, [isFetching]);
 
-
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
 
-  // Handle pagination change
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  // Extract pagination metadata from the API response
   const totalItems = data?.meta?.totalItems || 0;
   const totalPages = data?.meta?.totalPages || 1;
-  const itemsPerPage = data?.meta?.itemsPerPage ;
+  const itemsPerPage = data?.meta?.itemsPerPage;
 
-    // Check if no products are found
-    const noProductsFound = !isLoading && !showSkeleton && data?.products?.length === 0 && searchQuery.trim() !== "";
-
+  // Check if no products are found due to search or price range
+  const noProductsFound =
+    !isLoading &&
+    !showSkeleton &&
+    data?.products?.length === 0 &&
+    (searchQuery.trim() !== "" || priceMin !== 1 || priceMax !== 100000000000000);
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -119,7 +129,14 @@ const Shop = () => {
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Sidebar */}
-        <LeftSidebar />
+        <LeftSidebar
+          categories={categories}
+          brands={brands}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedBrand={selectedBrand}
+          setSelectedBrand={setSelectedBrand}
+        />
 
         {/* Product Grid */}
         <div className="flex-1">
@@ -143,21 +160,22 @@ const Shop = () => {
               </div>
             </div>
           </div>
+
           {/* Show Skeleton While Loading */}
           {(isLoading || showSkeleton) && <ProductsSkeleton />}
 
-         {/* Show "Product not found" message if no products match the search */}
-         {noProductsFound && (
+          {/* Show "No products found" message if no products match the search or price range */}
+          {noProductsFound && (
             <div className="text-center text-xl font-bold text-red-500 mt-10">
-              No products found for "{searchQuery}"
+              No products found for the selected criteria.
             </div>
           )}
-
 
           {/* Product Cards */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Map Products Once Data is Loaded */}
-            {!isLoading && !showSkeleton &&
+            {!isLoading &&
+              !showSkeleton &&
               data?.products?.map((item, index) => (
                 <div className="border border-gray-200 rounded-lg" key={index}>
                   <div className="group h-[250px] relative block bg-black">
@@ -191,6 +209,9 @@ const Shop = () => {
                     <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
                       <h2>{item?.name}</h2>
                     </div>
+                    <div className="mt-5 sm:mt-8 lg:mt-5 text-sm font-medium">
+                      <h2>#{item?.referenceId}</h2>
+                    </div>
                     <div className="mt-2 text-base font-medium text-primary">
                       <h2>From ${item.variants[0]?.price || 0}</h2>
                     </div>
@@ -209,6 +230,7 @@ const Shop = () => {
           </div>
         </div>
       </div>
+
       {/* Pagination */}
       <div className="flex justify-center mt-10">
         <Pagination

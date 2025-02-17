@@ -73,7 +73,7 @@ const ViewOrder = ({ selectedOrder }) => {
       <Card>
         {/* Order Header */}
         <div className="text-center">
-          <Title level={5}>Order Details</Title>
+          <h1 className="text-2xl mb-5 font-bold">Order Details</h1>
         </div>
         <Row gutter={[16, 16]}>
           <Col span={12}>
@@ -93,6 +93,9 @@ const ViewOrder = ({ selectedOrder }) => {
           </Col>
           <Col span={12}>
             <Text strong>Phone:</Text> {selectedOrder.phone}
+          </Col>
+          <Col span={12}>
+            <Text strong>Transaction-Id:</Text> {selectedOrder.transactionId}
           </Col>
         </Row>
 
