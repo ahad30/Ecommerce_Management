@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { Pagination } from 'antd';
 import { useGetCategoryQuery } from "../../redux/Feature/Admin/category/categoryApi";
 import { useGetBrandQuery } from "../../redux/Feature/Admin/brand/brandApi";
+import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
 
 const Shop = () => {
   const dispatch = useAppDispatch();
@@ -82,6 +83,7 @@ const Shop = () => {
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <DashboardTitle windowTitle={"Shop"}/>
       {/* Search Bar */}
       <div className="relative w-[100%] md:w-[50%] mx-auto mb-10 flex py-[6px]">
         <div className="w-full">
