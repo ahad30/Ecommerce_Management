@@ -1,6 +1,7 @@
 
 import visa from "../../assets/payment/visa.png";
 import mastercard from "../../assets/payment/card.png";
+import express from "../../assets/payment/american-express.png";
 
 const Footer = () => {
   return (
@@ -244,6 +245,10 @@ const Footer = () => {
               />
               <img
                 src={mastercard}
+                className="lg:w-[50px] w-[50px] lg:h-[55px] h-[50px] object-cover rounded-lg"
+              />
+              <img
+                src={express}
                 className="lg:w-[50px] w-[50px] lg:h-[55px] h-[50px] object-cover rounded-lg"
               />
 

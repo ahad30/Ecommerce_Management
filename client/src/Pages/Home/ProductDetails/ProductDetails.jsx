@@ -213,6 +213,7 @@ const ProductDetails = () => {
         {/* Product Details Section */}
         <div className="space-y-5">
           <h1 className="text-4xl font-semibold">{singleProduct.name}</h1>
+          <h1 className="text-xl font-semibold">#{singleProduct.referenceId}</h1>
           <p className="font-bold">
             Availability:
             <span className="text-green-500 font-medium ms-2">
@@ -336,57 +337,48 @@ const ProductDetails = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Weight</td>
-                <td className="px-4 py-2 border border-gray-300">
-                {singleProduct.weight && (
-              <p className="font-medium">
-                    {singleProduct.weight}
-              </p>
-            )}
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Material</td>
-                <td className="px-4 py-2 border border-gray-300">
-                {singleProduct.material !== "" && (
-              <p className="font-medium">
-                     {singleProduct.material}
-              </p>
-            )}
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Thickness</td>
-                <td className="px-4 py-2 border border-gray-300">
-                {singleProduct.thickness && (
-              <p className="font-medium">
-                   {singleProduct.thickness}
-              </p>
-            )}
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Elasticity</td>
-                <td className="px-4 py-2 border border-gray-300">
-                {singleProduct.elasticity && (
-              <p className="font-medium">
-                   {singleProduct.elasticity}
-              </p>
-            )}
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 border border-gray-300">Breathability</td>
-                <td className="px-4 py-2 border border-gray-300">
-                {singleProduct.breathability && (
-              <p className="font-medium">
-                   {singleProduct.breathability}
-              </p>
-            )}
-                </td>
-              </tr>
-            </tbody>
+  {singleProduct.weight && (
+    <tr>
+      <td className="px-4 py-2 border border-gray-300">Weight</td>
+      <td className="px-4 py-2 border border-gray-300">
+        <p className="font-medium">{singleProduct.weight}</p>
+      </td>
+    </tr>
+  )}
+  {singleProduct.material && (
+    <tr>
+      <td className="px-4 py-2 border border-gray-300">Material</td>
+      <td className="px-4 py-2 border border-gray-300">
+        <p className="font-medium">{singleProduct.material}</p>
+      </td>
+    </tr>
+  )}
+  {singleProduct.thickness && (
+    <tr>
+      <td className="px-4 py-2 border border-gray-300">Thickness</td>
+      <td className="px-4 py-2 border border-gray-300">
+        <p className="font-medium">{singleProduct.thickness}</p>
+      </td>
+    </tr>
+  )}
+  {singleProduct.elasticity && (
+    <tr>
+      <td className="px-4 py-2 border border-gray-300">Elasticity</td>
+      <td className="px-4 py-2 border border-gray-300">
+        <p className="font-medium">{singleProduct.elasticity}</p>
+      </td>
+    </tr>
+  )}
+  {singleProduct.breathability && (
+    <tr>
+      <td className="px-4 py-2 border border-gray-300">Breathability</td>
+      <td className="px-4 py-2 border border-gray-300">
+        <p className="font-medium">{singleProduct.breathability}</p>
+      </td>
+    </tr>
+  )}
+</tbody>
+
           </table>
         </div>
       </div>
