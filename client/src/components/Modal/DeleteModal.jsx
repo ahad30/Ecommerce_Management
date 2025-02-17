@@ -22,7 +22,6 @@ const DeleteModal = ({
   const handleCancel = () => {
     dispatch(setIsDeleteModalOpen());
   };
-   console.log(data)
   useEffect(() => {
     if (isLoading || isSuccess || isError) {
       toast.loading("Deleting ....", { id: 1 });

@@ -19,6 +19,7 @@ import PaymentError from "../Pages/Error/PaymentError";
 import OrderHistory from "../Pages/Dashboard/User/OrderHistory/OrderHistory";
 import EditProfile from "../Pages/Dashboard/User/EditProfile/EditProfile";
 import Verify from "../Pages/Verify/Verify";
+import OrderTrack from "../Pages/Track-Order/OrderTrack";
 
 export const routes = createBrowserRouter([
   {
@@ -95,6 +96,10 @@ export const routes = createBrowserRouter([
         path: "/verify/:token",
         element: <Verify/>,
       },
+      {
+        path: "/order-track",
+        element: <OrderTrack/>,
+      }
     ],
   },
   {

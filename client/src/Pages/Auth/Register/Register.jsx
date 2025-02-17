@@ -1,5 +1,4 @@
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ZInputTwo from "../../../components/Form/ZInputTwo";
 import ZFormTwo from "../../../components/Form/ZFormTwo";
@@ -10,11 +9,14 @@ import img from "../../../assets/banner/contact-banner.jpg";
 import { useRegisterMutation } from "../../../redux/Feature/auth/authApi";
 import { useAppSelector } from "../../../redux/Hook/Hook";
 import { useCurrentToken, useCurrentUser } from "../../../redux/Feature/auth/authSlice";
+import { Modal } from "antd"; // Import Ant Design Modal
 
 const Register = () => {
   const navigate = useNavigate();
   const user = useAppSelector(useCurrentUser);
   const token = useAppSelector(useCurrentToken);
+  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+
   const [
     register,
     {
@@ -26,15 +28,13 @@ const Register = () => {
     },
   ] = useRegisterMutation();
 
-
   useEffect(() => {
     if (token && user?.role === "admin") {
-      navigate("/admin/home")
+      navigate("/admin/home");
+    } else if (token && user?.role === "user") {
+      navigate("/");
     }
-    else if (token && user?.role === "user"){
-      navigate("/")
-    }
-  }, []);
+  }, [token, user, navigate]);
 
   const handleSubmit = (data) => {
     register({ ...data, role: "user" });
@@ -42,12 +42,14 @@ const Register = () => {
 
   useEffect(() => {
     if (lIsSuccess) {
-      navigate("/login");
+      setShowModal(true); // Show modal on successful registration
     }
   }, [lIsSuccess]);
 
-
-  
+  const handleCloseModal = () => {
+    setShowModal(false); // Close the modal
+    // navigate("/login");
+  };
 
   return (
     <>
@@ -94,6 +96,7 @@ const Register = () => {
                 isSuccess={lIsSuccess}
                 submit={handleSubmit}
                 data={rData}
+                formType={"create"}
                 buttonName={"Register"}
               >
                 <div>
@@ -143,6 +146,34 @@ const Register = () => {
           </div>
         </div>
       </div>
+
+      {/* Ant Design Modal for successful registration */}
+      <Modal
+      className=""
+ 
+  centered
+  open={showModal} // Control visibility
+  onOk={handleCloseModal} // Handle OK button click
+  onCancel={handleCloseModal} // Handle Cancel button click
+  okButtonProps={{
+    style: {
+      backgroundColor: "#52c41a", // Green color for the button
+      borderColor: "#52c41a", // Green border color
+      color: "#fff", // White text color
+    },
+  }}
+  cancelButtonProps={{ style: { display: "none" } }} // Hide Cancel button
+>
+<h1 className="mt-10 text-blue-500 text-xl text-center font-bold mb-5">Registration Successful!</h1>
+  <p style={{ 
+    fontSize: "16px", 
+    color: "#333", 
+    textAlign: "center", 
+    marginBottom: "30px" 
+  }}>
+    A verification link has been sent to your email. Please check your email to verify your account and login.
+  </p>
+</Modal>
     </>
   );
 };

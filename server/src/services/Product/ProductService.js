@@ -156,13 +156,26 @@ console.log(error);
                 data: {
                     name: data.name,
                     description: data.description,
+                    productSubtitle: data.productSubtitle,
                     price: data.price,
                     imageUrl: data.imageUrl,
+                    weight: data.weight,
+                    material: data.material,
+                    thickness: data.thickness,
+                    elasticity: data.elasticity,
+                    breathability: data.breathability,
                     categoryId: data.categoryId,
+                    brandId: data.brandId,
+                    referenceId: data.referenceId,
+                    topSale: data.topSale,
+                    newArrival: data.newArrival,
+                    status: data.status,
+                    availability: data.availability,
                     updatedAt: new Date(),
                 },
                 include: {
                     category: true,
+                    brand: true,
                     variants: true,
                 },
             });
@@ -182,27 +195,34 @@ console.log(error);
             if (data.variants && data.variants.length > 0) {
                 await Promise.all(
                     data.variants.map(async (variant) => {
-                        await this.prisma.variant.upsert({
-                            where: { id: variant.id || "new_id_placeholder" }, // Prevents Prisma error for new variants
-                            update: {
-                                attributes: variant.attributes,
-                                stock: variant.stock,
-                                price: variant.price,
-                                priceTiers: variant.priceTiers,
-                                imageUrl: variant.imageUrl,
-                                sku: variant.sku,
-                                updatedAt: new Date(),
-                            },
-                            create: {
-                                productId: id,
-                                attributes: variant.attributes,
-                                stock: variant.stock,
-                                price: variant.price,
-                                priceTiers: variant.priceTiers,
-                                imageUrl: variant.imageUrl,
-                                sku: variant.sku,
-                            },
-                        });
+                        if (variant.id) {
+                            // Update existing variant
+                            await this.prisma.variant.update({
+                                where: { id: variant.id },
+                                data: {
+                                    attributes: variant.attributes,
+                                    stock: variant.stock,
+                                    price: variant.price,
+                                    priceTiers: variant.priceTiers,
+                                    imageUrl: variant.imageUrl,
+                                    sku: variant.sku,
+                                    updatedAt: new Date(),
+                                },
+                            });
+                        } else {
+                            // Create new variant
+                            await this.prisma.variant.create({
+                                data: {
+                                    productId: id,
+                                    attributes: variant.attributes,
+                                    stock: variant.stock,
+                                    price: variant.price,
+                                    priceTiers: variant.priceTiers,
+                                    imageUrl: variant.imageUrl,
+                                    sku: variant.sku,
+                                },
+                            });
+                        }
                     })
                 );
             }
@@ -212,6 +232,7 @@ console.log(error);
                 where: { id },
                 include: {
                     category: true,
+                    brand: true,
                     variants: true,
                 },
             });
@@ -222,6 +243,7 @@ console.log(error);
             throw new Error("Product update failed");
         }
     }
+    
     
 
     // Delete a product by ID
