@@ -1,7 +1,7 @@
 // src/components/Shop/LeftSidebar/LeftSidebar.js
 import React, { useState, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../../redux/Hook/Hook";
-import { Slider } from "antd";
+import { Skeleton, Slider } from "antd";
 import { setPriceMin, setPriceMax } from "../../../redux/Modal/ModalSlice";
 
 const LeftSidebar = ({
@@ -11,6 +11,8 @@ const LeftSidebar = ({
   setSelectedCategory,
   selectedBrand,
   setSelectedBrand,
+  isCategoriesLoading,
+  isBrandsLoading
 }) => {
   const dispatch = useAppDispatch();
   const { isHomeCategorySidebarOpen, priceMin, priceMax } = useAppSelector((state) => state.modal);
@@ -60,6 +62,12 @@ const LeftSidebar = ({
       setSelectedBrand(brandId);
     }
   };
+
+  if(isBrandsLoading|| isCategoriesLoading){
+    return  <div>
+      <Skeleton/>
+    </div>
+  }
 
   return (
     <div className="md:px-4 bg-white">
