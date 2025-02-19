@@ -82,6 +82,18 @@ class ProductController {
         }
     }
 
+
+    async getRelatedProducts(req, res, next) {
+        try {
+            const { id } = req.params;
+            const result = await this.productService.getRelatedProducts(id);
+            res.status(200).json(result);
+        } catch (error) {
+            console.error(error);
+            next(error);
+        }
+    }
+
     // Update a product and its variants
     async updateProduct(req, res, next) {
         try {

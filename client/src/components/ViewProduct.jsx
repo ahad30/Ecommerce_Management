@@ -1,22 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useLoaderData } from "react-router-dom";
-import ProductImageSlider from "./ProductImageSlider";
+import { Link } from "react-router-dom";
+import ProductImageSlider from "../Pages/Home/ProductDetails/ProductImageSlider";
 import { FaGreaterThan, FaHome } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
-import { useAppDispatch, useAppSelector } from "../../../redux/Hook/Hook";
-import { addToCart } from "../../../redux/Cart/cartSlice";
+import { useAppDispatch, useAppSelector } from "../redux/Hook/Hook";
+import { addToCart } from "../redux/Cart/cartSlice";
 import { toast } from "sonner";
-import { Alert, Tooltip } from "antd";
-import NewProduct from "../NewProduct/NewProduct";
-import RelatedProduct from "../RelatedProduct/RelatedProduct";
+import { Alert, Spin, Tooltip } from "antd";
 
-const ProductDetails = () => {
-  const singleProduct = useLoaderData();
+const ViewProduct = ({ selectedProduct }) => {
   const dispatch = useAppDispatch();
   const [selectedAttributes, setSelectedAttributes] = useState({});
   const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(singleProduct?.variants[0]?.price || 0);
+  const [price, setPrice] = useState(selectedProduct?.variants?.[0]?.price || 0);
   const [isAdded, setIsAdded] = useState(false);
   const cartItems = useAppSelector((state) => state.cart?.items);
 
@@ -30,7 +27,7 @@ const ProductDetails = () => {
   };
 
   // Find the selected variant based on normalized attributes
-  const selectedVariant = singleProduct.variants.find((variant) => {
+  const selectedVariant = selectedProduct?.variants?.find((variant) => {
     const normalizedVariantAttributes = normalizeAttributes(variant.attributes);
     return Object.keys(selectedAttributes).every(
       (key) => normalizedVariantAttributes[key] === selectedAttributes[key]
@@ -38,23 +35,19 @@ const ProductDetails = () => {
   });
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(() => {
     const isProductInCart = cartItems.some(
       (item) =>
-        item.id === singleProduct.id &&
+        item.id === selectedProduct?.id &&
         JSON.stringify(item.selectedAttributes) ===
           JSON.stringify(selectedAttributes)
     );
     setIsAdded(isProductInCart);
-  }, [cartItems, singleProduct.id, selectedAttributes]);
+  }, [cartItems, selectedProduct?.id, selectedAttributes]);
 
-  // Function to group attribute values by key across all variants
+  // Group attributes by key (normalized to lowercase)
   const groupAttributesByKey = () => {
     const attributeMap = {};
-    singleProduct.variants.forEach((variant) => {
+    selectedProduct?.variants?.forEach((variant) => {
       const normalizedAttributes = normalizeAttributes(variant.attributes);
       Object.keys(normalizedAttributes).forEach((key) => {
         if (!attributeMap[key]) {
@@ -67,16 +60,16 @@ const ProductDetails = () => {
     return attributeMap;
   };
 
-  // Function to handle attribute selection
+  // Handle attribute selection (normalize keys)
   const handleAttributeSelection = (key, value) => {
     const normalizedKey = key.toLowerCase();
     setSelectedAttributes((prev) => ({ ...prev, [normalizedKey]: value }));
     updatePriceBasedOnAttributes({ ...selectedAttributes, [normalizedKey]: value });
   };
 
-  // Function to update price based on selected attributes
+  // Update price based on selected attributes
   const updatePriceBasedOnAttributes = (attributes) => {
-    const selectedVariant = singleProduct.variants.find((variant) => {
+    const selectedVariant = selectedProduct?.variants?.find((variant) => {
       const normalizedVariantAttributes = normalizeAttributes(variant.attributes);
       return Object.keys(attributes).every(
         (key) => normalizedVariantAttributes[key] === attributes[key]
@@ -87,18 +80,18 @@ const ProductDetails = () => {
     }
   };
 
-  // Function to render attributes dynamically
+  // Render attributes dynamically
   const renderAttributes = () => {
     const attributeMap = groupAttributesByKey();
 
     return Object.keys(attributeMap).map((key) => {
-      const values = Array.from(attributeMap[key]); // Convert Set to Array
+      const values = Array.from(attributeMap[key]);
 
       return (
         <div key={key} className="mt-4">
           <span className="font-medium capitalize">{key}:</span>
           <div className="flex gap-2 mt-2">
-            {values.map((value, index) => (
+            {values?.map((value, index) => (
               <button
                 key={index}
                 onClick={() => handleAttributeSelection(key, value)}
@@ -114,7 +107,7 @@ const ProductDetails = () => {
                   borderWidth:
                     selectedAttributes[key] === value ? "5px" : "1px",
                   color: selectedAttributes[key] === value ? "blueviolet" : "",
-                  borderColor: selectedAttributes[key] === value ? "aqua" : "",
+                  borderColor: selectedAttributes[key] === value ? "blue" : "",
                 }}
               >
                 {key !== "color" && value}
@@ -126,7 +119,7 @@ const ProductDetails = () => {
     });
   };
 
-  // Function to handle quantity change
+  // Handle quantity change
   const handleQuantityChange = (type) => {
     if (type === "increase") {
       setQuantity((prev) => prev + 1);
@@ -135,9 +128,10 @@ const ProductDetails = () => {
     }
   };
 
-  // Function to handle adding to cart
+  // Handle adding to cart
   const handleAddToCart = () => {
     console.log(selectedAttributes)
+
     if (
       Object.keys(selectedAttributes).length !==
       Object.keys(groupAttributesByKey()).length
@@ -146,8 +140,7 @@ const ProductDetails = () => {
       return;
     }
 
-    // Find the selected variant based on attributes
-    const selectedVariant = singleProduct.variants.find((variant) => {
+    const selectedVariant = selectedProduct?.variants?.find((variant) => {
       const normalizedVariantAttributes = normalizeAttributes(variant.attributes);
       return Object.keys(selectedAttributes).every(
         (key) => normalizedVariantAttributes[key] === selectedAttributes[key]
@@ -161,7 +154,7 @@ const ProductDetails = () => {
 
     const existingItem = cartItems.find(
       (item) =>
-        item.id === singleProduct.id &&
+        item.id === selectedProduct?.id &&
         item.variantId === selectedVariant.id &&
         JSON.stringify(item.selectedAttributes) ===
           JSON.stringify(selectedAttributes)
@@ -173,7 +166,7 @@ const ProductDetails = () => {
     }
 
     const item = {
-      ...singleProduct,
+      ...selectedProduct,
       variantId: selectedVariant.id,
       selectedAttributes,
       quantity,
@@ -192,67 +185,49 @@ const ProductDetails = () => {
 
   return (
     <section className="py-5">
-      <nav className="flex justify-start space-x-3 py-8 px-5">
-        <Link
-          to="/"
-          className="text-lg font-medium hover:text-gray-300 transition-all duration-200"
-        >
-          <FaHome className="text-blue-500" size={20} />
-        </Link>
-        <span className="text-lg text-gray-300 mt-1">
-          <FaGreaterThan size={15} />
-        </span>
-        <Link
-          to="/shop"
-          className="text-base font-medium hover:text-gray-300 transition-all duration-200 text-blue-500"
-        >
-          Shop
-        </Link>
-        <span className="text-lg text-gray-300 mt-1">
-          <FaGreaterThan size={15} />
-        </span>
-        <Link className="text-base font-medium hover:text-gray-300 transition-all duration-200">
-          {singleProduct.name}
-        </Link>
-      </nav>
       <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-        {/* Slider Section */}
         <div>
           <ProductImageSlider
-            images={singleProduct.variants.map(
+            images={selectedProduct?.variants?.map(
               (variant) => variant?.imageUrl
             )}
           />
         </div>
 
-        {/* Product Details Section */}
         <div className="space-y-5">
-          <h1 className="text-4xl font-semibold">{singleProduct.name}</h1>
-          <h1 className="text-xl font-semibold">#{singleProduct.referenceId}</h1>
+          <h1 className="text-4xl font-semibold">{selectedProduct?.name}</h1>
+          <h1 className="text-xl font-semibold">#{selectedProduct?.referenceId}</h1>
           <p className="font-bold">
             Availability:
             <span className="text-green-500 font-medium ms-2">
-              {singleProduct.availability === true
-                ? "In Stock"
-                : "Out of Stock"}
+              {selectedProduct?.availability === true ? "In Stock" : "Out of Stock"}
             </span>
           </p>
           <p className="font-medium">
             <span className="font-bold me-2">Category:</span>{" "}
-            {singleProduct?.category?.categoryName}
+            {selectedProduct?.category?.categoryName}
           </p>
           <p className="font-medium">
             <span className="font-bold me-2">Brand:</span>{" "}
-            {singleProduct?.brand?.brandName}
+            {selectedProduct?.brand?.brandName}
           </p>
           <div className="text-xl font-bold text-blue-500">Price: ${price}</div>
           <p className="text-xl text-gray-500">
-            {singleProduct?.productSubtitle}
+            {selectedProduct?.productSubtitle}
           </p>
 
-          {/* Render Attributes Dynamically */}
           {renderAttributes()}
 
+          <div className="mt-4">
+            <span className="font-medium">Quantity:</span>
+            <div className="flex items-center gap-2 mt-2">
+              <button onClick={() => handleQuantityChange("decrease")} className="px-4 py-2 border">-</button>
+              <input type="text" value={quantity} readOnly className="w-12 text-center border py-2" />
+              <button onClick={() => handleQuantityChange("increase")} className="px-4 py-2 border">+</button>
+            </div>
+          </div>
+
+          
           {/* Price Tiers */}
           <div className="mt-4">
             <span className="font-medium">
@@ -277,30 +252,6 @@ const ProductDetails = () => {
                 ))}
               </ul>
             )}
-          </div>
-          {/* Quantity Selector */}
-          <div className="mt-4">
-            <span className="font-medium">Quantity:</span>
-            <div className="flex items-center gap-2 mt-2">
-              <button
-                onClick={() => handleQuantityChange("decrease")}
-                className="px-4 py-2 border"
-              >
-                -
-              </button>
-              <input
-                type="text"
-                value={quantity}
-                readOnly
-                className="w-12 text-center border py-2"
-              />
-              <button
-                onClick={() => handleQuantityChange("increase")}
-                className="px-4 py-2 border"
-              >
-                +
-              </button>
-            </div>
           </div>
 
           {/* Add to Cart and Buy Now */}
@@ -334,76 +285,8 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-
-      {/* Tabs Section */}
-      <div className="container break-words mx-auto lg:mt-[50px] mb-16">
-        <div className="">
-          <ul className="flex justify-center space-x-8 text-2xl font-medium">
-            <li className="text-blue-500 border-b-2 border-blue-500">
-              Product Description
-            </li>
-          </ul>
-        </div>
-
-        {/* Tab Content */}
-        <div className="mt-6">
-          <p className="text-lg text-gray-500">{singleProduct?.description}</p>
-          <table className="mt-6 w-[50%] mx-auto border border-gray-300 text-left">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 border border-gray-300">Feature</th>
-                <th className="px-4 py-2 border border-gray-300">Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              {singleProduct.weight && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">Weight</td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    <p className="font-medium">{singleProduct.weight}</p>
-                  </td>
-                </tr>
-              )}
-              {singleProduct.material && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">Material</td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    <p className="font-medium">{singleProduct.material}</p>
-                  </td>
-                </tr>
-              )}
-              {singleProduct.thickness && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">Thickness</td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    <p className="font-medium">{singleProduct.thickness}</p>
-                  </td>
-                </tr>
-              )}
-              {singleProduct.elasticity && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">Elasticity</td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    <p className="font-medium">{singleProduct.elasticity}</p>
-                  </td>
-                </tr>
-              )}
-              {singleProduct.breathability && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">Breathability</td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    <p className="font-medium">{singleProduct.breathability}</p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <RelatedProduct id={singleProduct?.id} />
     </section>
   );
 };
 
-export default ProductDetails;
+export default ViewProduct;
