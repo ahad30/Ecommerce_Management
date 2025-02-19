@@ -7,7 +7,9 @@ import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { useAppDispatch, useAppSelector } from "../../../redux/Hook/Hook";
 import { addToCart } from "../../../redux/Cart/cartSlice";
 import { toast } from "sonner";
-import { Alert } from "antd";
+import { Alert, Tooltip } from "antd";
+import NewProduct from "../NewProduct/NewProduct";
+import RelatedProduct from "../RelatedProduct/RelatedProduct";
 
 const ProductDetails = () => {
   const singleProduct = useLoaderData();
@@ -17,12 +19,23 @@ const ProductDetails = () => {
   const [price, setPrice] = useState(singleProduct?.variants[0]?.price || 0);
   const [isAdded, setIsAdded] = useState(false);
   const cartItems = useAppSelector((state) => state.cart?.items);
-  const selectedVariant = singleProduct.variants.find((variant) =>
-    Object.keys(selectedAttributes).every(
-      (key) => variant.attributes[key] === selectedAttributes[key]
-    )
-  );
-  // console.log(singleProduct)
+
+  // Normalize attribute keys to lowercase
+  const normalizeAttributes = (attributes) => {
+    const normalized = {};
+    for (const key in attributes) {
+      normalized[key.toLowerCase()] = attributes[key];
+    }
+    return normalized;
+  };
+
+  // Find the selected variant based on normalized attributes
+  const selectedVariant = singleProduct.variants.find((variant) => {
+    const normalizedVariantAttributes = normalizeAttributes(variant.attributes);
+    return Object.keys(selectedAttributes).every(
+      (key) => normalizedVariantAttributes[key] === selectedAttributes[key]
+    );
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -36,17 +49,18 @@ const ProductDetails = () => {
           JSON.stringify(selectedAttributes)
     );
     setIsAdded(isProductInCart);
-  }, [cartItems, singleProduct.id, selectedAttributes]); // Added selectedAttributes as a dependency
+  }, [cartItems, singleProduct.id, selectedAttributes]);
 
   // Function to group attribute values by key across all variants
   const groupAttributesByKey = () => {
     const attributeMap = {};
     singleProduct.variants.forEach((variant) => {
-      Object.keys(variant.attributes).forEach((key) => {
+      const normalizedAttributes = normalizeAttributes(variant.attributes);
+      Object.keys(normalizedAttributes).forEach((key) => {
         if (!attributeMap[key]) {
           attributeMap[key] = new Set(); // Use a Set to avoid duplicate values
         }
-        attributeMap[key].add(variant.attributes[key]);
+        attributeMap[key].add(normalizedAttributes[key]);
       });
     });
 
@@ -55,17 +69,19 @@ const ProductDetails = () => {
 
   // Function to handle attribute selection
   const handleAttributeSelection = (key, value) => {
-    setSelectedAttributes((prev) => ({ ...prev, [key]: value }));
-    updatePriceBasedOnAttributes({ ...selectedAttributes, [key]: value });
+    const normalizedKey = key.toLowerCase();
+    setSelectedAttributes((prev) => ({ ...prev, [normalizedKey]: value }));
+    updatePriceBasedOnAttributes({ ...selectedAttributes, [normalizedKey]: value });
   };
 
   // Function to update price based on selected attributes
   const updatePriceBasedOnAttributes = (attributes) => {
-    const selectedVariant = singleProduct.variants.find((variant) =>
-      Object.keys(attributes).every(
-        (key) => variant.attributes[key] === attributes[key]
-      )
-    );
+    const selectedVariant = singleProduct.variants.find((variant) => {
+      const normalizedVariantAttributes = normalizeAttributes(variant.attributes);
+      return Object.keys(attributes).every(
+        (key) => normalizedVariantAttributes[key] === attributes[key]
+      );
+    });
     if (selectedVariant) {
       setPrice(selectedVariant.price);
     }
@@ -98,7 +114,7 @@ const ProductDetails = () => {
                   borderWidth:
                     selectedAttributes[key] === value ? "5px" : "1px",
                   color: selectedAttributes[key] === value ? "blueviolet" : "",
-                  borderColor: selectedAttributes[key] === value ? "blue" : "",
+                  borderColor: selectedAttributes[key] === value ? "aqua" : "",
                 }}
               >
                 {key !== "color" && value}
@@ -121,6 +137,7 @@ const ProductDetails = () => {
 
   // Function to handle adding to cart
   const handleAddToCart = () => {
+    console.log(selectedAttributes)
     if (
       Object.keys(selectedAttributes).length !==
       Object.keys(groupAttributesByKey()).length
@@ -130,13 +147,12 @@ const ProductDetails = () => {
     }
 
     // Find the selected variant based on attributes
-    const selectedVariant = singleProduct.variants.find((variant) =>
-      Object.keys(selectedAttributes).every(
-        (key) => variant.attributes[key] === selectedAttributes[key]
-      )
-    );
-
-    // console.log("Selected Variant:", selectedVariant);
+    const selectedVariant = singleProduct.variants.find((variant) => {
+      const normalizedVariantAttributes = normalizeAttributes(variant.attributes);
+      return Object.keys(selectedAttributes).every(
+        (key) => normalizedVariantAttributes[key] === selectedAttributes[key]
+      );
+    });
 
     if (!selectedVariant) {
       toast.error("Invalid selection! No matching variant found.");
@@ -168,7 +184,6 @@ const ProductDetails = () => {
     dispatch(addToCart(item));
     toast.success("Added to cart successfully!");
   };
-
 
   // Check if all required attributes are selected
   const areAllAttributesSelected = Object.keys(groupAttributesByKey()).every(
@@ -290,27 +305,31 @@ const ProductDetails = () => {
 
           {/* Add to Cart and Buy Now */}
           <div className="flex space-x-4">
-            <button
-              onClick={handleAddToCart}
-              disabled={!areAllAttributesSelected || isAdded}
-              className="bg-blue-500 text-white px-7 py-2 rounded hover:bg-white hover:text-blue-500 transition-all border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <p className="flex items-center justify-center">
-                <CiShoppingCart className="me-2" size={30} />
-                {isAdded ? "Added" : "Add to cart"}
-              </p>
-            </button>
-            <Link to={`/checkout`}>
+            <Tooltip title={!areAllAttributesSelected ? "Please select the attributes first" : ""}>
               <button
                 onClick={handleAddToCart}
                 disabled={!areAllAttributesSelected || isAdded}
-                className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-500 text-white px-7 py-2 rounded hover:bg-white hover:text-blue-500 transition-all border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <p className="flex items-center justify-center">
-                  <HiOutlineShoppingBag className="me-2" size={24} />
-                  Buy Now
+                  <CiShoppingCart className="me-2" size={30} />
+                  {isAdded ? "Added to cart" : "Add to cart"}
                 </p>
               </button>
+            </Tooltip>
+            <Link to={`/checkout`}>
+              <Tooltip title={!areAllAttributesSelected ? "Please select the attributes first" : ""}>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!areAllAttributesSelected || isAdded}
+                  className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <p className="flex items-center justify-center">
+                    <HiOutlineShoppingBag className="me-2" size={24} />
+                    {isAdded ? "Go to Cart to Complete Purchase" : "Buy Now"}
+                  </p>
+                </button>
+              </Tooltip>
             </Link>
           </div>
         </div>
@@ -337,51 +356,52 @@ const ProductDetails = () => {
               </tr>
             </thead>
             <tbody>
-  {singleProduct.weight && (
-    <tr>
-      <td className="px-4 py-2 border border-gray-300">Weight</td>
-      <td className="px-4 py-2 border border-gray-300">
-        <p className="font-medium">{singleProduct.weight}</p>
-      </td>
-    </tr>
-  )}
-  {singleProduct.material && (
-    <tr>
-      <td className="px-4 py-2 border border-gray-300">Material</td>
-      <td className="px-4 py-2 border border-gray-300">
-        <p className="font-medium">{singleProduct.material}</p>
-      </td>
-    </tr>
-  )}
-  {singleProduct.thickness && (
-    <tr>
-      <td className="px-4 py-2 border border-gray-300">Thickness</td>
-      <td className="px-4 py-2 border border-gray-300">
-        <p className="font-medium">{singleProduct.thickness}</p>
-      </td>
-    </tr>
-  )}
-  {singleProduct.elasticity && (
-    <tr>
-      <td className="px-4 py-2 border border-gray-300">Elasticity</td>
-      <td className="px-4 py-2 border border-gray-300">
-        <p className="font-medium">{singleProduct.elasticity}</p>
-      </td>
-    </tr>
-  )}
-  {singleProduct.breathability && (
-    <tr>
-      <td className="px-4 py-2 border border-gray-300">Breathability</td>
-      <td className="px-4 py-2 border border-gray-300">
-        <p className="font-medium">{singleProduct.breathability}</p>
-      </td>
-    </tr>
-  )}
-</tbody>
-
+              {singleProduct.weight && (
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Weight</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <p className="font-medium">{singleProduct.weight}</p>
+                  </td>
+                </tr>
+              )}
+              {singleProduct.material && (
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Material</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <p className="font-medium">{singleProduct.material}</p>
+                  </td>
+                </tr>
+              )}
+              {singleProduct.thickness && (
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Thickness</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <p className="font-medium">{singleProduct.thickness}</p>
+                  </td>
+                </tr>
+              )}
+              {singleProduct.elasticity && (
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Elasticity</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <p className="font-medium">{singleProduct.elasticity}</p>
+                  </td>
+                </tr>
+              )}
+              {singleProduct.breathability && (
+                <tr>
+                  <td className="px-4 py-2 border border-gray-300">Breathability</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <p className="font-medium">{singleProduct.breathability}</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
         </div>
       </div>
+
+      <RelatedProduct id={singleProduct?.id} />
     </section>
   );
 };

@@ -7,25 +7,24 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import SectionTitle from "../SectionTitle/SectionTitle";
 import { useGetProductsQuery } from "../../../redux/Feature/Admin/product/productApi";
 import SliderSkeleton from "../../../components/Skeleton/SliderSkeleton";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const NewProduct = () => {
   const { data, error, isLoading } = useGetProductsQuery();
   const [showSkeleton, setShowSkeleton] = useState(true);
-  const sliderRef = useRef(null); // Ref to store the Keen Slider instance
-  
-  const products = data?.data?.filter((item) => item?.newArrival === true);
+  const sliderRef = useRef(null);
+  const location = useLocation()
 
+
+  const products = data?.data?.filter((item) => item?.newArrival === true);
 
   useEffect(() => {
     if (isLoading || !products || products.length === 0) return;
 
-   
     if (sliderRef.current) {
       sliderRef.current.destroy();
       sliderRef.current = null;
     }
-
 
     const sliderElement = document.getElementById("keen-slider");
     if (!sliderElement) return;
@@ -55,23 +54,22 @@ const NewProduct = () => {
       },
     });
 
-    
     const keenSliderPrevious = document.getElementById("keen-slider-previous");
     const keenSliderNext = document.getElementById("keen-slider-next");
 
-    keenSliderPrevious?.addEventListener("click", () => sliderRef.current.prev());
+    keenSliderPrevious?.addEventListener("click", () =>
+      sliderRef.current.prev()
+    );
     keenSliderNext?.addEventListener("click", () => sliderRef.current.next());
-
 
     // const autoplayInterval = setInterval(() => {
     //   sliderRef.current.next();
     // }, 3000);
 
-
     return () => {
       // clearInterval(autoplayInterval);
       if (sliderRef.current) {
-        sliderRef.current.destroy(); 
+        sliderRef.current.destroy();
         sliderRef.current = null;
       }
     };
@@ -103,94 +101,96 @@ const NewProduct = () => {
   return (
     <div className="mt-16 mb-16">
       <SectionTitle
-        title="TOP NEW ARRIVALS"
-        subTitle="Our Best-Selling and Most Popular Items"
+        title={"TOP NEW ARRIVALS"}
+        subTitle="Discover the Latest Trends & Freshest Picks!"
       />
-           { products?.length === 0 ? (
-          <p className="text-center font-bold text-2xl text-primary">
-             No newest product arrived yet. <br/>Stay tuned with us
-          </p>
-        ) :
-        ( <>
-      <div className="mt-8 flex gap-4 lg:mt-5 justify-end">
-        <button
-          aria-label="Previous slide"
-          id="keen-slider-previous"
-          className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
-        >
-          <FaAngleLeft></FaAngleLeft>
-        </button>
+      {products?.length === 0 ? (
+        <p className="text-center font-bold text-2xl text-primary">
+          No newest product arrived yet. <br />
+          Stay tuned with us
+        </p>
+      ) : (
+        <>
+          <div className="mt-8 flex gap-4 lg:mt-5 justify-end">
+            <button
+              aria-label="Previous slide"
+              id="keen-slider-previous"
+              className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
+            >
+              <FaAngleLeft></FaAngleLeft>
+            </button>
 
-        <button
-          aria-label="Next slide"
-          id="keen-slider-next"
-          className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
-        >
-          <FaAngleRight></FaAngleRight>
-        </button>
-      </div>
+            <button
+              aria-label="Next slide"
+              id="keen-slider-next"
+              className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
+            >
+              <FaAngleRight></FaAngleRight>
+            </button>
+          </div>
 
-    
-      <div id="keen-slider" className="mt-16 keen-slider cursor-grabbing">
-        {products?.map((item, index) => (
-          <div className="keen-slider__slide border border-gray-200 rounded-lg" key={index}>
-            <div className="group h-[250px] relative block bg-black">
-              <img
-                alt={item?.name}
-                src={item?.imageUrl || "https://placehold.co/300x250"}
-                className="absolute inset-0 h-[250px] w-full object-cover transition-opacity group-hover:opacity-50"
-              />
+          <div id="keen-slider" className="mt-16 keen-slider cursor-grabbing">
+            {products?.map((item, index) => (
+              <div
+                className="keen-slider__slide border border-gray-200 rounded-lg"
+                key={index}
+              >
+                <div className="group h-[250px] relative block bg-black">
+                  <img
+                    alt={item?.name}
+                    src={item?.imageUrl || "https://placehold.co/300x250"}
+                    className="absolute inset-0 h-[250px] w-full object-cover transition-opacity group-hover:opacity-50"
+                  />
 
-              <div className="relative">
-                <div className="flex justify-between p-4 sm:p-6 lg:p-2">
-                  <div>
-                    {item?.topSale === true && (
-                      <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-primary text-white">
-                        {item?.topSale && "Top Sale"}
-                      </p>
-                    )}
-                    {item?.newArrival === true && (
-                      <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-primary text-white">
-                        {item?.newArrival && "Newest"}
-                      </p>
-                    )}
-                  </div>
-                  <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
-                    <MdOutlineRemoveRedEye size={28} />
+                  <div className="relative">
+                    <div className="flex justify-between p-4 sm:p-6 lg:p-2">
+                      <div>
+                        {item?.topSale === true && (
+                          <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-primary text-white">
+                            {item?.topSale && "Top Sale"}
+                          </p>
+                        )}
+                        {item?.newArrival === true && (
+                          <p className="text-sm font-medium uppercase rounded-md px-3 py-1 inline-block bg-primary text-white">
+                            {item?.newArrival && "Newest"}
+                          </p>
+                        )}
+                      </div>
+                      <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                        <MdOutlineRemoveRedEye size={28} />
+                      </div>
+                    </div>
                   </div>
                 </div>
+                <div className="p-2">
+                  <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
+                    <h2>{item?.name}</h2>
+                  </div>
+                  <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-sm font-medium">
+                    <h2>#{item?.referenceId}</h2>
+                  </div>
+                  <div className="mt-2 px-2 text-base font-medium text-primary">
+                    <h2>Pricing starts from ${item.variants[0]?.price || 0}</h2>
+                  </div>
+                </div>
+                <Link to={`/product/${item?.id}`}>
+                  <div className="flex justify-center mt-10 mb-5">
+                    <button className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white">
+                      View Details
+                    </button>
+                  </div>
+                </Link>
               </div>
-            </div>
-            <div className="p-2">
-              <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
-                <h2>{item?.name}</h2>
-              </div>
-              <div className="mt-2 text-base font-medium text-primary">
-                <h2>From ${item.variants[0]?.price || 0}</h2>
-              </div>
-            </div>
-            <Link to={`/product/${item?.id}`}>
-              <div className="flex justify-center mt-10 mb-5">
-                <button
-                  className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white"
-                >
-                  View Details
-                </button>
-              </div>
-            </Link>
+            ))}
           </div>
-        ))}
-
-       
-      </div>
-      <Link to={`/shop`}>
-      <div className="flex justify-center mx-auto w-[200px] mt-10 mb-5">
-          <Button className="bg-[#3498DB] w-full font-Poppins font-medium py-2 px-1">
-            See More
-          </Button>
-      </div>
-        </Link>
-      </>
+          <Link to={`/shop`}>
+            <div className="flex justify-center mx-auto w-[200px] mt-10 mb-5">
+              <Button className="bg-[#3498DB] w-full font-Poppins font-medium py-2 px-1">
+                See More
+              </Button>
+            </div>
+          </Link>
+        </>
       )}
     </div>
   );

@@ -11,6 +11,7 @@ const ViewModal = ({ children, isViewModalOpen, title, width }) => {
   return (
     <>
       <Modal
+      className="my-5"
         title={title}
         centered
         open={isViewModalOpen}
@@ -20,7 +21,7 @@ const ViewModal = ({ children, isViewModalOpen, title, width }) => {
         okButtonProps={{ style: { display: "none" } }}
         cancelButtonProps={{ style: { display: "none" } }}
       >
-        <div className="mt-7">{children}</div>
+        <div className="">{children}</div>
       </Modal>
     </>
   );

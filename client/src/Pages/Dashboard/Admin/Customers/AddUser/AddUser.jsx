@@ -46,6 +46,7 @@ const AddUser = () => {
             label="User Name"
             defaultKey={""}
             placeholder={"Enter the username"}
+            required={1}
           />
           <ZInputTwo
             name="email"
@@ -53,6 +54,8 @@ const AddUser = () => {
             label="Email"
             defaultKey={""}
             placeholder={"Enter the email"}
+            required={1}
+
           />
           <ZInputTwo
             name="phone"
@@ -60,6 +63,8 @@ const AddUser = () => {
             label="Phone"
             defaultKey={""}
             placeholder={"Enter the phone number"}
+            required={1}
+
           />
           <ZInputTwo
             name="password"
@@ -67,6 +72,8 @@ const AddUser = () => {
             label="Password"
             defaultKey={""}
             placeholder={"Enter the password"}
+            required={1}
+
           />
           <button
             type="submit"

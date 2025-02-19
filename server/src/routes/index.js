@@ -21,6 +21,8 @@ const SubscribeService = require('../services/Subscribe/SubscribeService');
 const SubscribeController = require('../controllers/subscribeController');
 const UserService = require('../services/User/userService');
 const UserController = require('../controllers/userController');
+const ContactService = require('../services/Contact/ContactService');
+const ContactController = require('../controllers/contactController');
 
 const router = express.Router();
 
@@ -39,6 +41,9 @@ const subscribeService = new SubscribeService(prisma)
 
 const userService = new UserService(prisma);
 const userController = new UserController(userService);
+
+const contactService = new ContactService(prisma);
+const contactController = new ContactController(contactService);
 // user route
 // [route("/users/create")]
 router.post("/users/create", (req, res, next) => {
@@ -126,6 +131,11 @@ router.get("/allProduct", (req, res, next) => {
 router.get("/product/:id", (req, res, next) => {
     const productController = new ProductController(productService);
     productController.getProductById(req, res, next);
+})
+
+router.get("/relatedProducts/:id", (req, res, next) => {
+    const productController = new ProductController(productService);
+    productController.getRelatedProducts(req, res, next);
 })
 
 
@@ -288,5 +298,26 @@ router.get("/subscriptions/:email", (req, res, next) => {
     const subscribeController = new SubscribeController(subscribeService);
     subscribeController.getSubscriptionByEmail(req, res, next)
 })
+
+// Contact routes
+router.post('/contact/create', (req, res, next) => {
+    contactController.createContact(req, res, next);
+});
+
+router.get('/contact', (req, res, next) => {
+    contactController.getContacts(req, res, next);
+});
+
+router.get('/contact/:id', (req, res, next) => {
+    contactController.getContactById(req, res, next);
+});
+
+router.put('/contact/:id', (req, res, next) => {
+    contactController.updateContact(req, res, next);
+});
+
+router.delete('/contact/:id', (req, res, next) => {
+    contactController.deleteContact(req, res, next);
+});
 
 module.exports = router;

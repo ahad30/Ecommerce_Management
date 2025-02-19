@@ -6,6 +6,7 @@ import InfoCardDetails from "./InfoCardDetails/InfoCardDetails";
 import NewsSletter from "./NewsSletter/NewsSletter";
 import ProductBanner from "./ProductBanner/ProductBanner";
 import NewProduct from "./NewProduct/NewProduct";
+import TopSaleProduct from "./TopSaleProduct/TopSaleProduct";
 // import { useKeenSlider } from "keen-slider/react";
 // import "keen-slider/keen-slider.min.css";
 
@@ -44,11 +45,13 @@ const Home = () => {
       </div>
       {/* <Category/> */}
    
+       <TopSaleProduct/>
       <NewProduct/>
       <AllProduct/>
       {/* <TopBrands></TopBrands> */}
     
        <NewsSletter/>
+
 
        {/* <div>
 

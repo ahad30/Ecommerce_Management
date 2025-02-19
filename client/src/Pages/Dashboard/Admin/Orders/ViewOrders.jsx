@@ -14,6 +14,7 @@ const ViewOrders = ({selectedOrder}) => {
   return (
     <div><Descriptions bordered column={1}>
     <Descriptions.Item label="Order ID">{selectedOrder?.id}</Descriptions.Item>
+    <Descriptions.Item label="Order Date">{selectedOrder?.createdAt}</Descriptions.Item>
     <Descriptions.Item label="Customer Name">{selectedOrder?.name}</Descriptions.Item>
     <Descriptions.Item label="Email">{selectedOrder?.email}</Descriptions.Item>
     <Descriptions.Item label="Phone">{selectedOrder?.phone}</Descriptions.Item>
