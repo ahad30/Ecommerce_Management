@@ -2,12 +2,15 @@ import React from 'react'
 import { FaArrowRight, FaEnvelope, FaGreaterThan, FaHome, FaMapMarkerAlt, FaPhoneAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import img from "../../assets/banner/contact-banner.jpg";
+import DashboardTitle from '../../components/DashboardTitle/DashboardTitle';
             
 const Contact = () => {
   return (
 
 
 <section className="">
+<DashboardTitle windowTitle={"Contact"}/>
+
    <div className="relative mb-16">
         <div
           className="absolute top-0 left-0 right-0 bottom-0 bg-cover bg-center bg-fixed"

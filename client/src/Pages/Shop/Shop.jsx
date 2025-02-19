@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { Pagination } from 'antd';
 import { useGetCategoryQuery } from "../../redux/Feature/Admin/category/categoryApi";
 import { useGetBrandQuery } from "../../redux/Feature/Admin/brand/brandApi";
+import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
 
 const Shop = () => {
   const dispatch = useAppDispatch();
@@ -26,8 +27,9 @@ const Shop = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [showSkeleton, setShowSkeleton] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(""); 
-  const [selectedBrand, setSelectedBrand] = useState(""); 
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [viewMode, setViewMode] = useState("grid"); // State for view mode (grid or list)
 
   // Fetch categories and brands
   const { data: categories, isLoading: isCategoriesLoading } = useGetCategoryQuery();
@@ -40,11 +42,9 @@ const Shop = () => {
     limit: limit,
     priceMin: priceMin,
     priceMax: priceMax,
-    category: selectedCategory, // Pass selected category
-    brand: selectedBrand, // Pass selected brand
+    category: selectedCategory,
+    brand: selectedBrand,
   });
-
-
 
   useEffect(() => {
     if (isFetching) {
@@ -56,6 +56,10 @@ const Shop = () => {
       return () => clearTimeout(timer);
     }
   }, [isFetching]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -79,6 +83,7 @@ const Shop = () => {
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <DashboardTitle windowTitle={"Shop"}/>
       {/* Search Bar */}
       <div className="relative w-[100%] md:w-[50%] mx-auto mb-10 flex py-[6px]">
         <div className="w-full">
@@ -114,12 +119,12 @@ const Shop = () => {
             {isHomeCategorySidebarOpen ? (
               <div className="bg-black px-7 text-white rounded-full py-1">
                 <MdClose className="inline-block w-6 h-6" />
-                <span className="text-base">Filters & Sort</span>
+                <span className="text-base">Filters</span>
               </div>
             ) : (
               <div className="bg-black px-7 text-white rounded-full py-1">
                 <CiFilter className="inline-block w-6 h-6" />
-                <span className="text-base">Filters & Sort</span>
+                <span className="text-base">Filters</span>
               </div>
             )}
           </span>
@@ -136,6 +141,8 @@ const Shop = () => {
           setSelectedCategory={setSelectedCategory}
           selectedBrand={selectedBrand}
           setSelectedBrand={setSelectedBrand}
+          isCategoriesLoading={isCategoriesLoading}
+          isBrandsLoading={isBrandsLoading}
         />
 
         {/* Product Grid */}
@@ -152,10 +159,20 @@ const Shop = () => {
 
             {/* Grid/List View Toggle (Desktop) */}
             <div className="items-center gap-3 hidden lg:flex">
-              <div className="cursor-pointer p-2 border rounded hover:bg-gray-100">
+              <div
+                className={`cursor-pointer p-2 border rounded hover:bg-gray-100 ${
+                  viewMode === "grid" ? "bg-gray-200" : ""
+                }`}
+                onClick={() => setViewMode("grid")}
+              >
                 <CiGrid42 size={20} />
               </div>
-              <div className="cursor-pointer p-2 border rounded hover:bg-gray-100">
+              <div
+                className={`cursor-pointer p-2 border rounded hover:bg-gray-100 ${
+                  viewMode === "list" ? "bg-gray-200" : ""
+                }`}
+                onClick={() => setViewMode("list")}
+              >
                 <FaListAlt size={20} />
               </div>
             </div>
@@ -172,13 +189,24 @@ const Shop = () => {
           )}
 
           {/* Product Cards */}
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            className={`mt-16 gap-4 ${
+              viewMode === "grid"
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                : "flex flex-col"
+            }`}
+          >
             {/* Map Products Once Data is Loaded */}
             {!isLoading &&
               !showSkeleton &&
               data?.products?.map((item, index) => (
-                <div className="border border-gray-200 rounded-lg" key={index}>
-                  <div className="group h-[250px] relative block bg-black">
+                <div
+                  className={`border border-gray-200 rounded-lg ${
+                    viewMode === "list" ? "flex items-center p-4" : ""
+                  }`}
+                  key={index}
+                >
+                  <div className={`group h-[250px] relative block bg-black ${viewMode === "list" ? "w-1/3 me-2" : "w-full"}`}>
                     <img
                       alt={item?.name}
                       src={item?.imageUrl || "https://placehold.co/300x250"}
@@ -205,26 +233,45 @@ const Shop = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="p-2">
-                    <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
+                  <div className={` ${viewMode === "list" ? "w-2/3 p-2" : ""}`}>
+                    <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-base font-medium">
                       <h2>{item?.name}</h2>
                     </div>
-                    <div className="mt-5 sm:mt-8 lg:mt-5 text-sm font-medium">
+                    {viewMode === "list"  &&
+                      <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
+                      <h2 className="text-gray-500">{item?.productSubtitle}</h2>
+                    </div>
+                    }
+                    <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-sm font-medium">
                       <h2>#{item?.referenceId}</h2>
                     </div>
-                    <div className="mt-2 text-base font-medium text-primary">
-                      <h2>From ${item.variants[0]?.price || 0}</h2>
+                    <div className="mt-2 px-2 text-base font-medium text-primary">
+
+                      <h2>Pricing starts from ${item.variants[0]?.price || 0}</h2>
                     </div>
+                    {viewMode === "grid" && (
+                      <Link to={`/product/${item?.id}`}>
+                        <div className="flex justify-center mt-10 mb-5">
+                          <button
+                            className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white"
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      </Link>
+                    )}
+                    {viewMode === "list" && (
+                      <div className="mt-4 flex justify-end">
+                        <Link to={`/product/${item?.id}`}>
+                          <button
+                            className="bg-primary font-Poppins font-medium py-2 px-4 rounded text-white"
+                          >
+                            View Details
+                          </button>
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                  <Link to={`/product/${item?.id}`}>
-                    <div className="flex justify-center mt-10 mb-5">
-                      <button
-                        className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white"
-                      >
-                        View Details
-                      </button>
-                    </div>
-                  </Link>
                 </div>
               ))}
           </div>
