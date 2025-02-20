@@ -5,80 +5,74 @@ import "keen-slider/keen-slider.min.css";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import SectionTitle from "../SectionTitle/SectionTitle";
-import { useGetProductsQuery } from "../../../redux/Feature/Admin/product/productApi";
 import SliderSkeleton from "../../../components/Skeleton/SliderSkeleton";
-import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../redux/Hook/Hook";
-import { setIsNewProductViewModalOpen } from "../../../redux/Modal/ModalSlice";
-import { Modal } from "antd";
-import ViewProduct from "../../../components/ViewProduct";
+import { Link, useLocation } from "react-router-dom";
+import { useGetRelatedProductsQuery } from "../../../redux/Feature/Admin/product/productApi";
 
-const NewProduct = () => {
-  const dispatch = useAppDispatch();
-  const { data, error, isLoading } = useGetProductsQuery();
+const RelatedProduct = ({id}) => {
+  const { data, error, isLoading } = useGetRelatedProductsQuery(id);
   const [showSkeleton, setShowSkeleton] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Initialize as null
-  const sliderRef = useRef(null);
-  const { isNewProductViewModalOpen } = useAppSelector((state) => state.modal);
+  const sliderRef3 = useRef(null);
 
-  const products = data?.data?.filter((item) => item?.newArrival === true);
 
-  useEffect(() => {
-    if (isLoading || !products || products.length === 0) return;
+  const products = data;
 
-    if (sliderRef.current) {
-      sliderRef.current.destroy();
-      sliderRef.current = null;
-    }
+//   useEffect(() => {
+//     if (isLoading || !products || products.length === 0) return;
 
-    const sliderElement = document.getElementById("keen-slider");
-    if (!sliderElement) return;
+//     if (sliderRef3.current) {
+//       sliderRef3.current.destroy();
+//       sliderRef3.current = null;
+//     }
 
-    sliderRef.current = new KeenSlider(sliderElement, {
-      loop: true,
-      slides: {
-        origin: "center",
-        perView: 1,
-        spacing: 16,
-      },
-      breakpoints: {
-        "(min-width: 1024px)": {
-          slides: {
-            origin: "auto",
-            perView: 4,
-            spacing: 20,
-          },
-        },
-        "(max-width: 600px)": {
-          slides: {
-            origin: "center",
-            perView: 1,
-            spacing: 0,
-          },
-        },
-      },
-    });
+//     const sliderElement = document.getElementById("keen-slider-related");
+//     if (!sliderElement) return;
 
-    const keenSliderPrevious = document.getElementById("keen-slider-previous");
-    const keenSliderNext = document.getElementById("keen-slider-next");
+//     sliderRef3.current = new KeenSlider(sliderElement, {
+//       loop: true,
+//       slides: {
+//         origin: "center",
+//         perView: 1,
+//         spacing: 16,
+//       },
+//       breakpoints: {
+//         "(min-width: 1024px)": {
+//           slides: {
+//             origin: "auto",
+//             perView: 4,
+//             spacing: 20,
+//           },
+//         },
+//         "(max-width: 600px)": {
+//           slides: {
+//             origin: "center",
+//             perView: 1,
+//             spacing: 0,
+//           },
+//         },
+//       },
+//     });
 
-    keenSliderPrevious?.addEventListener("click", () =>
-      sliderRef.current.prev()
-    );
-    keenSliderNext?.addEventListener("click", () => sliderRef.current.next());
+//     const keenSliderPrevious = document.getElementById("keen-slider-related-previous");
+//     const keenSliderNext = document.getElementById("keen-slider-related-next");
 
-    // const autoplayInterval = setInterval(() => {
-    //   sliderRef.current.next();
-    // }, 3000);
+//     keenSliderPrevious?.addEventListener("click", () =>
+//       sliderRef3.current.prev()
+//     );
+//     keenSliderNext?.addEventListener("click", () => sliderRef3.current.next());
 
-    return () => {
-      // clearInterval(autoplayInterval);
-      if (sliderRef.current) {
-        sliderRef.current.destroy();
-        sliderRef.current = null;
-      }
-    };
-  }, [products, isLoading]);
+//     // const autoplayInterval = setInterval(() => {
+//     //   sliderRef3.current.next();
+//     // }, 3000);
+
+//     return () => {
+//       // clearInterval(autoplayInterval);
+//       if (sliderRef3.current) {
+//         sliderRef3.current.destroy();
+//         sliderRef3.current = null;
+//       }
+//     };
+//   }, [products, isLoading]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -94,33 +88,32 @@ const NewProduct = () => {
     return <SliderSkeleton />;
   }
 
-  const handleViewProduct = (productData) => {
-    setSelectedProduct(productData); // Set the selected product
-    dispatch(setIsNewProductViewModalOpen()); // Open the modal
-  };
-
-  const handleCloseModal = () => {
-    setSelectedProduct(null); // Clear the selected product
-    dispatch(setIsNewProductViewModalOpen()); // Close the modal
-  };
+  // if(){
+  //    { products?.length === 0 && (
+  //         <p className="text-center font-bold text-2xl">
+  //            No newest product arrived yet.Stay tuned with us
+  //         </p>
+  //       )
+  //       }
+  // }
 
   return (
     <div className="mt-16 mb-16">
       <SectionTitle
-        title={"TOP NEW ARRIVALS"}
+        title={"Related Products"}
         subTitle="Discover the Latest Trends & Freshest Picks!"
       />
       {products?.length === 0 ? (
         <p className="text-center font-bold text-2xl text-primary">
-          No newest product arrived yet. <br />
+          No related product arrived yet. <br />
           Stay tuned with us
         </p>
       ) : (
         <>
-          <div className="mt-8 flex gap-4 lg:mt-5 justify-end">
+          {/* <div className="mt-8 flex gap-4 lg:mt-5 justify-end">
             <button
               aria-label="Previous slide"
-              id="keen-slider-previous"
+              id="keen-slider-related-previous"
               className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
             >
               <FaAngleLeft></FaAngleLeft>
@@ -128,17 +121,19 @@ const NewProduct = () => {
 
             <button
               aria-label="Next slide"
-              id="keen-slider-next"
+              id="keen-slider-related-next"
               className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
             >
               <FaAngleRight></FaAngleRight>
             </button>
-          </div>
+          </div> */}
 
-          <div id="keen-slider" className="mt-16 keen-slider cursor-grabbing">
+          <div 
+        //   id="keen-slider-related" 
+          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {products?.map((item, index) => (
               <div
-                className="keen-slider__slide border border-gray-200 rounded-lg"
+                className="border border-gray-200 rounded-lg"
                 key={index}
               >
                 <div className="group h-[250px] relative block bg-black">
@@ -162,11 +157,9 @@ const NewProduct = () => {
                           </p>
                         )}
                       </div>
-                      <button onClick={() => handleViewProduct(item)}>
-                        <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
-                          <MdOutlineRemoveRedEye size={28} />
-                        </div>
-                      </button>
+                      <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                        <MdOutlineRemoveRedEye size={28} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -176,6 +169,10 @@ const NewProduct = () => {
                   </div>
                   <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-sm font-medium">
                     <h2>#{item?.referenceId}</h2>
+                  </div>
+                  <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-sm font-medium  flex justify-between">
+                    <h2 className="text-blue-500">{item?.category?.categoryName}</h2>
+                    <h2 className="text-green-500 font-bold">{item?.brand?.brandName}</h2>
                   </div>
                   <div className="mt-2 px-2 text-base font-medium text-primary">
                     <h2>Pricing starts from ${item.variants[0]?.price || 0}</h2>
@@ -200,19 +197,8 @@ const NewProduct = () => {
           </Link>
         </>
       )}
-      {/* View Modal */}
-      <Modal
-        className="my-5"
-        width={1200}
-        centered
-        open={isNewProductViewModalOpen && !!selectedProduct} // Ensure modal opens only if selectedProduct is set
-        onCancel={handleCloseModal} // Close modal and clear selectedProduct
-        footer={null} // Remove default footer buttons
-      >
-        {selectedProduct && <ViewProduct selectedProduct={selectedProduct} />}
-      </Modal>
     </div>
   );
 };
 
-export default NewProduct;
+export default RelatedProduct;

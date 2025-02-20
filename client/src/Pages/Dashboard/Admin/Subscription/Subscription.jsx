@@ -16,7 +16,7 @@ const Subscription = () => {
     id: subscription?.id,
     email: subscription?.email,
     isSubscribed: subscription?.isSubscribed,
-    subscribedAt: moment(subscription?.subscribedAt).format("MMM Do YY"),
+    subscribedAt: moment(subscription?.subscribedAt).format("Do MMMM YYYY, h:mm:ss a"),
     unsubscribedAt: subscription?.unsubscribedAt || "N/A",
   }));
 
@@ -55,19 +55,19 @@ const Subscription = () => {
     //   dataIndex: "unsubscribedAt",
     //   key: "unsubscribedAt",
     // },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <a onClick={() => handleDeleteSubscription(record.id)}>
-            <Tooltip title="Delete" placement="top">
-              <AiFillDelete className="text-red-500" size={20} />
-            </Tooltip>
-          </a>
-        </Space>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       <a onClick={() => handleDeleteSubscription(record.id)}>
+    //         <Tooltip title="Delete" placement="top">
+    //           <AiFillDelete className="text-red-500" size={20} />
+    //         </Tooltip>
+    //       </a>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   return (

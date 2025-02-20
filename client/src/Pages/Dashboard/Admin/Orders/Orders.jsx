@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Table, Tag, Space, Tooltip } from "antd";
+import React, { useState } from "react";
+import { Table, Tag, Space, Tooltip, Radio } from "antd"; // Added Radio component
 import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb";
 import DashboardTable from "../../../../components/Table/DashboardTable";
 import ButtonWithModal from "../../../../components/Button/ButtonWithModal";
@@ -21,6 +21,10 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState({});
   const [deleteOrder, { isLoading: dOIsLoading, isError, isSuccess, data: dOData, error: dOError }] = useDeleteOrderMutation();
 
+  // State for radio button filter
+  const [filterStatus, setFilterStatus] = useState("all"); // Default: show all orders
+
+  // Transform data for the table
   const ordersData = data?.data?.map((order, index) => ({
     key: index + 1,
     id: order?.id,
@@ -38,6 +42,11 @@ const Orders = () => {
     deliveryFee: order?.deliveryFee,
     taxAmount: order?.taxAmount
   }));
+
+  // Filter orders based on selected radio button
+  const filteredOrders = filterStatus === "all"
+    ? ordersData // Show all orders
+    : ordersData?.filter((order) => order.orderStatus === filterStatus); // Filter by status
 
   const handleEditOrder = (orderData) => {
     setSelectedOrder(orderData);
@@ -101,18 +110,17 @@ const Orders = () => {
       key: "orderStatus",
       render: (status) => (
         <Tag 
-        color={
-          status === "pending" ? "blue" :
-          status === "processing" ? "orange" :
-          status === "shipped" ? "purple" :
-          status === "delivered" ? "green" :
-          status === "cancelled" ? "red" :
-          "default"
-        }
-      >
-        {status}
-      </Tag>
-      
+          color={
+            status === "pending" ? "blue" :
+            status === "processing" ? "orange" :
+            status === "shipped" ? "purple" :
+            status === "delivered" ? "green" :
+            status === "cancelled" ? "red" :
+            "default"
+          }
+        >
+          {status}
+        </Tag>
       ),
     },
     {
@@ -146,8 +154,26 @@ const Orders = () => {
         <BreadCrumb />
       </div>
 
-      <DashboardTable columns={columns} data={ordersData} loading={ordersIsLoading} />
+      {/* Radio Button Filters */}
+      <div className="flex justify-center" style={{ marginBottom: 16 }}>
+        <Radio.Group
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          buttonStyle="solid"
+        >
+          <Radio.Button value="all">All</Radio.Button>
+          <Radio.Button value="pending">Pending</Radio.Button>
+          <Radio.Button value="processing">Processing</Radio.Button>
+          <Radio.Button value="shipped">Shipped</Radio.Button>
+          <Radio.Button value="delivered">Delivered</Radio.Button>
+          <Radio.Button value="cancelled">Cancelled</Radio.Button>
+        </Radio.Group>
+      </div>
 
+      {/* Table */}
+      <DashboardTable columns={columns} data={filteredOrders} loading={ordersIsLoading} />
+
+      {/* Modals */}
       <EditModal isEditModalOpen={isEditModalOpen} title="Edit Order">
         <EditOrders selectedOrder={selectedOrder} />
       </EditModal>

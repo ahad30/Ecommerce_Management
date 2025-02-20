@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"; // Add useRef
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@material-tailwind/react";
 import KeenSlider from "keen-slider";
 import "keen-slider/keen-slider.min.css";
@@ -9,73 +9,55 @@ import { useGetProductsQuery } from "../../../redux/Feature/Admin/product/produc
 import SliderSkeleton from "../../../components/Skeleton/SliderSkeleton";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../redux/Hook/Hook";
-import { setIsNewProductViewModalOpen } from "../../../redux/Modal/ModalSlice";
+import { setIsTopProductViewModalOpen } from "../../../redux/Modal/ModalSlice";
 import { Modal } from "antd";
 import ViewProduct from "../../../components/ViewProduct";
 
-const NewProduct = () => {
+const TopSaleProduct = () => {
   const dispatch = useAppDispatch();
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { isTopProductViewModalOpen } = useAppSelector((state) => state.modal);
   const { data, error, isLoading } = useGetProductsQuery();
   const [showSkeleton, setShowSkeleton] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Initialize as null
-  const sliderRef = useRef(null);
-  const { isNewProductViewModalOpen } = useAppSelector((state) => state.modal);
+  const sliderRef2 = useRef(null);
 
-  const products = data?.data?.filter((item) => item?.newArrival === true);
+  const products = data?.data?.filter((item) => item?.topSale === true);
 
   useEffect(() => {
     if (isLoading || !products || products.length === 0) return;
 
-    if (sliderRef.current) {
-      sliderRef.current.destroy();
-      sliderRef.current = null;
+    if (sliderRef2.current) {
+      sliderRef2.current.destroy();
+      sliderRef2.current = null;
     }
 
-    const sliderElement = document.getElementById("keen-slider");
+    const sliderElement = document.getElementById("keen-slider-topsale");
     if (!sliderElement) return;
 
-    sliderRef.current = new KeenSlider(sliderElement, {
+    sliderRef2.current = new KeenSlider(sliderElement, {
       loop: true,
-      slides: {
-        origin: "center",
-        perView: 1,
-        spacing: 16,
-      },
+      slides: { origin: "center", perView: 1, spacing: 16 },
       breakpoints: {
         "(min-width: 1024px)": {
-          slides: {
-            origin: "auto",
-            perView: 4,
-            spacing: 20,
-          },
+          slides: { origin: "auto", perView: 4, spacing: 20 },
         },
         "(max-width: 600px)": {
-          slides: {
-            origin: "center",
-            perView: 1,
-            spacing: 0,
-          },
+          slides: { origin: "center", perView: 1, spacing: 0 },
         },
       },
     });
 
-    const keenSliderPrevious = document.getElementById("keen-slider-previous");
-    const keenSliderNext = document.getElementById("keen-slider-next");
-
-    keenSliderPrevious?.addEventListener("click", () =>
-      sliderRef.current.prev()
-    );
-    keenSliderNext?.addEventListener("click", () => sliderRef.current.next());
-
-    // const autoplayInterval = setInterval(() => {
-    //   sliderRef.current.next();
-    // }, 3000);
+    document
+      .getElementById("keen-slider-previous-topsale")
+      ?.addEventListener("click", () => sliderRef2.current.prev());
+    document
+      .getElementById("keen-slider-next-topsale")
+      ?.addEventListener("click", () => sliderRef2.current.next());
 
     return () => {
-      // clearInterval(autoplayInterval);
-      if (sliderRef.current) {
-        sliderRef.current.destroy();
-        sliderRef.current = null;
+      if (sliderRef2.current) {
+        sliderRef2.current.destroy();
+        sliderRef2.current = null;
       }
     };
   }, [products, isLoading]);
@@ -96,23 +78,23 @@ const NewProduct = () => {
 
   const handleViewProduct = (productData) => {
     setSelectedProduct(productData); // Set the selected product
-    dispatch(setIsNewProductViewModalOpen()); // Open the modal
+    dispatch(setIsTopProductViewModalOpen()); // Open the modal
   };
 
   const handleCloseModal = () => {
     setSelectedProduct(null); // Clear the selected product
-    dispatch(setIsNewProductViewModalOpen()); // Close the modal
+    dispatch(setIsTopProductViewModalOpen()); // Close the modal
   };
 
   return (
     <div className="mt-16 mb-16">
       <SectionTitle
-        title={"TOP NEW ARRIVALS"}
-        subTitle="Discover the Latest Trends & Freshest Picks!"
+        title="OUR TOP SALE PRODUCTS"
+        subTitle="Our Best-Selling and Most Popular Items"
       />
       {products?.length === 0 ? (
         <p className="text-center font-bold text-2xl text-primary">
-          No newest product arrived yet. <br />
+          No top sale product arrived yet. <br />
           Stay tuned with us
         </p>
       ) : (
@@ -120,7 +102,7 @@ const NewProduct = () => {
           <div className="mt-8 flex gap-4 lg:mt-5 justify-end">
             <button
               aria-label="Previous slide"
-              id="keen-slider-previous"
+              id="keen-slider-previous-topsale"
               className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
             >
               <FaAngleLeft></FaAngleLeft>
@@ -128,14 +110,17 @@ const NewProduct = () => {
 
             <button
               aria-label="Next slide"
-              id="keen-slider-next"
+              id="keen-slider-next-topsale"
               className="rounded-full border p-3 text-black transition hover:bg-[#FD3D57] hover:text-white"
             >
               <FaAngleRight></FaAngleRight>
             </button>
           </div>
 
-          <div id="keen-slider" className="mt-16 keen-slider cursor-grabbing">
+          <div
+            id="keen-slider-topsale"
+            className="mt-16 keen-slider cursor-grabbing"
+          >
             {products?.map((item, index) => (
               <div
                 className="keen-slider__slide border border-gray-200 rounded-lg"
@@ -200,14 +185,15 @@ const NewProduct = () => {
           </Link>
         </>
       )}
+
       {/* View Modal */}
       <Modal
         className="my-5"
         width={1200}
         centered
-        open={isNewProductViewModalOpen && !!selectedProduct} // Ensure modal opens only if selectedProduct is set
-        onCancel={handleCloseModal} // Close modal and clear selectedProduct
-        footer={null} // Remove default footer buttons
+        open={isTopProductViewModalOpen && !!selectedProduct}
+        onCancel={handleCloseModal}
+        footer={null}
       >
         {selectedProduct && <ViewProduct selectedProduct={selectedProduct} />}
       </Modal>
@@ -215,4 +201,4 @@ const NewProduct = () => {
   );
 };
 
-export default NewProduct;
+export default TopSaleProduct;
