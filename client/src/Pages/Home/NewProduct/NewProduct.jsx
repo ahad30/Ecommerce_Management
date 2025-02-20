@@ -7,14 +7,19 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import SectionTitle from "../SectionTitle/SectionTitle";
 import { useGetProductsQuery } from "../../../redux/Feature/Admin/product/productApi";
 import SliderSkeleton from "../../../components/Skeleton/SliderSkeleton";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../redux/Hook/Hook";
+import { setIsNewProductViewModalOpen } from "../../../redux/Modal/ModalSlice";
+import { Modal } from "antd";
+import ViewProduct from "../../../components/ViewProduct";
 
 const NewProduct = () => {
+  const dispatch = useAppDispatch();
   const { data, error, isLoading } = useGetProductsQuery();
   const [showSkeleton, setShowSkeleton] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null); // Initialize as null
   const sliderRef = useRef(null);
-  const location = useLocation()
-
+  const { isNewProductViewModalOpen } = useAppSelector((state) => state.modal);
 
   const products = data?.data?.filter((item) => item?.newArrival === true);
 
@@ -89,14 +94,15 @@ const NewProduct = () => {
     return <SliderSkeleton />;
   }
 
-  // if(){
-  //    { products?.length === 0 && (
-  //         <p className="text-center font-bold text-2xl">
-  //            No newest product arrived yet.Stay tuned with us
-  //         </p>
-  //       )
-  //       }
-  // }
+  const handleViewProduct = (productData) => {
+    setSelectedProduct(productData); // Set the selected product
+    dispatch(setIsNewProductViewModalOpen()); // Open the modal
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null); // Clear the selected product
+    dispatch(setIsNewProductViewModalOpen()); // Close the modal
+  };
 
   return (
     <div className="mt-16 mb-16">
@@ -156,9 +162,11 @@ const NewProduct = () => {
                           </p>
                         )}
                       </div>
-                      <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
-                        <MdOutlineRemoveRedEye size={28} />
-                      </div>
+                      <button onClick={() => handleViewProduct(item)}>
+                        <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                          <MdOutlineRemoveRedEye size={28} />
+                        </div>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -192,6 +200,17 @@ const NewProduct = () => {
           </Link>
         </>
       )}
+      {/* View Modal */}
+      <Modal
+        className="my-5"
+        width={1200}
+        centered
+        open={isNewProductViewModalOpen && !!selectedProduct} // Ensure modal opens only if selectedProduct is set
+        onCancel={handleCloseModal} // Close modal and clear selectedProduct
+        footer={null} // Remove default footer buttons
+      >
+        {selectedProduct && <ViewProduct selectedProduct={selectedProduct} />}
+      </Modal>
     </div>
   );
 };
