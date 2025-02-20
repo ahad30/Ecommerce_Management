@@ -249,11 +249,13 @@ const Shop = () => {
                             </p>
                           )}
                         </div>
+                        <button   onClick={()=> handleViewProduct(item)}>
+           
                         <div
-                        onClick={()=> handleViewProduct(item)}
                          className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
                           <MdOutlineRemoveRedEye size={28} />
                         </div>
+                        </button>
                       </div>
                     </div>
                   </div>

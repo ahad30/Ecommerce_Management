@@ -74,12 +74,13 @@ const AllProduct = () => {
                       </p>
                     )}
                   </div>
-                  <div
-                    onClick={() => handleViewProduct(item)} // Call handleViewProduct on click
-                    className="bg-green-300 text-white rounded-full p-1 cursor-pointer"
-                  >
-                    <MdOutlineRemoveRedEye size={28} />
-                  </div>
+                  <button   onClick={()=> handleViewProduct(item)}>
+           
+                        <div
+                         className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                          <MdOutlineRemoveRedEye size={28} />
+                        </div>
+                        </button>
                 </div>
               </div>
             </div>
@@ -87,9 +88,13 @@ const AllProduct = () => {
               <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
                 <h2>{item?.name}</h2>
               </div>
-              <div className="mt-2 text-base font-medium text-primary">
-                <h2>From ${item.variants[0]?.price || 0}</h2>
-              </div>
+              <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-sm font-medium">
+                    <h2>#{item?.referenceId}</h2>
+                  </div>
+                  <div className="mt-2 px-2 text-base font-medium text-primary">
+                    <h2>Pricing starts from ${item.variants[0]?.price || 0}</h2>
+                  </div>
+             
             </div>
             <Link to={`/product/${item?.id}`}>
               <div className="flex justify-center mt-10 mb-5">

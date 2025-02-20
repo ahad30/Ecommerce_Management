@@ -142,42 +142,40 @@ class ProductService {
   }
 
   async getRelatedProducts(
-    productId, 
-    limit = 12
-  ) {
-    try {
-      // Get the current product details
-      const product = await this.prisma.product.findUnique({
-        where: { id: productId },
-        select: { categoryId: true, brandId: true }, // Fetch only necessary fields
-      });
+  productId, 
+  limit = 12
+) {
+  try {
+    // Get the current product details
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      select: { categoryId: true }, // Only categoryId is needed
+    });
 
-      if (!product) throw new Error("Product not found");
+    if (!product) throw new Error("Product not found");
 
-      // Find related products by the same category or brand
-      const relatedProducts = await this.prisma.product.findMany({
-        where: {
-          AND: [
-            { categoryId: product.categoryId },
-            { brandId: product.brandId },
-          ],
-          NOT: { id: productId }, // Exclude the current product
-        },
-        take: limit, // Limit the number of related products
-        include: {
-          category: true,
-          brand: true,
-          variants: true,
-        },
-        orderBy: { createdAt: "desc" }, // Newest related products first
-      });
+    // Find related products by the same category (excluding the same product)
+    const relatedProducts = await this.prisma.product.findMany({
+      where: {
+        categoryId: product.categoryId, // Match the same category
+        NOT: { id: productId }, // Exclude the current product
+      },
+      take: limit, // Limit the number of related products
+      include: {
+        category: true,
+        brand: true,
+        variants: true,
+      },
+      orderBy: { createdAt: "desc" }, // Newest related products first
+    });
 
-      return relatedProducts;
-    } catch (error) {
-      console.error("Error fetching related products:", error);
-      throw new Error("Failed to fetch related products");
-    }
+    return relatedProducts;
+  } catch (error) {
+    console.error("Error fetching related products:", error);
+    throw new Error("Failed to fetch related products");
   }
+}
+
 
   // Update a product by ID
   async updateProduct(id, data) {

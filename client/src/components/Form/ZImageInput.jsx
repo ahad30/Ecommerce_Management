@@ -82,7 +82,7 @@ const ZImageInput = ({
         >
           <Upload
             name="image"
-            listType="picture-card"
+            listType="picture"
             fileList={imageList}
             onPreview={(file) => {
               const url = file.url || URL.createObjectURL(file.originFileObj);
@@ -125,10 +125,7 @@ const ZImageInput = ({
             onChange={handleChange}
           >
             {imageList.length < 1 && (
-              <div>
-                <UploadOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
+              <Button icon={<UploadOutlined />}> Upload</Button>
             )}
           </Upload>
         </Form.Item>
