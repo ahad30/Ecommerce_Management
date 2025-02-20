@@ -1,19 +1,5 @@
 import { useEffect, useState } from "react";
-import { Rating, Star } from "@smastrom/react-rating";
-import "@smastrom/react-rating/style.css";
 import { Button } from "@material-tailwind/react";
-import img1 from "../../../assets/Product/product-01.png";
-import img2 from "../../../assets/Product/product-02.png";
-import img3 from "../../../assets/Product/product-03.webp";
-import img4 from "../../../assets/Product/product-04.webp";
-import img5 from "../../../assets/Product/product-05.webp";
-import img6 from "../../../assets/Product/product-06.webp";
-import img7 from "../../../assets/Product/product-07.webp";
-import img8 from "../../../assets/Product/product-08.webp";
-import img9 from "../../../assets/Product/product-09.webp";
-import img10 from "../../../assets/Product/product-10.webp";
-import img11 from "../../../assets/Product/product-11.webp";
-import img12 from "../../../assets/Product/product-11.webp";
 import { CiHeart, CiShoppingCart } from "react-icons/ci";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
@@ -21,12 +7,17 @@ import { Link } from "react-router-dom";
 import SectionTitle from "../SectionTitle/SectionTitle";
 import { useGetProductsQuery } from "../../../redux/Feature/Admin/product/productApi";
 import ProductsSkeleton from "../../../components/Skeleton/ProductsSkeleton";
-
-
+import { useAppDispatch, useAppSelector } from "../../../redux/Hook/Hook";
+import ViewProduct from "../../../components/ViewProduct";
+import { setIsProductViewModalOpen } from "../../../redux/Modal/ModalSlice";
+import { Modal } from "antd";
 
 const AllProduct = () => {
+  const dispatch = useAppDispatch();
   const { data, error, isLoading } = useGetProductsQuery();
   const [showSkeleton, setShowSkeleton] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null); // Initialize as null
+  const { isProductViewModalOpen } = useAppSelector((state) => state.modal);
 
   useEffect(() => {
     if (!isLoading) {
@@ -38,16 +29,29 @@ const AllProduct = () => {
     }
   }, [isLoading]);
 
+  const handleViewProduct = (productData) => {
+    setSelectedProduct(productData); // Set the selected product
+    dispatch(setIsProductViewModalOpen()); // Open the modal
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null); // Clear the selected product
+    dispatch(setIsProductViewModalOpen()); // Close the modal
+  };
+
   if (isLoading || showSkeleton) {
     return <ProductsSkeleton />;
   }
 
   return (
     <div className="mt-16 mb-16">
-      <SectionTitle title="Recommended For you" subTitle="Empowering everyone to express themselves through clothes." />
+      <SectionTitle
+        title="Recommended For you"
+        subTitle="Empowering everyone to express themselves through clothes."
+      />
 
       <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {data?.data?.slice(0,8).map((item, index) => (
+        {data?.data?.slice(0, 8).map((item, index) => (
           <div className="border border-gray-200 rounded-lg" key={index}>
             <div className="group h-[250px] relative block bg-black">
               <img
@@ -70,9 +74,13 @@ const AllProduct = () => {
                       </p>
                     )}
                   </div>
-                  <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
-                    <MdOutlineRemoveRedEye size={28} />
-                  </div>
+                  <button   onClick={()=> handleViewProduct(item)}>
+           
+                        <div
+                         className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                          <MdOutlineRemoveRedEye size={28} />
+                        </div>
+                        </button>
                 </div>
               </div>
             </div>
@@ -80,29 +88,44 @@ const AllProduct = () => {
               <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
                 <h2>{item?.name}</h2>
               </div>
-              <div className="mt-2 text-base font-medium text-primary">
-                <h2>From ${item.variants[0]?.price || 0}</h2>
+              <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-sm font-medium">
+                    <h2>#{item?.referenceId}</h2>
+                  </div>
+                  <div className="mt-2 px-2 text-base font-medium text-primary">
+                    <h2>Pricing starts from ${item.variants[0]?.price || 0}</h2>
+                  </div>
+             
+            </div>
+            <Link to={`/product/${item?.id}`}>
+              <div className="flex justify-center mt-10 mb-5">
+                <button className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white">
+                  View Details
+                </button>
               </div>
-            </div>
-             <Link to={`/product/${item?.id}`}>
-            <div className="flex justify-center mt-10 mb-5">
-             <button
-                className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white"
-              >
-                View Details
-              </button>
-            </div>
-             </Link>
+            </Link>
           </div>
         ))}
       </div>
-        <Link to={`/shop`}>
-      <div className="flex justify-center mx-auto w-[200px] mt-10 mb-5">
+
+      <Link to={`/shop`}>
+        <div className="flex justify-center mx-auto w-[200px] mt-10 mb-5">
           <Button className="bg-[#3498DB] w-full font-Poppins font-medium py-2 px-1">
             See More
           </Button>
-      </div>
-        </Link>
+        </div>
+      </Link>
+
+      {/* View Modal */}
+      <Modal
+        className="my-5"
+        width={1200}
+        centered
+        open={isProductViewModalOpen && !!selectedProduct} // Ensure modal opens only if selectedProduct is set
+        onCancel={handleCloseModal} // Close modal and clear selectedProduct
+        footer={null} // Remove default footer buttons
+      >
+        {selectedProduct && <ViewProduct selectedProduct={selectedProduct} />}
+      </Modal>
     </div>
   );
 };

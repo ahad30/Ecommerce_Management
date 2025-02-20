@@ -1,6 +1,5 @@
 import baseApi from '../../../Api/baseApi';
 
-
 const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Add Product
@@ -24,10 +23,9 @@ const productApi = baseApi.injectEndpoints({
       providesTags: ['products']
     }),
 
-
-     // Get Products with search, pagination, and price filtering
-     getProductsBySearch: builder.query({
-      query: ({ search = '', page, limit, priceMin, priceMax , category , brand}) => ({
+    // Get Products with search, pagination, and price filtering
+    getProductsBySearch: builder.query({
+      query: ({ search = '', page, limit, priceMin, priceMax, category, brand }) => ({
         url: "/product",
         params: {
           search,
@@ -42,11 +40,18 @@ const productApi = baseApi.injectEndpoints({
       providesTags: ['products']
     }),
 
-
-     // Get Products by Id
-     getProductsById: builder.query({
+    // Get Products by Id
+    getProductsById: builder.query({
       query: (id) => ({
         url: `/product/${id}`,
+      }),
+      providesTags: ['products']
+    }),
+
+    // Get Related Products
+    getRelatedProducts: builder.query({
+      query: (id) => ({
+        url: `/relatedProducts/${id}`,
       }),
       providesTags: ['products']
     }),
@@ -80,6 +85,7 @@ export const {
   useGetProductsQuery,
   useGetProductsBySearchQuery,
   useGetProductsByIdQuery,
+  useGetRelatedProductsQuery, // Export the new query hook
   useUpdateProductMutation,
   useDeleteProductMutation,
 } = productApi;

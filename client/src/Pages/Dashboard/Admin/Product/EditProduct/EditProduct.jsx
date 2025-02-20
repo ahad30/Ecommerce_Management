@@ -31,9 +31,9 @@ function generateUniqueId(length = 2) {
 }
 
 const EditProduct = () => {
+  const [updateProductData, setUpdateProductData] = useState({});
   const navigate = useNavigate();
   const { id } = useParams();
-  const [updateProductData, setUpdateProductData] = useState({});
   const [addonPages, setAddonPages] = useState([
     { minQty: "", maxQty: "", price: "" },
   ]);
@@ -89,7 +89,7 @@ const EditProduct = () => {
   ] = useUpdateProductMutation();
 
 //  console.log(productData)
- console.log(skus)
+  // console.log(skus)
 
 
   useEffect(() => {

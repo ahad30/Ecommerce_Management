@@ -33,6 +33,8 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+
+
 model Category {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   categoryName String  @unique
@@ -155,4 +157,14 @@ model Subscribe {
   unsubscribedAt DateTime? @db.Date
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+
+model Contact {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   
+  phone     String?  
+  name      String
+  description      String
+  createdAt DateTime @default(now())
 }

@@ -26,7 +26,7 @@ export default function ProductImageSlider({ images }) {
           modules={[FreeMode, Navigation, Thumbs]}
           className="mySwiper2"
         >
-          {images.map((image, index) => (
+          {images?.map((image, index) => (
             <SwiperSlide key={index}>
               <Image
                 src={image}
@@ -42,8 +42,8 @@ export default function ProductImageSlider({ images }) {
 
         {/* Thumbnail Slider */}
         {location.pathname.includes("/admin/view-product-details/") ? null : (
-  <div className="mt-4 hidden lg:block">
-    <Swiper
+       <div className="mt-4 hidden lg:block">
+       <Swiper
       onSwiper={setThumbsSwiper}
       spaceBetween={10}
       slidesPerView={4}
@@ -51,8 +51,8 @@ export default function ProductImageSlider({ images }) {
       watchSlidesProgress={true}
       modules={[FreeMode, Thumbs]}
       className="w-full mySwiper"
-    >
-      {images.map((image, index) => (
+     >
+      {images?.map((image, index) => (
         <SwiperSlide key={index}>
           <img
             src={image}

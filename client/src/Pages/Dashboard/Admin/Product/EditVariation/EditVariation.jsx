@@ -8,16 +8,17 @@ import { useAppDispatch } from "../../../../../redux/Hook/Hook";
 import axios from "axios";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 
-const EditVariation = ({ selectedVariant, setSkus, skus, closeModal , setSelectedVariant}) => {
+const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelectedVariant }) => {
   const [priceTiers, setPriceTiers] = useState(
     selectedVariant?.priceTiers || [{ minQty: "", maxQty: "", price: "" }]
   );
   const [isImageRemoved, setIsImageRemoved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Reset priceTiers and isImageRemoved when selectedVariant changes
   useEffect(() => {
     setPriceTiers(selectedVariant?.priceTiers || [{ minQty: "", maxQty: "", price: "" }]);
-    setIsImageRemoved(false);
+    setIsImageRemoved(false); // Reset isImageRemoved when selectedVariant changes
   }, [selectedVariant]);
 
   // Handle Price Tier Updates
@@ -39,28 +40,31 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal , setSelecte
   };
 
   const handleSubmit = async (data) => {
+    setIsLoading(true);
+
     try {
       let imageUrl = selectedVariant?.imageUrl;
 
-      // Upload image if a new file is selected
-      if (data.imageUrl && !isImageRemoved) {
+      // Upload image if a new file is selected and isImageRemoved is false
+      if (data?.imageUrl && !isImageRemoved) {
         const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
         const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
         const imageFile = new FormData();
-        imageFile.append("image", data.imageUrl);
+        imageFile.append("image", data?.imageUrl);
 
         const res = await axios.post(image_hosting_api, imageFile);
 
         if (res?.data?.success) {
-          imageUrl = res.data.data.display_url;
+          imageUrl = res?.data?.data?.display_url;
         } else {
           throw new Error("Image upload failed");
         }
       }
 
+      // If image is removed, set imageUrl to an empty string
       if (isImageRemoved) {
-        imageUrl = ""; // Set imageUrl to empty if the image was removed
+        imageUrl = "";
       }
 
       // Create updated variant object
@@ -69,7 +73,7 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal , setSelecte
         price: parseFloat(data.price),
         stock: parseInt(data.stock),
         priceTiers,
-        imageUrl, // Updated imageUrl
+        imageUrl,
       };
 
       // Update the skus array with the new variant data
@@ -81,16 +85,21 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal , setSelecte
 
       setSkus(updatedSkus);
 
-      // Update the selectedVariant state with the new imageUrl
+      // Update selectedVariant with the new imageUrl
       setSelectedVariant((prev) => ({
         ...prev,
-        imageUrl, // Ensure the selectedVariant is updated
+        imageUrl,
       }));
 
-      toast.success("Changes applied successfully! Don't forget to submit your updates.");
-      closeModal();
+      // Simulate a 3-second delay
+      setTimeout(() => {
+        setIsLoading(false);
+        toast.success("Changes applied successfully! Don't forget to submit your updates.");
+        closeModal();
+      }, 3000);
     } catch (error) {
       console.error("Error updating variant:", error);
+      setIsLoading(false);
       toast.error("Failed to update variant. Please try again.");
     }
   };
@@ -100,7 +109,6 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal , setSelecte
       submit={handleSubmit}
       formType="edit"
       closeModal={closeModal}
-      buttonName="Make Changes"
     >
       <div className="grid grid-cols-2 gap-4">
         <ZInputTwo
@@ -198,6 +206,15 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal , setSelecte
           ))}
         </div>
       </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+      >
+        {isLoading ? "Submitting..." : "Submit"}
+      </button>
     </ZFormTwo>
   );
 };

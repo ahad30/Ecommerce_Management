@@ -5,6 +5,9 @@ const initialState = {
   isAddModalOpen: false,
   isDeleteModalOpen: false,
   isViewModalOpen: false,
+  isProductViewModalOpen: false,
+  isNewProductViewModalOpen: false,
+  isTopProductViewModalOpen: false,
   isCustomerModalOpen: false,
   isProductModalOpen: false,
   isCalculatorModalOpen: false,
@@ -47,6 +50,15 @@ const ModalSlice = createSlice({
     setIsHomeCategorySidebarOpen: (state) => {
       state.isHomeCategorySidebarOpen = !state.isHomeCategorySidebarOpen;
     },
+    setIsProductViewModalOpen: (state) => {
+      state.isProductViewModalOpen = !state.isProductViewModalOpen;
+    },
+    setIsNewProductViewModalOpen: (state) => {
+      state.isNewProductViewModalOpen = !state.isNewProductViewModalOpen;
+    },
+    setIsTopProductViewModalOpen: (state) => {
+      state.isTopProductViewModalOpen = !state.isTopProductViewModalOpen;
+    },
     setPriceMin: (state, action) => {
       state.priceMin = action.payload;
     },
@@ -66,6 +78,9 @@ export const {
   setIsCalculatorModalOpen,
   setIsVariantModalOpen,
   setIsHomeCategorySidebarOpen,
+  setIsProductViewModalOpen,
+  setIsNewProductViewModalOpen,
+  setIsTopProductViewModalOpen,
   setPriceMin, 
   setPriceMax
 } = ModalSlice.actions;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Space, Tooltip, Modal, Button } from "antd";
+import { Space, Tooltip, Modal, Button, Tag, Radio } from "antd";
 import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb";
 import DashboardTable from "../../../../components/Table/DashboardTable";
 import ButtonWithModal from "../../../../components/Button/ButtonWithModal";
@@ -18,15 +18,24 @@ const Users = () => {
   const { isAddModalOpen, isEditModalOpen } = useAppSelector((state) => state.modal);
   const [selectedUser, setSelectedUser] = useState({});
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deleteUser, { isLoading: dUIsLoading , isSuccess , isError, error: uError}] = useDeleteUserMutation();
+  const [deleteUser, { isLoading: dUIsLoading, isSuccess, isError, error: uError }] = useDeleteUserMutation();
+  const [roleFilter, setRoleFilter] = useState("all"); // State for role filter
 
-  const userData = data?.data?.map((user, index) => ({
+  // Filter users based on role
+  const filteredUsers = data?.data?.filter((user) => {
+    if (roleFilter === "all") return true;
+    return user.role === roleFilter;
+  });
+
+  const userData = filteredUsers?.map((user, index) => ({
     key: index,
     id: user?.id,
     email: user?.email,
     phone: user?.phone,
     role: user?.role,
     name: user?.name,
+    isVerified: user?.isVerified,
+    createdAt: user?.createdAt,
   }));
 
   const handleEditUser = (userData) => {
@@ -42,12 +51,8 @@ const Users = () => {
   const handleDeleteConfirm = async () => {
     await deleteUser(selectedUser?.id);
     setIsDeleteModalOpen(false);
-    toast.success("User Deleted Successfully")
+    toast.success("User Deleted Successfully");
   };
-
-
-
-
 
   const columns = [
     {
@@ -71,15 +76,18 @@ const Users = () => {
       key: "role",
     },
     {
+      title: "Verified",
+      dataIndex: "isVerified",
+      key: "isVerified",
+      render: (isVerified) => (
+        <Tag color={isVerified === true ? "green" : "red"}>{isVerified === true ? "Yes" : "No"}</Tag>
+      ),
+    },
+    {
       title: "Action",
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          {/* <a onClick={() => handleEditUser(record)}>
-            <Tooltip title="Edit" placement="top">
-              <AiFillEdit className="text-green-500" size={20} />
-            </Tooltip>
-          </a> */}
           <a onClick={() => handleDeleteUser(record)}>
             <Tooltip title="Delete" placement="top">
               <AiFillDelete className="text-red-500" size={20} />
@@ -97,6 +105,19 @@ const Users = () => {
       </div>
       <div className="flex flex-col lg:flex-row items-center gap-x-2 justify-end my-5">
         <ButtonWithModal title="Add User" path={`/admin/users/add-user`}></ButtonWithModal>
+      </div>
+
+      {/* Role Filter */}
+      <div className="my-8 flex justify-center">
+        <Radio.Group
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          buttonStyle="solid"
+        >
+          <Radio.Button value="all">All</Radio.Button>
+          <Radio.Button value="user">User</Radio.Button>
+          <Radio.Button value="admin">Admin</Radio.Button>
+        </Radio.Group>
       </div>
 
       <DashboardTable columns={columns} data={userData} loading={userIsLoading} />

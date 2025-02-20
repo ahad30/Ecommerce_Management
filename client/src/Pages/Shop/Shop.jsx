@@ -1,7 +1,7 @@
 // src/components/Shop/Shop.js
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
-import { setIsHomeCategorySidebarOpen } from "../../redux/Modal/ModalSlice";
+import { setIsHomeCategorySidebarOpen, setIsProductViewModalOpen, setIsViewModalOpen } from "../../redux/Modal/ModalSlice";
 import { MdClose } from "react-icons/md";
 import LeftSidebar from "./LeftSidebar/LeftSidebar";
 import { CiFilter, CiGrid2H, CiGrid31, CiGrid42 } from "react-icons/ci";
@@ -15,14 +15,17 @@ import { IoSearch } from "react-icons/io5";
 import ProductsSkeleton from "../../components/Skeleton/ProductsSkeleton";
 import { useGetProductsBySearchQuery } from "../../redux/Feature/Admin/product/productApi";
 import { Link } from "react-router-dom";
-import { Pagination } from 'antd';
+import { Modal, Pagination } from 'antd';
 import { useGetCategoryQuery } from "../../redux/Feature/Admin/category/categoryApi";
 import { useGetBrandQuery } from "../../redux/Feature/Admin/brand/brandApi";
 import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
+import ViewModal from "../../components/Modal/ViewModal";
+import ViewProduct from "../../components/ViewProduct";
 
 const Shop = () => {
   const dispatch = useAppDispatch();
-  const { isHomeCategorySidebarOpen, priceMin, priceMax } = useAppSelector((state) => state.modal);
+  const { isHomeCategorySidebarOpen, isViewModalOpen, priceMin, priceMax ,isProductViewModalOpen} = useAppSelector((state) => state.modal);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -45,6 +48,8 @@ const Shop = () => {
     category: selectedCategory,
     brand: selectedBrand,
   });
+
+
 
   useEffect(() => {
     if (isFetching) {
@@ -70,9 +75,23 @@ const Shop = () => {
     setCurrentPage(page);
   };
 
+  const handleViewProduct = (productData) => {
+    setSelectedProduct(productData);
+    dispatch(setIsProductViewModalOpen ());
+  };
+
+  
+  const handleCloseModal = () => {
+    setSelectedProduct(null); // Clear the selected product
+    dispatch(setIsProductViewModalOpen()); // Close the modal
+  };
+
   const totalItems = data?.meta?.totalItems || 0;
   const totalPages = data?.meta?.totalPages || 1;
   const itemsPerPage = data?.meta?.itemsPerPage;
+
+
+
 
   // Check if no products are found due to search or price range
   const noProductsFound =
@@ -80,6 +99,9 @@ const Shop = () => {
     !showSkeleton &&
     data?.products?.length === 0 &&
     (searchQuery.trim() !== "" || priceMin !== 1 || priceMax !== 100000000000000);
+
+    
+    
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -227,9 +249,13 @@ const Shop = () => {
                             </p>
                           )}
                         </div>
-                        <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                        <button   onClick={()=> handleViewProduct(item)}>
+           
+                        <div
+                         className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
                           <MdOutlineRemoveRedEye size={28} />
                         </div>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -287,6 +313,18 @@ const Shop = () => {
           onChange={handlePageChange}
         />
       </div>
+    
+      <Modal
+        className="my-5"
+        width={1200}
+        centered
+        open={isProductViewModalOpen && !!selectedProduct} // Ensure modal opens only if selectedProduct is set
+        onCancel={handleCloseModal} // Close modal and clear selectedProduct
+        footer={null} // Remove default footer buttons
+      >
+        {selectedProduct && <ViewProduct selectedProduct={selectedProduct} />}
+      </Modal>
+      
     </section>
   );
 };
