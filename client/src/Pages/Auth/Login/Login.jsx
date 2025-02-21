@@ -112,7 +112,7 @@ const Login = () => {
               <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                 <div className="relative mb-8">
                   <ZEmail label={"Email"}
-                   value={"admin@gmail.com"}
+                  //  value={"admin@gmail.com"}
                    name={"email"}
                    placeholder={"enterEmail"}
                     required={1}/>
@@ -123,7 +123,7 @@ const Login = () => {
                     name="password"
                     type="password"
                     label={"Password"}
-                    value={"123456"}
+                    // value={"123456"}
                     placeholder={"Enter your password"}
                   />
                 </div>

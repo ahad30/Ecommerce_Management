@@ -32,6 +32,7 @@ function generateUniqueId(length = 2) {
 
 const EditProduct = () => {
   const [updateProductData, setUpdateProductData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const [addonPages, setAddonPages] = useState([
@@ -73,7 +74,7 @@ const EditProduct = () => {
   const {
     data: productData,
     isSuccess,
-    isLoading,
+    isLoading:sPIsLoading,
     error,
   } = useGetProductsByIdQuery(id);
 
@@ -243,6 +244,8 @@ const EditProduct = () => {
   };
 
   const handleSubmit = async (data) => {
+    setIsLoading(true);
+
   const uploadImage = async (file) => {
     if (!file) return "";
 
@@ -327,10 +330,14 @@ const EditProduct = () => {
 
     console.log("Final Product Data:", variantProductData);
     updateProduct({ data: variantProductData, id: id });
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success("Product updated successfully");
+    }, 4000);
   }
 };
 
-  if (isLoading) {
+  if (sPIsLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
         <p>
@@ -350,14 +357,14 @@ const EditProduct = () => {
       </Link>
 
       <ZFormTwo
-        isLoading={pIsLoading}
-        isSuccess={pIsSuccess}
+        // isLoading={pIsLoading}
+        // isSuccess={pIsSuccess}
         isError={pIsError}
         error={pError}
         submit={handleSubmit}
         formType="edit"
         data={pData}
-        buttonName="Submit"
+        // buttonName="Submit"
       >
         <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-10">
           <ZInputTwo
@@ -686,6 +693,15 @@ const EditProduct = () => {
           </div>
           {/* per sku end */}
         </div>
+        <div className="flex justify-end">
+    <button
+        type="submit"
+        disabled={isLoading}
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+      >
+        {isLoading ? "Submitting..." : "Submit"}
+      </button>
+    </div>
       </ZFormTwo>
       <VariantProductTable skus={skus} setSkus={setSkus}></VariantProductTable>
     </div>
