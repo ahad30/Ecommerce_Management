@@ -208,13 +208,15 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
       </div>
 
       {/* Submit Button */}
-      <button
+    <div className="flex justify-end">
+    <button
         type="submit"
         disabled={isLoading}
         className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
       >
         {isLoading ? "Submitting..." : "Submit"}
       </button>
+    </div>
     </ZFormTwo>
   );
 };

@@ -4,8 +4,8 @@ import "./App.css";
 import { routes } from "./Routes/routes";
 import { Toaster } from "sonner";
 import LoadingPage from "./components/LoadingPage";
-import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
-import 'primereact/resources/primereact.min.css'; // Core CSS
+import "primereact/resources/themes/saga-blue/theme.css"; // Theme
+import "primereact/resources/primereact.min.css"; // Core CSS
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,21 +15,19 @@ function App() {
       setIsLoading(false);
     }, 500);
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timer); // Cleanup the timer
   }, []);
+
+  // If loading, show the loading page
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  // Otherwise, render the main app
   return (
     <>
-     {isLoading ? (
-          <div>
-            <LoadingPage />
-          </div>
-        ) : (
-    <>
-    <RouterProvider router={routes} />
-    <Toaster expand={true} richColors/>
-    </>
-        )}
-
+      <RouterProvider router={routes} />
+      <Toaster expand={true} richColors />
     </>
   );
 }

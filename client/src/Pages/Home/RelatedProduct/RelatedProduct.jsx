@@ -130,7 +130,7 @@ const RelatedProduct = ({id}) => {
 
           <div 
         //   id="keen-slider-related" 
-          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {products?.map((item, index) => (
               <div
                 className="border border-gray-200 rounded-lg"
