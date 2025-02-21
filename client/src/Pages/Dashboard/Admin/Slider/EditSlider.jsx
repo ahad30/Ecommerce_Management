@@ -22,11 +22,7 @@ const EditSlider = ({ selectedSlider }) => {
     try {
       let imageUrl = selectedSlider?.imageUrl;
 
-      // Handle image removal
-      if (isImageRemoved) {
-        imageUrl = ""; // Clear the image URL if removed
-        console.log('Image removed'); // Debugging
-      }
+ 
 
       // Handle new image upload (only if a new image is provided and not removed)
       if (formData?.imageUrl && !isImageRemoved) {
@@ -45,6 +41,12 @@ const EditSlider = ({ selectedSlider }) => {
           throw new Error('Image upload failed');
         }
       }
+
+           // Handle image removal
+           if (isImageRemoved) {
+            imageUrl = ""; // Clear the image URL if removed
+            console.log('Image removed'); // Debugging
+          }
 
       // Prepare slider data for the API
       const sliderData = {
@@ -106,8 +108,8 @@ const EditSlider = ({ selectedSlider }) => {
           <ZImageInput
             name="imageUrl"
             label="Slider Image"
-            onRemove={() => setIsImageRemoved(true)} // Set image removal state
-            onChange={() => setIsImageRemoved(false)} // Reset isImageRemoved when a new image is selected
+            onRemove={() => setIsImageRemoved(true)} 
+            onChange={() => setIsImageRemoved(false)} 
             defaultValue={selectedSlider?.imageUrl ? [
               {
                 uid: '-1',
