@@ -35,9 +35,9 @@ const Home = () => {
           <div className="w-full h-full md:h-[80%]">      
             <BannerSlider />
           </div>
-          <div className="mt-[-64px] md:mt-[-65px]">
+          {/* <div className="mt-[-64px] md:mt-[-65px]">
             <ProductBanner />
-          </div>
+          </div> */}
         </div>
       {/* </div> */}
       <div className="mt-6">

@@ -9,13 +9,14 @@ const ZImageInput = ({
   label,
   defaultValue,
   onRemove,
+  onChange: parentOnChange, // Add parent onChange handler
   defaultKey,
   setPriceQuantityImage,
   refresh,
 }) => {
   const [imageList, setImageList] = useState([]);
   const { control, resetField } = useFormContext();
-  const { isAddModalOpen, isEditModalOpen , isVariantModalOpen} = useAppSelector(
+  const { isAddModalOpen, isEditModalOpen, isVariantModalOpen } = useAppSelector(
     (state) => state.modal
   );
 
@@ -25,7 +26,7 @@ const ZImageInput = ({
       setImageList([]);
       resetField(name);
     }
-  }, [isAddModalOpen, isEditModalOpen , isVariantModalOpen]);
+  }, [isAddModalOpen, isEditModalOpen, isVariantModalOpen]);
 
   // Update imageList when defaultValue changes
   useEffect(() => {
@@ -68,6 +69,11 @@ const ZImageInput = ({
         imageUrl: "",
       }));
     }
+
+    // Call parent onChange handler if provided
+    if (parentOnChange) {
+      parentOnChange(info);
+    }
   };
 
   return (
@@ -107,6 +113,11 @@ const ZImageInput = ({
                 }));
               }
 
+              // Call parent onChange handler if provided
+              if (parentOnChange) {
+                parentOnChange({ file });
+              }
+
               return false; // Prevent automatic upload
             }}
             onRemove={() => {
@@ -119,6 +130,11 @@ const ZImageInput = ({
                   ...prev,
                   imageUrl: "",
                 }));
+              }
+
+              // Call parent onChange handler if provided
+              if (parentOnChange) {
+                parentOnChange({ file: null });
               }
             }}
             maxCount={1}
