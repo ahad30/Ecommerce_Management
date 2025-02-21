@@ -18,7 +18,7 @@ const Sliders = () => {
   const dispatch = useAppDispatch();
   const { data, error, isLoading: sliderIsLoading } = useGetSlidersQuery();
   const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useAppSelector((state) => state.modal);
-  const [selectedSlider, setSelectedSlider] = useState({});
+  const [selectedSlider, setSelectedSlider] = useState(null);
   const [
     deleteSlider,
     { isLoading: dSIsLoading, isError, isSuccess, data: dSData, error: dSError },
@@ -30,7 +30,7 @@ const Sliders = () => {
     id: slider?.id,
     title: slider?.title,
     description: slider?.description,
-    imageUrl: slider?.imageUrl,
+    imageUrl: slider.imageUrl,
     linkUrl: slider?.linkUrl,
     isActive: slider?.isActive,
   }));
@@ -119,7 +119,7 @@ const Sliders = () => {
 
       {/* EditModal Component */}
       <EditModal isEditModalOpen={isEditModalOpen} title="Edit Slider">
-        <EditSlider selectedSlider={selectedSlider} />
+        <EditSlider selectedSlider={selectedSlider} setSelectedSlider={setSelectedSlider}/>
       </EditModal>
 
       {/* DeleteModal Component */}
