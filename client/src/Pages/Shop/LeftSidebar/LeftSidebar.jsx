@@ -1,7 +1,6 @@
-// src/components/Shop/LeftSidebar/LeftSidebar.js
 import React, { useState, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../../redux/Hook/Hook";
-import { Skeleton, Slider } from "antd";
+import { Slider } from "antd";
 import { setPriceMin, setPriceMax } from "../../../redux/Modal/ModalSlice";
 
 const LeftSidebar = ({
@@ -12,15 +11,24 @@ const LeftSidebar = ({
   selectedBrand,
   setSelectedBrand,
   isCategoriesLoading,
-  isBrandsLoading
+  isBrandsLoading,
 }) => {
   const dispatch = useAppDispatch();
   const { isHomeCategorySidebarOpen, priceMin, priceMax } = useAppSelector((state) => state.modal);
   const [priceRange, setPriceRange] = useState([priceMin, priceMax]);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   useEffect(() => {
     setPriceRange([priceMin, priceMax]);
   }, [priceMin, priceMax]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSliderChange = (value) => {
     setPriceRange(value);
@@ -41,32 +49,65 @@ const LeftSidebar = ({
     }
   };
 
-  // Handle category checkbox change
   const handleCategoryChange = (categoryId) => {
     if (selectedCategory === categoryId) {
-      // If the category is already selected, uncheck it
       setSelectedCategory("");
     } else {
-      // Otherwise, set the selected category
       setSelectedCategory(categoryId);
     }
   };
 
-  // Handle brand checkbox change
   const handleBrandChange = (brandId) => {
     if (selectedBrand === brandId) {
-      // If the brand is already selected, uncheck it
       setSelectedBrand("");
     } else {
-      // Otherwise, set the selected brand
       setSelectedBrand(brandId);
     }
   };
 
-  if(isBrandsLoading|| isCategoriesLoading){
-    return  <div>
-      <Skeleton/>
-    </div>
+  // Skeleton Component
+  if (isLoading) {
+    return (
+      <div className="md:px-4 bg-white">
+        <div className={`${isHomeCategorySidebarOpen ? "block" : "hidden"} lg:block w-[250px]`}>
+          {/* Categories Skeleton */}
+          <div className="mb-6">
+            <div className="h-6 w-1/2 bg-gray-300 rounded mb-3 animate-pulse"></div>
+            <div className="space-y-2">
+              {[1, 2, 3].map((_, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="h-4 w-4 bg-gray-300 rounded mr-2 animate-pulse"></div>
+                  <div className="h-4 w-3/4 bg-gray-300 rounded animate-pulse"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Brands Skeleton */}
+          <div className="mb-6">
+            <div className="h-6 w-1/2 bg-gray-300 rounded mb-3 animate-pulse"></div>
+            <div className="space-y-2">
+              {[1, 2, 3].map((_, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="h-4 w-4 bg-gray-300 rounded mr-2 animate-pulse"></div>
+                  <div className="h-4 w-3/4 bg-gray-300 rounded animate-pulse"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Range Skeleton */}
+          <div className="mb-6">
+            <div className="h-6 w-1/2 bg-gray-300 rounded mb-3 animate-pulse"></div>
+            <div className="h-4 w-full bg-gray-300 rounded animate-pulse"></div>
+            <div className="flex items-center gap-4 justify-between mt-4">
+              <div className="h-10 w-1/2 bg-gray-300 rounded animate-pulse"></div>
+              <div className="h-10 w-1/2 bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -127,12 +168,12 @@ const LeftSidebar = ({
               min={1}
               max={9999}
               step={0.01}
-              trackStyle={[{ backgroundColor: 'black' }]}
+              trackStyle={[{ backgroundColor: "black" }]}
               handleStyle={[
-                { borderColor: 'black', backgroundColor: 'white' },
-                { borderColor: 'black', backgroundColor: 'white' },
+                { borderColor: "black", backgroundColor: "white" },
+                { borderColor: "black", backgroundColor: "white" },
               ]}
-              railStyle={{ backgroundColor: '#d1d5db' }}
+              railStyle={{ backgroundColor: "#d1d5db" }}
             />
           </div>
 

@@ -12,15 +12,15 @@ const BannerSlider = () => {
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
-    if (isFetching) {
+    if (isFetching || sliderIsLoading) {
       setShowSkeleton(true);
     } else {
       const timer = setTimeout(() => {
         setShowSkeleton(false);
-      }, 2000);
+      }, 4000);
       return () => clearTimeout(timer);
     }
-  }, [isFetching]);
+  }, [isFetching , sliderIsLoading]);
   
 
 
