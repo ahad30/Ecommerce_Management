@@ -108,7 +108,7 @@ export const VariantProductTable = ({ skus, setSkus }) => {
           setSelectedVariant={setSelectedVariant}
           setSkus={setSkus}
           skus={skus}
-          closeModal={handleCloseModal} // Pass function to close modal
+          closeModal={handleCloseModal}
         />
       </Modal>
     </>
