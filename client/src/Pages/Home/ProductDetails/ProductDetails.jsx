@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Alert, Tooltip } from "antd";
 import NewProduct from "../NewProduct/NewProduct";
 import RelatedProduct from "../RelatedProduct/RelatedProduct";
+import ProductDetailsSkeleton from "../../../components/Skeleton/ProductDetailsSkeleton";
 
 const ProductDetails = () => {
   const singleProduct = useLoaderData();
@@ -18,7 +19,17 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(singleProduct?.variants[0]?.price || 0);
   const [isAdded, setIsAdded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const cartItems = useAppSelector((state) => state.cart?.items);
+
+  // Simulate loading for 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Normalize attribute keys to lowercase
   const normalizeAttributes = (attributes) => {
@@ -193,6 +204,10 @@ const ProductDetails = () => {
   const areAllAttributesSelected = Object.keys(groupAttributesByKey()).every(
     (key) => selectedAttributes[key]
   );
+
+  if (isLoading) {
+    return <ProductDetailsSkeleton />;
+  }
 
   return (
     <section className="py-5">
