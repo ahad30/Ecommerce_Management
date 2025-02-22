@@ -12,7 +12,7 @@ import ZImageInput from "../../../../components/Form/ZImageInput";
 const AddSlider = () => {
   const dispatch = useAppDispatch();
   const [createSlider, { isLoading: SIsLoading, isError: SIsError, error: SError, isSuccess: SIsSuccess, data }] = useAddSliderMutation();
-  console.log(data)
+  // console.log(data)
   const handleSubmit = async (data) => {
     try {
       let imageUrl = '';
@@ -79,7 +79,7 @@ const AddSlider = () => {
             label="Title"
             defaultKey={""}
             placeholder={"Enter the title"}
-            required={1}
+            // required={1}
             reset
           />
 
@@ -89,7 +89,7 @@ const AddSlider = () => {
             label="Description"
             defaultKey={""}
             placeholder={"Enter the description"}
-            required={1}
+            // required={1}
             reset
           />
 

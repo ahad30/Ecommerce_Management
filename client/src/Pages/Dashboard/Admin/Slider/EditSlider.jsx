@@ -18,60 +18,56 @@ const EditSlider = ({ selectedSlider }) => {
 
   const handleSubmit = async (formData) => {
     setIsLoading(true);
-
+  
     try {
-      let imageUrl = selectedSlider?.imageUrl;
-
- 
-
-      // Handle new image upload (only if a new image is provided and not removed)
+      let imageUrl = selectedSlider?.imageUrl; // Keep old image if no new one is provided
+  
+      // Handle new image upload
       if (formData?.imageUrl && !isImageRemoved) {
         const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
         const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
-        
+  
         const imageFile = new FormData();
-        imageFile.append('image', formData.imageUrl);
-        
+        imageFile.append("image", formData.imageUrl);
+  
         const res = await axios.post(image_hosting_api, imageFile);
-
+  
         if (res?.data?.success) {
           imageUrl = res.data.data.display_url;
-          console.log('New image uploaded:', imageUrl); // Debugging
         } else {
-          throw new Error('Image upload failed');
+          throw new Error("Image upload failed");
         }
       }
-
-           // Handle image removal
-           if (isImageRemoved) {
-            imageUrl = ""; // Clear the image URL if removed
-            console.log('Image removed'); // Debugging
-          }
-
-      // Prepare slider data for the API
+  
+      // **Ensure image removal is handled**
+      if (!formData?.imageUrl && isImageRemoved) {
+        imageUrl = ""; 
+      }
+  
+      // Prepare slider data for API
       const sliderData = {
         title: formData?.title,
         description: formData?.description,
-        imageUrl: imageUrl,
+        imageUrl: imageUrl, // Send updated image or empty string
         linkUrl: formData?.linkUrl,
         isActive: formData?.isActive,
       };
-
-      console.log('Updating slider with data:', sliderData); // Debugging
-
-      // Call the updateSlider mutation
+  
+      console.log("Updating slider with data:", sliderData); // Debugging
+  
+      // Update slider with API
       await updateSlider({ id: selectedSlider.id, data: sliderData }).unwrap();
-
-      // Show success message and close the modal
+  
       toast.success("Slider Updated Successfully");
       handleCloseAndOpen();
     } catch (error) {
-      console.error('Error updating slider:', error);
-      toast.error(error.message || 'Error updating slider. Please try again.');
+      console.error("Error updating slider:", error);
+      toast.error(error.message || "Error updating slider. Please try again.");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
+  
 
   const handleCloseAndOpen = () => {
     dispatch(setIsEditModalOpen()); // Close the edit modal
@@ -93,7 +89,7 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Title"
             placeholder={"Enter the title"}
-            required
+     
           />
 
           <ZInputTwo
@@ -102,7 +98,7 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Description"
             placeholder={"Enter the description"}
-            required
+   
           />
 
           <ZImageInput

@@ -9,7 +9,7 @@ const ZImageInput = ({
   label,
   defaultValue,
   onRemove,
-  onChange: parentOnChange, // Add parent onChange handler
+  onChange: parentOnChange, 
   defaultKey,
   setPriceQuantityImage,
   refresh,
@@ -53,28 +53,38 @@ const ZImageInput = ({
 
   const handleChange = (info) => {
     const file = info.file;
-
-    if (
-      setPriceQuantityImage &&
-      defaultKey === "product" &&
-      info?.fileList?.length > 0
-    ) {
-      setPriceQuantityImage((prev) => ({
-        ...prev,
-        imageUrl: file,
-      }));
-    } else if (setPriceQuantityImage) {
-      setPriceQuantityImage((prev) => ({
-        ...prev,
-        imageUrl: "",
-      }));
-    }
-
-    // Call parent onChange handler if provided
-    if (parentOnChange) {
-      parentOnChange(info);
+  
+    if (info.fileList.length > 0) {
+      setImageList([{ uid: file.uid, name: file.name, status: "done", url: URL.createObjectURL(file) }]);
+      parentOnChange(file);
+  
+      if (parentOnChange) {
+        parentOnChange({ file });
+      }
+  
+      if (setPriceQuantityImage && defaultKey === "product") {
+        setPriceQuantityImage((prev) => ({
+          ...prev,
+          imageUrl: file,
+        }));
+      }
+    } else {
+      setImageList([]);
+      parentOnChange(null);
+  
+      if (parentOnChange) {
+        parentOnChange({ file: null });
+      }
+  
+      if (setPriceQuantityImage && defaultKey === "product") {
+        setPriceQuantityImage((prev) => ({
+          ...prev,
+          imageUrl: "",
+        }));
+      }
     }
   };
+  
 
   return (
     <Controller
@@ -124,7 +134,10 @@ const ZImageInput = ({
               setImageList([]);
               onChange(null);
               if (onRemove) onRemove();
-
+                // Call parent onChange handler if provided
+                if (parentOnChange) {
+                parentOnChange({ file: null });
+              }
               if (setPriceQuantityImage && defaultKey === "product") {
                 setPriceQuantityImage((prev) => ({
                   ...prev,
@@ -132,17 +145,14 @@ const ZImageInput = ({
                 }));
               }
 
-              // Call parent onChange handler if provided
-              if (parentOnChange) {
-                parentOnChange({ file: null });
-              }
+            
             }}
             maxCount={1}
             onChange={handleChange}
           >
-            {imageList.length < 1 && (
+
               <Button icon={<UploadOutlined />}> Upload</Button>
-            )}
+
           </Upload>
         </Form.Item>
       )}

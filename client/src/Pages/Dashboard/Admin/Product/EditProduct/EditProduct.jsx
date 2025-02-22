@@ -89,8 +89,7 @@ const EditProduct = () => {
     },
   ] = useUpdateProductMutation();
 
-//  console.log(productData)
-  // console.log(skus)
+
 
 
   useEffect(() => {
@@ -245,97 +244,113 @@ const EditProduct = () => {
 
   const handleSubmit = async (data) => {
     setIsLoading(true);
-
-  const uploadImage = async (file) => {
-    if (!file) return "";
-
-    try {
-      const imageHostingKey = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-      const imageHostingApi = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
-
-      const imageFile = new FormData();
-      imageFile.append("image", file);
-
-      const res = await axios.post(imageHostingApi, imageFile, {
-        headers: { "content-type": "multipart/form-data" },
-      });
-
-      if (res?.data?.success) {
-        return res.data.data.display_url;
-      } else {
-        throw new Error("Image upload failed");
+  
+    const uploadImage = async (file) => {
+      if (!file) return "";
+  
+      try {
+        const imageHostingKey = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+        const imageHostingApi = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
+  
+        const imageFile = new FormData();
+        imageFile.append("image", file);
+  
+        const res = await axios.post(imageHostingApi, imageFile, {
+          headers: { "content-type": "multipart/form-data" },
+        });
+  
+        if (res?.data?.success) {
+          return res.data.data.display_url;
+        } else {
+          throw new Error("Image upload failed");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error.message);
+        return ""; // Return an empty string if the upload fails
       }
-    } catch (error) {
-      console.error("Error uploading image:", error.message);
-      return ""; // Return an empty string if the upload fails
-    }
-  };
-
-  const mainImageUrl = await uploadImage(data?.ImageUrl);
-
-  // Prepare the main product data
-  const modifiedData = {
-    brandId: data?.brandId || "",
-    categoryId: data?.categoryId || "",
-    status: data?.status || true,
-    topSale: data?.topSale || false,
-    availability: data?.availability || true,
-    newArrival: data?.newArrival || false,
-    description: data.description || "",
-    productSubtitle: data.productSubtitle || "",
-    name: data.name || "",
-    material: data.material || "",
-    thickness: data.thickness || "",
-    elasticity: data.elasticity || "",
-    breathability: data.breathability || "",
-    weight: data?.weight || "",
-    imageUrl: mainImageUrl || updateProductData?.imageUrl,
-    price: parseFloat(data?.Price),
-  };
-
-  if (skus.length > 0) {
-    // Upload images for each variation
-    const variantProductData = {
-      ...modifiedData,
-      variants: await Promise.all(
-        skus.map(async (sku) => {
-          const uploadedImageUrl = await uploadImage(sku.imageUrl);
-
-          // For new variants, exclude variationId and productId
-          if (!sku.variationId) {
+    };
+  
+    // Check if the main image has changed
+    const mainImageUrl =
+      data?.ImageUrl && data?.ImageUrl !== updateProductData?.imageUrl
+        ? await uploadImage(data?.ImageUrl)
+        : updateProductData?.imageUrl;
+  
+    // Prepare the main product data
+    const modifiedData = {
+      brandId: data?.brandId || "",
+      categoryId: data?.categoryId || "",
+      status: data?.status || true,
+      topSale: data?.topSale || false,
+      availability: data?.availability || true,
+      newArrival: data?.newArrival || false,
+      description: data.description || "",
+      productSubtitle: data.productSubtitle || "",
+      name: data.name || "",
+      material: data.material || "",
+      thickness: data.thickness || "",
+      elasticity: data.elasticity || "",
+      breathability: data.breathability || "",
+      weight: data?.weight || "",
+      imageUrl: mainImageUrl || updateProductData?.imageUrl, // Fallback to existing URL
+      price: parseFloat(data?.Price),
+    };
+  
+    if (skus.length > 0) {
+      // Upload images for each variation only if the image has changed
+      const variantProductData = {
+        ...modifiedData,
+        variants: await Promise.all(
+          skus.map(async (sku) => {
+            // Find the corresponding original variant from `updateProductData`
+            const originalVariant = updateProductData?.variants?.find(
+              (v) => v.variationId === sku.variationId
+            );
+  
+            // Check if the image has changed
+            const shouldUploadImage =
+              sku?.imageUrl && // Ensure sku.imageUrl is not empty
+              sku?.imageUrl !== originalVariant?.imageUrl; // Compare with original image URL
+  
+            const uploadedImageUrl = shouldUploadImage
+              ? await uploadImage(sku?.imageUrl)
+              : originalVariant?.imageUrl || sku?.imageUrl; // Fallback to existing URL
+  
+            // For new variants, exclude variationId and productId
+            if (!sku.variationId) {
+              return {
+                attributes: sku.attributes,
+                sku: sku.sku,
+                stock: sku.stock,
+                price: sku.price,
+                imageUrl: uploadedImageUrl,
+                priceTiers: sku.priceTiers || [],
+              };
+            }
+  
+            // For existing variants, include variationId and productId
             return {
+              id: sku.variationId,
+              productId: sku.productId,
               attributes: sku.attributes,
               sku: sku.sku,
               stock: sku.stock,
               price: sku.price,
-              imageUrl: uploadedImageUrl || sku?.imageUrl,
+              imageUrl: uploadedImageUrl,
               priceTiers: sku.priceTiers || [],
             };
-          }
-
-          // For existing variants, include variationId and productId
-          return {
-            id: sku.variationId,
-            productId: sku.productId,
-            attributes: sku.attributes,
-            sku: sku.sku,
-            stock: sku.stock,
-            price: sku.price,
-            imageUrl: uploadedImageUrl || sku?.imageUrl,
-            priceTiers: sku.priceTiers || [],
-          };
-        })
-      ),
-    };
-
-    console.log("Final Product Data:", variantProductData);
-    updateProduct({ data: variantProductData, id: id });
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("Product updated successfully");
-    }, 4000);
-  }
-};
+          })
+        ),
+      };
+  
+      console.log("Final Product Data:", variantProductData);
+      updateProduct({ data: variantProductData, id: id });
+      setTimeout(() => {
+        setIsLoading(false);
+        toast.success("Product updated successfully");
+      }, 4000);
+    }
+  };
 
   if (sPIsLoading) {
     return (

@@ -7,19 +7,10 @@ import NewsSletter from "./NewsSletter/NewsSletter";
 import ProductBanner from "./ProductBanner/ProductBanner";
 import NewProduct from "./NewProduct/NewProduct";
 import TopSaleProduct from "./TopSaleProduct/TopSaleProduct";
-// import { useKeenSlider } from "keen-slider/react";
-// import "keen-slider/keen-slider.min.css";
+
 
 const Home = () => {
-  // const [sliderRef1] = useKeenSlider({
-  //   loop: true,
-  //   slides: { perView: 1, spacing: 10 },
-  // });
 
-  // const [sliderRef2] = useKeenSlider({
-  //   loop: true,
-  //   slides: { perView: 1, spacing: 15 },
-  // });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,9 +26,9 @@ const Home = () => {
           <div className="w-full h-full md:h-[80%]">      
             <BannerSlider />
           </div>
-          {/* <div className="mt-[-64px] md:mt-[-65px]">
+          <div className="mt-[3px] md:mt-[3px]">
             <ProductBanner />
-          </div> */}
+          </div>
         </div>
       {/* </div> */}
       <div className="mt-6">
@@ -52,21 +43,6 @@ const Home = () => {
     
        <NewsSletter/>
 
-
-       {/* <div>
-
-      <div ref={sliderRef1} className="keen-slider">
-        <div className="keen-slider__slide">Slide 1</div>
-        <div className="keen-slider__slide">Slide 2</div>
-        <div className="keen-slider__slide">Slide 3</div>
-      </div>
-
-      <div ref={sliderRef2} className="keen-slider mt-10">
-        <div className="keen-slider__slide">Slide A</div>
-        <div className="keen-slider__slide">Slide B</div>
-        <div className="keen-slider__slide">Slide C</div>
-      </div>
-    </div> */}
     </div>
   );
 };
