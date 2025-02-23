@@ -17,7 +17,7 @@ const BannerSlider = () => {
     } else {
       const timer = setTimeout(() => {
         setShowSkeleton(false);
-      }, 4000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [isFetching , sliderIsLoading]);

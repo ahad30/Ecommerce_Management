@@ -4,7 +4,7 @@ const SendEmailUtility = require("../../shared/SendEmailUtility ");
 class OrderService {
     constructor(prisma) {
         this.prisma = prisma;
-        this.adminEmail =  "hossainsazzad9079@gmail.com";
+        this.adminEmail =  "hossainsazza9079@gmail.com";
     }
 
     async createOrder(postBody) {
@@ -13,39 +13,37 @@ class OrderService {
             const order = await this.prisma.order.create({
                 data: postBody,
             });
+        //  if (order.email) {
+        //         const customerEmailSubject = "Your Order Has Been Placed";
+        //         const customerEmailBody = `
+        //             <h1>Thank you for your order!</h1>
+        //             <p>Your order has been successfully placed. Below are the details:</p>
+        //             <ul>
+        //                 <li><strong>Order ID:</strong> ${order.id}</li>
+        //                 <li><strong>Transaction ID:</strong> ${order.transactionId}</li>
+        //                 <li><strong>Total Amount:</strong> $${order.orderTotal}</li>
+        //             </ul>
+        //             <p>We will notify you once your order is shipped.</p>
+        //         `;
 
-            // Send an email to the customer with the order details (if email is provided)
-            if (order.email) {
-                const customerEmailSubject = "Your Order Has Been Placed";
-                const customerEmailBody = `
-                    <h1>Thank you for your order!</h1>
-                    <p>Your order has been successfully placed. Below are the details:</p>
-                    <ul>
-                        <li><strong>Order ID:</strong> ${order.id}</li>
-                        <li><strong>Transaction ID:</strong> ${order.transactionId}</li>
-                        <li><strong>Total Amount:</strong> $${order.orderTotal}</li>
-                    </ul>
-                    <p>We will notify you once your order is shipped.</p>
-                `;
+        //         await SendEmailUtility.sendEmail(order.email, customerEmailBody, customerEmailSubject);
+        //     }
 
-                await SendEmailUtility.sendEmail(order.email, customerEmailBody, customerEmailSubject);
-            }
+         
+        //     const adminEmailSubject = "New Order Notification";
+        //     const adminEmailBody = `
+        //         <h1>New Order Received</h1>
+        //         <p>A new order has been placed. Below are the details:</p>
+        //         <ul>
+        //             <li><strong>Order ID:</strong> ${order.id}</li>
+        //             <li><strong>Transaction ID:</strong> ${order.transactionId}</li>
+        //             <li><strong>Customer Email:</strong> ${order.email || "Not provided"}</li>
+        //             <li><strong>Total Amount:</strong> $${order.orderTotal}</li>
+        //         </ul>
+        //         <p>Please review the order and proceed with the next steps.</p>
+        //     `;
 
-            // Send an email to the admin with the order details
-            const adminEmailSubject = "New Order Notification";
-            const adminEmailBody = `
-                <h1>New Order Received</h1>
-                <p>A new order has been placed. Below are the details:</p>
-                <ul>
-                    <li><strong>Order ID:</strong> ${order.id}</li>
-                    <li><strong>Transaction ID:</strong> ${order.transactionId}</li>
-                    <li><strong>Customer Email:</strong> ${order.email || "Not provided"}</li>
-                    <li><strong>Total Amount:</strong> $${order.orderTotal}</li>
-                </ul>
-                <p>Please review the order and proceed with the next steps.</p>
-            `;
-
-            await SendEmailUtility.sendEmail(this.adminEmail, adminEmailBody, adminEmailSubject);
+        //     await SendEmailUtility.sendEmail(this.adminEmail, adminEmailBody, adminEmailSubject);
 
             return order;
         } catch (error) {
