@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import axios from "axios";
+import { useAppDispatch } from "../../../../redux/Hook/Hook";
 import ZFormTwo from "../../../../components/Form/ZFormTwo";
 import ZInputTwo from "../../../../components/Form/ZInputTwo";
-import { useAppDispatch } from "../../../../redux/Hook/Hook";
-import { setIsEditModalOpen } from "../../../../redux/Modal/ModalSlice";
-import ZSelect from "../../../../components/Form/ZSelect";
 import ZImageInput from "../../../../components/Form/ZImageInput";
-import axios from "axios"; // Ensure axios is imported
-import { toast } from "sonner";
+import ZSelect from "../../../../components/Form/ZSelect";
 import { useUpdateSliderMutation } from "../../../../redux/Feature/Admin/slider/sliderApi";
+import { toast } from "sonner";
+import { setIsEditModalOpen } from "../../../../redux/Modal/ModalSlice";
 
 const EditSlider = ({ selectedSlider }) => {
   const dispatch = useAppDispatch();
@@ -39,7 +39,7 @@ const EditSlider = ({ selectedSlider }) => {
         }
       }
   
-      // **Ensure image removal is handled**
+      // Handle image removal
       if (!formData?.imageUrl && isImageRemoved) {
         imageUrl = ""; 
       }
@@ -67,7 +67,6 @@ const EditSlider = ({ selectedSlider }) => {
       setIsLoading(false);
     }
   };
-  
 
   const handleCloseAndOpen = () => {
     dispatch(setIsEditModalOpen()); // Close the edit modal
@@ -89,7 +88,6 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Title"
             placeholder={"Enter the title"}
-     
           />
 
           <ZInputTwo
@@ -98,18 +96,17 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Description"
             placeholder={"Enter the description"}
-   
           />
 
           <ZImageInput
             name="imageUrl"
             label="Slider Image"
             onRemove={() => setIsImageRemoved(true)} 
-            onChange={() => setIsImageRemoved(false)} 
+            onChange={() =>  setIsImageRemoved(false)} 
             defaultValue={selectedSlider?.imageUrl ? [
               {
                 uid: '-1',
-                name: 'Current Image',
+                name: 'Previous Image',
                 status: 'done',
                 url: selectedSlider?.imageUrl,
               },

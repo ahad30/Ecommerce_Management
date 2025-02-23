@@ -63,7 +63,7 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
       }
 
       // If image is removed, set imageUrl to an empty string
-      if (isImageRemoved) {
+      if (!data?.imageUrl && isImageRemoved) {
         imageUrl = "";
       }
 
@@ -135,12 +135,13 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
           name="imageUrl"
           label="Product Image"
           onRemove={() => setIsImageRemoved(true)}
+          onChange={() => setIsImageRemoved(false)} 
           defaultValue={
             selectedVariant?.imageUrl
               ? [
                   {
                     uid: "-1",
-                    name: "Current Image",
+                    name: "Previous Image",
                     status: "done",
                     url: selectedVariant?.imageUrl,
                   },

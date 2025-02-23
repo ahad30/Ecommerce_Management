@@ -9,7 +9,7 @@ const ZImageInput = ({
   label,
   defaultValue,
   onRemove,
-  onChange: parentOnChange, 
+  onChange,
   defaultKey,
   setPriceQuantityImage,
   refresh,
@@ -33,8 +33,8 @@ const ZImageInput = ({
     if (defaultValue && defaultValue[0]?.url) {
       setImageList([
         {
-          uid: defaultValue[0].uid,
-          name: defaultValue[0].name,
+          uid: defaultValue[0].uid || "-1",
+          name: defaultValue[0].name || "Previous Image",
           status: "done",
           url: defaultValue[0].url,
         },
@@ -51,17 +51,27 @@ const ZImageInput = ({
     }
   }, [refresh]);
 
+  // Handle file change
   const handleChange = (info) => {
     const file = info.file;
-  
+
     if (info.fileList.length > 0) {
-      setImageList([{ uid: file.uid, name: file.name, status: "done", url: URL.createObjectURL(file) }]);
-      parentOnChange(file);
-  
-      if (parentOnChange) {
-        parentOnChange({ file });
+      const newFileList = [
+        {
+          uid: file.uid,
+          name: file.name,
+          status: "done",
+          url: URL.createObjectURL(file),
+        },
+      ];
+      setImageList(newFileList);
+
+      // Call parent onChange handler if provided
+      if (onChange) {
+        onChange(file);
       }
-  
+
+      // Update price quantity image if needed
       if (setPriceQuantityImage && defaultKey === "product") {
         setPriceQuantityImage((prev) => ({
           ...prev,
@@ -70,12 +80,13 @@ const ZImageInput = ({
       }
     } else {
       setImageList([]);
-      parentOnChange(null);
-  
-      if (parentOnChange) {
-        parentOnChange({ file: null });
+
+      // Call parent onChange handler if provided
+      if (onChange) {
+        onChange(null);
       }
-  
+
+      // Update price quantity image if needed
       if (setPriceQuantityImage && defaultKey === "product") {
         setPriceQuantityImage((prev) => ({
           ...prev,
@@ -84,7 +95,29 @@ const ZImageInput = ({
       }
     }
   };
-  
+
+  // Handle file removal
+  const handleRemove = () => {
+    setImageList([]);
+
+    // Call parent onRemove handler if provided
+    if (onRemove) {
+      onRemove();
+    }
+
+    // Call parent onChange handler if provided
+    if (onChange) {
+      onChange(null);
+    }
+
+    // Update price quantity image if needed
+    if (setPriceQuantityImage && defaultKey === "product") {
+      setPriceQuantityImage((prev) => ({
+        ...prev,
+        imageUrl: "",
+      }));
+    }
+  };
 
   return (
     <Controller
@@ -123,36 +156,17 @@ const ZImageInput = ({
                 }));
               }
 
-              // Call parent onChange handler if provided
-              if (parentOnChange) {
-                parentOnChange({ file });
-              }
-
               return false; // Prevent automatic upload
             }}
-            onRemove={() => {
-              setImageList([]);
-              onChange(null);
-              if (onRemove) onRemove();
-                // Call parent onChange handler if provided
-                if (parentOnChange) {
-                parentOnChange({ file: null });
-              }
-              if (setPriceQuantityImage && defaultKey === "product") {
-                setPriceQuantityImage((prev) => ({
-                  ...prev,
-                  imageUrl: "",
-                }));
-              }
-
-            
-            }}
+            onRemove={handleRemove}
             maxCount={1}
             onChange={handleChange}
+            showUploadList={{
+              showRemoveIcon: false,
+              showPreviewIcon: true,
+            }}
           >
-
-              <Button icon={<UploadOutlined />}> Upload</Button>
-
+            <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>
       )}

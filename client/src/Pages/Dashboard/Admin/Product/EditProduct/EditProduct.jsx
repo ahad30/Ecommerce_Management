@@ -14,7 +14,6 @@ import ZInputTwo from "../../../../../components/Form/ZInputTwo";
 import ZNumber from "../../../../../components/Form/ZNumber";
 import ZSelect from "../../../../../components/Form/ZSelect";
 import ZFormTwo from "../../../../../components/Form/ZFormTwo";
-import BreadCrumb from "../../../../../components/BreadCrumb/BreadCrumb";
 import { VariantProductTable } from "../../../../../components/VariantProductTable";
 import ZInputTextArea from "../../../../../components/Form/ZInputTextArea";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
@@ -431,11 +430,13 @@ const EditProduct = () => {
             value={updateProductData?.brandId}
           />
 
-          <ZImageInput name="ImageUrl" label="Thumbnail Image" 
+          <ZImageInput 
+          name="ImageUrl"
+          label="Thumbnail Image" 
           defaultValue={updateProductData?.imageUrl ? [
               {
                 uid: '-1',
-                name: 'Current Image',
+                name: 'Previous Image',
                 status: 'done',
                 url: updateProductData?.imageUrl,
               },

@@ -9,10 +9,10 @@ const Skeleton = () => {
       {isHomePage ? (
         <div
           role="status"
-          className="w-full p-4 mb-6 space-y-4 border border-gray-200 rounded shadow animate-pulse dark:border-gray-700"
+          className="w-full p-4 mb-6 space-y-4 rounded  animate-pulse"
         >
-          <div className="h-48 bg-gray-300 rounded dark:bg-gray-600"></div>
-          <span className="sr-only">Loading banner...</span>
+          <div className="h-48 bg-gray-300 rounded dark:bg-gray-200"></div>
+          <span className="sr-only text-black">Loading banner...</span>
         </div>
       ) :
 
