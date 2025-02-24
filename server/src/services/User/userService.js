@@ -47,7 +47,7 @@ class UserService extends BcryptHasher {
         },
       });
 
-      const verificationLink = `http://localhost:5173/verify/${verificationToken}`;
+      const verificationLink = `https://inkspire-steel.vercel.app/verify/${verificationToken}`;
       
       await SendEmailUtility
       .sendEmail(

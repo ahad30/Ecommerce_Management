@@ -33,6 +33,8 @@ const AddProduct = () => {
   const [addonPages, setAddonPages] = useState([
     { minQty: "", maxQty: "", price: "" },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
+
   // attribute State - 1 from db
   const [attributeValue, setAttributeValue] = useState([]);
 
@@ -223,6 +225,8 @@ const AddProduct = () => {
   };
 
   const handleSubmit = async (data) => {
+    setIsLoading(true);
+
     const uploadImage = async (file) => {
       if (!file) return "";
 
@@ -292,6 +296,10 @@ const AddProduct = () => {
 
       console.log("Final Product Data:", variantProductData);
       createProduct(variantProductData);
+      setTimeout(() => {
+        setIsLoading(false);
+        toast.success("Product added successfully");
+      }, 4000);
     }
   };
 
@@ -309,14 +317,14 @@ const AddProduct = () => {
     <div className="">
       <BreadCrumb />
       <ZFormTwo
-        isLoading={CIsloading}
-        isSuccess={CIsSuccess}
+        // isLoading={CIsloading}
+        // isSuccess={CIsSuccess}
         isError={CIsError}
         error={CError}
         submit={handleSubmit}
         formType="create"
         data={data}
-        buttonName="Submit"
+        // buttonName="Submit"
       >
         <>
           <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-10">
@@ -332,9 +340,10 @@ const AddProduct = () => {
               type="text"
               label="Subtitle"
               placeholder="Enter product subtitle"
+              required={1}
             />
 
-            <ZNumber name="Price" label="Price" placeholder="Enter Price" />
+            <ZNumber required={1} name="Price" label="Price" placeholder="Enter Price" />
 
             <ZSelect
               name="categoryId"
@@ -672,6 +681,15 @@ const AddProduct = () => {
             </div>
             {/* per sku end */}
           </div>
+          <div className="flex justify-end">
+    <button
+        type="submit"
+        disabled={isLoading}
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+      >
+        {isLoading ? "Submitting..." : "Submit"}
+      </button>
+    </div>
         </>
       </ZFormTwo>
       <VariantProductTable skus={skus} setSkus={setSkus}></VariantProductTable>

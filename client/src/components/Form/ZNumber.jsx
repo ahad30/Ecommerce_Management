@@ -122,10 +122,10 @@ const handleKeyPress = (event) => {
       name={name}
       control={control}
       rules={{
-        // // ...(required && { 
-        //   required: `This ${label} field is required` 
-        // // })
-        // ,
+        ...(required ? { 
+          required: `This ${label} field is required` 
+        } : "")
+        ,
         pattern: {
           value:
             [

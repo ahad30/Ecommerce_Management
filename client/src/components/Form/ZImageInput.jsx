@@ -9,13 +9,14 @@ const ZImageInput = ({
   label,
   defaultValue,
   onRemove,
+  onChange,
   defaultKey,
   setPriceQuantityImage,
   refresh,
 }) => {
   const [imageList, setImageList] = useState([]);
   const { control, resetField } = useFormContext();
-  const { isAddModalOpen, isEditModalOpen , isVariantModalOpen} = useAppSelector(
+  const { isAddModalOpen, isEditModalOpen, isVariantModalOpen } = useAppSelector(
     (state) => state.modal
   );
 
@@ -25,15 +26,15 @@ const ZImageInput = ({
       setImageList([]);
       resetField(name);
     }
-  }, [isAddModalOpen, isEditModalOpen , isVariantModalOpen]);
+  }, [isAddModalOpen, isEditModalOpen, isVariantModalOpen]);
 
   // Update imageList when defaultValue changes
   useEffect(() => {
     if (defaultValue && defaultValue[0]?.url) {
       setImageList([
         {
-          uid: defaultValue[0].uid,
-          name: defaultValue[0].name,
+          uid: defaultValue[0].uid || "-1",
+          name: defaultValue[0].name || "Previous Image",
           status: "done",
           url: defaultValue[0].url,
         },
@@ -50,19 +51,67 @@ const ZImageInput = ({
     }
   }, [refresh]);
 
+  // Handle file change
   const handleChange = (info) => {
     const file = info.file;
 
-    if (
-      setPriceQuantityImage &&
-      defaultKey === "product" &&
-      info?.fileList?.length > 0
-    ) {
-      setPriceQuantityImage((prev) => ({
-        ...prev,
-        imageUrl: file,
-      }));
-    } else if (setPriceQuantityImage) {
+    if (info.fileList.length > 0) {
+      const newFileList = [
+        {
+          uid: file.uid,
+          name: file.name,
+          status: "done",
+          url: URL.createObjectURL(file),
+        },
+      ];
+      setImageList(newFileList);
+
+      // Call parent onChange handler if provided
+      if (onChange) {
+        onChange(file);
+      }
+
+      // Update price quantity image if needed
+      if (setPriceQuantityImage && defaultKey === "product") {
+        setPriceQuantityImage((prev) => ({
+          ...prev,
+          imageUrl: file,
+        }));
+      }
+    } else {
+      setImageList([]);
+
+      // Call parent onChange handler if provided
+      if (onChange) {
+        onChange(null);
+      }
+
+      // Update price quantity image if needed
+      if (setPriceQuantityImage && defaultKey === "product") {
+        setPriceQuantityImage((prev) => ({
+          ...prev,
+          imageUrl: "",
+        }));
+      }
+    }
+  };
+
+  // Handle file removal
+  const handleRemove = () => {
+    setImageList([]);
+
+    // Call parent onRemove handler if provided
+    if (onRemove) {
+      onRemove();
+    }
+
+    // Call parent onChange handler if provided
+    if (onChange) {
+      onChange(null);
+    }
+
+    // Update price quantity image if needed
+    if (setPriceQuantityImage && defaultKey === "product") {
       setPriceQuantityImage((prev) => ({
         ...prev,
         imageUrl: "",
@@ -109,24 +158,15 @@ const ZImageInput = ({
 
               return false; // Prevent automatic upload
             }}
-            onRemove={() => {
-              setImageList([]);
-              onChange(null);
-              if (onRemove) onRemove();
-
-              if (setPriceQuantityImage && defaultKey === "product") {
-                setPriceQuantityImage((prev) => ({
-                  ...prev,
-                  imageUrl: "",
-                }));
-              }
-            }}
+            onRemove={handleRemove}
             maxCount={1}
             onChange={handleChange}
+            showUploadList={{
+              showRemoveIcon: false,
+              showPreviewIcon: true,
+            }}
           >
-            {imageList.length < 1 && (
-              <Button icon={<UploadOutlined />}> Upload</Button>
-            )}
+            <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>
       )}
