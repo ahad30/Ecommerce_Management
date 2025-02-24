@@ -84,43 +84,65 @@ class ProductService {
   }
 
   // Get all products with optional filtering
-  async getProducts(filters = {}, searchTerm = null, page = 1, limit = 10) {
-    try {
-      const whereClause = this.buildWhereClause(filters, searchTerm);
-      const skip = (page - 1) * limit;
-      const products = await this.prisma.product.findMany({
-        where: whereClause,
-        skip,
-        take: limit,
-        include: {
-          category: true,
-          variants: true,
-          brand: true,
-        },
-        orderBy: {
-          createdAt: "desc", // Sorts orders from latest to earliest
-        },
-      });
+  async getProducts(filters = {}, searchTerm = null, page = 1, limit = 10, sortBy = "") {
+  try {
+    const whereClause = this.buildWhereClause(filters, searchTerm);
+    const skip = (page - 1) * limit;
 
-      // Count total products for pagination meta
-      const totalProducts = await this.prisma.product.count({
-        where: whereClause,
-      });
-
-      // Pagination metadata
-      const meta = {
-        totalItems: totalProducts,
-        totalPages: Math.ceil(totalProducts / limit),
-        currentPage: page,
-        itemsPerPage: limit,
-      };
-
-      return { products, meta };
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      throw new Error("Failed to fetch products");
+    // Define the orderBy clause based on the sortBy parameter
+    let orderBy = {};
+    switch (sortBy) {
+      case "price-low":
+        orderBy = { price: "asc" }; // Sort by price: low to high
+        break;
+      case "price-high":
+        orderBy = { price: "desc" }; // Sort by price: high to low
+        break;
+      case "newest":
+        orderBy = { newArrival: "desc" };
+        break;
+      case "popular":
+        // Assuming you have a field like `popularity` or `salesCount` to sort by popularity
+        orderBy = { topSale: "desc" }; 
+        break;
+      default:
+        orderBy = { createdAt: "desc" }; // Default sorting: newest first
+        break;
     }
+    
+    // console.log("Sort By (Backend):", sortBy);
+    // console.log("Order By (Backend):", orderBy);
+    const products = await this.prisma.product.findMany({
+      where: whereClause,
+      skip,
+      take: limit,
+      include: {
+        category: true,
+        variants: true,
+        brand: true,
+      },
+      orderBy,
+    });
+
+    // Count total products for pagination meta
+    const totalProducts = await this.prisma.product.count({
+      where: whereClause,
+    });
+
+    // Pagination metadata
+    const meta = {
+      totalItems: totalProducts,
+      totalPages: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      itemsPerPage: limit,
+    };
+
+    return { products, meta };
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw new Error("Failed to fetch products");
   }
+}
 
   // Get a single product by ID
   async getProductById(id) {

@@ -1,16 +1,10 @@
-// src/components/Shop/Shop.js
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
-import { setIsHomeCategorySidebarOpen, setIsProductViewModalOpen, setIsViewModalOpen } from "../../redux/Modal/ModalSlice";
-import { MdClose } from "react-icons/md";
+import { setIsHomeCategorySidebarOpen, setIsProductViewModalOpen } from "../../redux/Modal/ModalSlice";
+import { MdClose, MdOutlineRemoveRedEye } from "react-icons/md";
 import LeftSidebar from "./LeftSidebar/LeftSidebar";
-import { CiFilter, CiGrid2H, CiGrid31, CiGrid42 } from "react-icons/ci";
-import { Rating, Star } from "@smastrom/react-rating";
-import "@smastrom/react-rating/style.css";
-import { Button } from "@material-tailwind/react";
-import { CiHeart, CiShoppingCart } from "react-icons/ci";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { FaAngleLeft, FaAngleRight, FaGripLinesVertical, FaListAlt } from "react-icons/fa";
+import { CiFilter, CiGrid42 } from "react-icons/ci";
+import { FaListAlt } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import ProductsSkeleton from "../../components/Skeleton/ProductsSkeleton";
 import { useGetProductsBySearchQuery } from "../../redux/Feature/Admin/product/productApi";
@@ -19,12 +13,11 @@ import { Modal, Pagination } from 'antd';
 import { useGetCategoryQuery } from "../../redux/Feature/Admin/category/categoryApi";
 import { useGetBrandQuery } from "../../redux/Feature/Admin/brand/brandApi";
 import DashboardTitle from "../../components/DashboardTitle/DashboardTitle";
-import ViewModal from "../../components/Modal/ViewModal";
 import ViewProduct from "../../components/ViewProduct";
 
 const Shop = () => {
   const dispatch = useAppDispatch();
-  const { isHomeCategorySidebarOpen, isViewModalOpen, priceMin, priceMax ,isProductViewModalOpen} = useAppSelector((state) => state.modal);
+  const { isHomeCategorySidebarOpen, isProductViewModalOpen, priceMin, priceMax } = useAppSelector((state) => state.modal);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,12 +26,13 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
   const [viewMode, setViewMode] = useState("grid"); // State for view mode (grid or list)
-
+  const [sortBy, setSortBy] = useState(""); // State for sorting option
+ console.log(sortBy)
   // Fetch categories and brands
   const { data: categories, isLoading: isCategoriesLoading } = useGetCategoryQuery();
   const { data: brands, isLoading: isBrandsLoading } = useGetBrandQuery();
 
-  // Fetch products with filters
+  // Fetch products with filters and sorting
   const { data, error, isLoading, isFetching } = useGetProductsBySearchQuery({
     search: searchQuery,
     page: currentPage,
@@ -47,9 +41,8 @@ const Shop = () => {
     priceMax: priceMax,
     category: selectedCategory,
     brand: selectedBrand,
+    sortBy: sortBy, // Pass the sorting option to the API
   });
-
-
 
   useEffect(() => {
     if (isFetching) {
@@ -77,21 +70,22 @@ const Shop = () => {
 
   const handleViewProduct = (productData) => {
     setSelectedProduct(productData);
-    dispatch(setIsProductViewModalOpen ());
+    dispatch(setIsProductViewModalOpen());
   };
 
-  
   const handleCloseModal = () => {
     setSelectedProduct(null); // Clear the selected product
     dispatch(setIsProductViewModalOpen()); // Close the modal
   };
 
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value); // Update the sorting option
+    setCurrentPage(1); // Reset to the first page when sorting changes
+  };
+
   const totalItems = data?.meta?.totalItems || 0;
   const totalPages = data?.meta?.totalPages || 1;
   const itemsPerPage = data?.meta?.itemsPerPage;
-
-
-
 
   // Check if no products are found due to search or price range
   const noProductsFound =
@@ -100,19 +94,16 @@ const Shop = () => {
     data?.products?.length === 0 &&
     (searchQuery.trim() !== "" || priceMin !== 1 || priceMax !== 100000000000000);
 
-    
-    
-
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <DashboardTitle windowTitle={"Shop"}/>
+      <DashboardTitle windowTitle={"Shop"} />
       {/* Search Bar */}
       <div className="relative w-[100%] md:w-[50%] mx-auto mb-10 flex py-[6px]">
         <div className="w-full">
           <label htmlFor="Search" className="sr-only">
             Search
           </label>
-          <form className="" onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <input
               type="text"
               id="Search"
@@ -125,7 +116,7 @@ const Shop = () => {
           </form>
 
           <div className="absolute -end-2 bg-secondary px-2 md:px-4 top-[6px] bottom-0 flex justify-center items-center rounded-sm h-[29px] md:h-[37px]">
-            <IoSearch className="cursor-pointer text-lg text-white"></IoSearch>
+            <IoSearch className="cursor-pointer text-lg text-white" />
           </div>
         </div>
       </div>
@@ -171,12 +162,16 @@ const Shop = () => {
         <div className="flex-1">
           <div className="flex flex-col lg:flex-row lg:justify-between justify-center items-center mb-4 space-y-7 lg:space-y-0">
             {/* Sorting Dropdown */}
-            <select className="border p-2 rounded outline-none">
+            <select
+              className="border p-2 rounded outline-none"
+              value={sortBy}
+              onChange={handleSortChange}
+            >
               <option value="">Default sorting</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
               <option value="newest">Newest First</option>
-              <option value="popular">Most Popular</option>
+              <option value="popular">Most Popular First</option>
             </select>
 
             {/* Grid/List View Toggle (Desktop) */}
@@ -249,12 +244,10 @@ const Shop = () => {
                             </p>
                           )}
                         </div>
-                        <button   onClick={()=> handleViewProduct(item)}>
-           
-                        <div
-                         className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
-                          <MdOutlineRemoveRedEye size={28} />
-                        </div>
+                        <button onClick={() => handleViewProduct(item)}>
+                          <div className="bg-green-300 text-white rounded-full p-1 cursor-pointer">
+                            <MdOutlineRemoveRedEye size={28} />
+                          </div>
                         </button>
                       </div>
                     </div>
@@ -263,24 +256,21 @@ const Shop = () => {
                     <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-base font-medium">
                       <h2>{item?.name}</h2>
                     </div>
-                    {viewMode === "list"  &&
+                    {viewMode === "list" && (
                       <div className="mt-5 sm:mt-8 lg:mt-5 text-base font-medium">
-                      <h2 className="text-gray-500">{item?.productSubtitle}</h2>
-                    </div>
-                    }
+                        <h2 className="text-gray-500">{item?.productSubtitle}</h2>
+                      </div>
+                    )}
                     <div className="mt-5 px-2 sm:mt-8 lg:mt-5 text-sm font-medium">
                       <h2>#{item?.referenceId}</h2>
                     </div>
                     <div className="mt-2 px-2 text-base font-medium text-primary">
-
                       <h2>Pricing starts from ${item.variants[0]?.price || 0}</h2>
                     </div>
                     {viewMode === "grid" && (
                       <Link to={`/product/${item?.id}`}>
                         <div className="flex justify-center mt-10 mb-5">
-                          <button
-                            className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white"
-                          >
+                          <button className="bg-primary w-full font-Poppins font-medium py-2 px-1 rounded-t-none rounded-b-lg -mb-5 text-white">
                             View Details
                           </button>
                         </div>
@@ -289,9 +279,7 @@ const Shop = () => {
                     {viewMode === "list" && (
                       <div className="mt-4 flex justify-end">
                         <Link to={`/product/${item?.id}`}>
-                          <button
-                            className="bg-primary font-Poppins font-medium py-2 px-4 rounded text-white"
-                          >
+                          <button className="bg-primary font-Poppins font-medium py-2 px-4 rounded text-white">
                             View Details
                           </button>
                         </Link>
@@ -313,7 +301,8 @@ const Shop = () => {
           onChange={handlePageChange}
         />
       </div>
-    
+
+      {/* Product View Modal */}
       <Modal
         className="my-5"
         width={1200}
@@ -324,7 +313,6 @@ const Shop = () => {
       >
         {selectedProduct && <ViewProduct selectedProduct={selectedProduct} />}
       </Modal>
-      
     </section>
   );
 };

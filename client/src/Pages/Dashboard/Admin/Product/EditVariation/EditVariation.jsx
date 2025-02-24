@@ -63,7 +63,7 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
       }
 
       // If image is removed, set imageUrl to an empty string
-      if (isImageRemoved) {
+      if (!data?.imageUrl && isImageRemoved) {
         imageUrl = "";
       }
 
@@ -135,12 +135,13 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
           name="imageUrl"
           label="Product Image"
           onRemove={() => setIsImageRemoved(true)}
+          onChange={() => setIsImageRemoved(false)} 
           defaultValue={
             selectedVariant?.imageUrl
               ? [
                   {
                     uid: "-1",
-                    name: "Current Image",
+                    name: "Previous Image",
                     status: "done",
                     url: selectedVariant?.imageUrl,
                   },
@@ -208,13 +209,15 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
       </div>
 
       {/* Submit Button */}
-      <button
+    <div className="flex justify-end">
+    <button
         type="submit"
         disabled={isLoading}
         className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
       >
         {isLoading ? "Submitting..." : "Submit"}
       </button>
+    </div>
     </ZFormTwo>
   );
 };

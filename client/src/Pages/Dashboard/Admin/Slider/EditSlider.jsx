@@ -1,75 +1,85 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import axios from "axios";
+import { useAppDispatch } from "../../../../redux/Hook/Hook";
 import ZFormTwo from "../../../../components/Form/ZFormTwo";
 import ZInputTwo from "../../../../components/Form/ZInputTwo";
-import { useAppDispatch } from "../../../../redux/Hook/Hook";
-import { setIsEditModalOpen } from "../../../../redux/Modal/ModalSlice";
-import ZSelect from "../../../../components/Form/ZSelect";
 import ZImageInput from "../../../../components/Form/ZImageInput";
-import axios from "axios"; // Ensure axios is imported
-import { toast } from "sonner";
+import ZSelect from "../../../../components/Form/ZSelect";
 import { useUpdateSliderMutation } from "../../../../redux/Feature/Admin/slider/sliderApi";
+import { toast } from "sonner";
+import { setIsEditModalOpen } from "../../../../redux/Modal/ModalSlice";
 
 const EditSlider = ({ selectedSlider }) => {
-  console.log(selectedSlider)
   const dispatch = useAppDispatch();
-  const [updateSlider, { isLoading: SIsLoading, isError: SIsError, error: SError, isSuccess: SIsSuccess, data }] = useUpdateSliderMutation();
+  const [updateSlider, { isLoading: SIsLoading, isError: SIsError, error: SError, isSuccess: SIsSuccess }] = useUpdateSliderMutation();
   
   const [isImageRemoved, setIsImageRemoved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (formData) => {
+    setIsLoading(true);
+  
     try {
-      let imageUrl = selectedSlider?.imageUrl;
-
-      if (formData.imageUrl && !isImageRemoved) {
+      let imageUrl = selectedSlider?.imageUrl; // Keep old image if no new one is provided
+  
+      // Handle new image upload
+      if (formData?.imageUrl && !isImageRemoved) {
         const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
         const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
-        
+  
         const imageFile = new FormData();
-        imageFile.append('image', formData.imageUrl);
-        
+        imageFile.append("image", formData.imageUrl);
+  
         const res = await axios.post(image_hosting_api, imageFile);
-
+  
         if (res?.data?.success) {
           imageUrl = res.data.data.display_url;
+        } else {
+          throw new Error("Image upload failed");
         }
       }
-
-      if (isImageRemoved) {
-        imageUrl = ""; // Set imageUrl to empty string if the image was removed
+  
+      // Handle image removal
+      if (!formData?.imageUrl && isImageRemoved) {
+        imageUrl = ""; 
       }
-
+  
+      // Prepare slider data for API
       const sliderData = {
         title: formData?.title,
         description: formData?.description,
-        imageUrl: imageUrl,
+        imageUrl: imageUrl, // Send updated image or empty string
         linkUrl: formData?.linkUrl,
         isActive: formData?.isActive,
-        // createdById: "64b8c4c8d4a7f3d9e0e6e1d4"
       };
-
-      updateSlider({ id: selectedSlider.id, data: sliderData });
+  
+      console.log("Updating slider with data:", sliderData); // Debugging
+  
+      // Update slider with API
+      await updateSlider({ id: selectedSlider.id, data: sliderData }).unwrap();
+  
+      toast.success("Slider Updated Successfully");
+      handleCloseAndOpen();
     } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Error updating slider. Please try again.');
+      console.error("Error updating slider:", error);
+      toast.error(error.message || "Error updating slider. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleCloseAndOpen = () => {
-    dispatch(setIsEditModalOpen());
+    dispatch(setIsEditModalOpen()); // Close the edit modal
   };
 
   return (
     <div className="">
       <ZFormTwo
-        isLoading={SIsLoading}
-        isSuccess={SIsSuccess}
         isError={SIsError}
         error={SError}
         submit={handleSubmit}
         closeModal={handleCloseAndOpen}  
         formType="edit"  
-        data={data}
-        buttonName="Update"
       >
         <div className="grid grid-cols-1 gap-3 mt-10">
           <ZInputTwo
@@ -78,7 +88,6 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Title"
             placeholder={"Enter the title"}
-            required
           />
 
           <ZInputTwo
@@ -87,17 +96,17 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Description"
             placeholder={"Enter the description"}
-            required
           />
 
           <ZImageInput
             name="imageUrl"
             label="Slider Image"
-            onRemove={() => setIsImageRemoved(true)} // Set image removal state
+            onRemove={() => setIsImageRemoved(true)} 
+            onChange={() =>  setIsImageRemoved(false)} 
             defaultValue={selectedSlider?.imageUrl ? [
               {
                 uid: '-1',
-                name: 'Current Image',
+                name: 'Previous Image',
                 status: 'done',
                 url: selectedSlider?.imageUrl,
               },
@@ -110,7 +119,6 @@ const EditSlider = ({ selectedSlider }) => {
             type="text"
             label="Link URL"
             placeholder={"Enter the link URL"}
-            
           />
 
           <ZSelect
@@ -123,6 +131,15 @@ const EditSlider = ({ selectedSlider }) => {
             placeholder="Select status"
             value={selectedSlider?.isActive}
           />
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            {isLoading ? "Submitting..." : "Submit"}
+          </button>
         </div>
       </ZFormTwo>
     </div>

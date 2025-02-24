@@ -45,7 +45,9 @@ class ProductController {
             // Pagination parameters
             const page = parseInt(req.query.page, 10) || 1; // Default to page 1
             const limit = parseInt(req.query.limit, 10) || 10;
-            const result = await this.productService.getProducts(filters, searchTerm,page,limit);
+             // Sorting parameter
+             const sortBy = req.query.sortBy || ""; // Default to empty string (no sorting)
+            const result = await this.productService.getProducts(filters, searchTerm,page,limit , sortBy);
             res.status(200).json(result);
         } catch (error) {
             console.error(error);

@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../redux/Hook/Hook";
 import { addToCart } from "../redux/Cart/cartSlice";
 import { toast } from "sonner";
 import { Alert, Spin, Tooltip } from "antd";
+import ProductDetailsSkeleton from "./Skeleton/ProductDetailsSkeleton";
 
 const ViewProduct = ({ selectedProduct }) => {
   const dispatch = useAppDispatch();
@@ -15,8 +16,17 @@ const ViewProduct = ({ selectedProduct }) => {
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(selectedProduct?.variants?.[0]?.price || 0);
   const [isAdded, setIsAdded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const cartItems = useAppSelector((state) => state.cart?.items);
 
+  // Simulate loading for 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
   // Normalize attribute keys to lowercase
   const normalizeAttributes = (attributes) => {
     const normalized = {};
@@ -130,7 +140,7 @@ const ViewProduct = ({ selectedProduct }) => {
 
   // Handle adding to cart
   const handleAddToCart = () => {
-    console.log(selectedAttributes)
+   
 
     if (
       Object.keys(selectedAttributes).length !==
@@ -146,19 +156,23 @@ const ViewProduct = ({ selectedProduct }) => {
         (key) => normalizedVariantAttributes[key] === selectedAttributes[key]
       );
     });
+    console.log(selectedVariant)
 
     if (!selectedVariant) {
       toast.error("Invalid selection! No matching variant found.");
       return;
     }
 
-    const existingItem = cartItems.find(
-      (item) =>
-        item.id === selectedProduct?.id &&
+    const normalizedSelectedAttributes = normalizeAttributes(selectedAttributes);
+
+    const existingItem = cartItems.find((item) => {
+      const normalizedItemAttributes = normalizeAttributes(item.selectedAttributes);
+      return (
+        item.id === selectedProduct.id &&
         item.variantId === selectedVariant.id &&
-        JSON.stringify(item.selectedAttributes) ===
-          JSON.stringify(selectedAttributes)
-    );
+        JSON.stringify(normalizedItemAttributes) === JSON.stringify(normalizedSelectedAttributes)
+      );
+    });
 
     if (existingItem) {
       toast.error("Product already added to cart!");
@@ -182,6 +196,10 @@ const ViewProduct = ({ selectedProduct }) => {
   const areAllAttributesSelected = Object.keys(groupAttributesByKey()).every(
     (key) => selectedAttributes[key]
   );
+
+   if (isLoading) {
+      return <ProductDetailsSkeleton />;
+    }
 
   return (
     <section className="py-5">
@@ -240,7 +258,7 @@ const ViewProduct = ({ selectedProduct }) => {
             ) ? (
               <p className="text-sm text-red-500">No price tiers available</p>
             ) : (
-              <ul className="mt-1 text-sm list-none pl-0 flex gap-4">
+              <ul className="mt-1 text-sm list-none pl-0 flex flex-col lg:flex-row gap-4">
                 {selectedVariant?.priceTiers?.map((tier, index) => (
                   <li className="mb-5" key={index}>
                     <Alert
@@ -255,12 +273,12 @@ const ViewProduct = ({ selectedProduct }) => {
           </div>
 
           {/* Add to Cart and Buy Now */}
-          <div className="flex space-x-4">
+          <div className="flex flex-col lg:flex-row lg:space-x-4 space-y-2 lg:space-y-0">
             <Tooltip title={!areAllAttributesSelected ? "Please select the attributes first" : ""}>
               <button
                 onClick={handleAddToCart}
                 disabled={!areAllAttributesSelected || isAdded}
-                className="bg-blue-500 text-white px-7 py-2 rounded hover:bg-white hover:text-blue-500 transition-all border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-white hover:text-blue-500 transition-all border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <p className="flex items-center justify-center">
                   <CiShoppingCart className="me-2" size={30} />
@@ -273,7 +291,7 @@ const ViewProduct = ({ selectedProduct }) => {
                 <button
                   onClick={handleAddToCart}
                   disabled={!areAllAttributesSelected || isAdded}
-                  className="border border-gray-300 px-6 py-2 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="border border-gray-300 px-6 py-3 rounded hover:border-blue-500 hover:bg-green-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full"
                 >
                   <p className="flex items-center justify-center">
                     <HiOutlineShoppingBag className="me-2" size={24} />

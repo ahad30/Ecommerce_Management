@@ -155,7 +155,7 @@ const Orders = () => {
       </div>
 
       {/* Radio Button Filters */}
-      <div className="flex justify-center" style={{ marginBottom: 16 }}>
+      <div className="flex justify-center my-10" >
         <Radio.Group
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
