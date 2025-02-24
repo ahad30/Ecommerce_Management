@@ -2,7 +2,7 @@
 import { CiEdit, CiTrash } from "react-icons/ci";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Modal } from "antd";
+import { Modal, Tooltip } from "antd";
 import { IoMdClose } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../redux/Hook/Hook";
 import { setIsVariantModalOpen } from "../redux/Modal/ModalSlice";
@@ -18,6 +18,9 @@ export const VariantProductTable = ({ skus, setSkus }) => {
     try {
       const filteredVariants = skus.filter((item) => item.variationId !== id);
       setSkus(filteredVariants);
+      if(pathname.startsWith("/admin/edit-product/")){
+        toast.success("Variant deleted successfully from the product , apply the submit button to save the changes");
+      }
     } catch (error) {
       toast.error("Failed to delete variant");
       console.error(error);
@@ -38,9 +41,17 @@ export const VariantProductTable = ({ skus, setSkus }) => {
     <>
       {skus.length > 0 && (
         <div>
-          <h1 className="text-center lg:text-xl mt-9 mb-5 font-bold">
+{  pathname.startsWith("/admin/edit-product/") ?        
+           ( <h1 className="text-center lg:text-xl mt-9 mb-5 font-bold">
+            Check your Previously Added Variant of The Product
+          </h1>) : 
+          (
+            <h1 className="text-center lg:text-xl mt-9 mb-5 font-bold">
             Check your added Variant of The Product
           </h1>
+          )
+          
+          }
           <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
             <table className="w-full text-center table-auto min-w-max">
               <thead>
@@ -53,30 +64,42 @@ export const VariantProductTable = ({ skus, setSkus }) => {
                 </tr>
               </thead>
               <tbody>
-                {skus.map((item, index) => (
-                  <tr key={item?.variationId} className="border-b">
-                    <td className="p-4">{index + 1}</td>
-                    <td className="p-4">{item?.sku}</td>
-                    <td className="p-4">{item?.price}</td>
-                    <td className="p-4">{item?.stock}</td>
-                    <td className="p-4">
-                      <div className="flex gap-2 justify-center">
-                        <button
-                          onClick={() => handleEditVariant(item)}
-                          className={`cursor-pointer bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-all ${pathname === "/admin/add-product" ? "hidden" : ""}`}
-                        >
-                          <CiEdit size={20} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTheVariant(item.variationId)}
-                          className="cursor-pointer bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-all"
-                        >
-                          <CiTrash size={20} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+{skus.map((item, index) => (
+  <tr key={item?.variationId} className="border-b">
+    <td className="p-4">{index + 1}</td>
+    <td className="p-4">{item?.sku}</td>
+    <td className="p-4">{item?.price}</td>
+    <td className="p-4">{item?.stock}</td>
+    <td className="p-4">
+      <div className="flex gap-2 justify-center">
+        {/* Edit Button with Tooltip */}
+        <Tooltip
+          title={!item?.variationId ? "Submit the new variant of this product first to edit this variant" : ""}
+        >
+          <button
+            disabled={!item?.variationId}
+            onClick={() => handleEditVariant(item)}
+            className={` ${
+              !item?.variationId ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+            } text-white px-3 py-2 rounded-md transition-all ${
+              pathname === "/admin/add-product" ? "hidden" : ""
+            }`}
+          >
+            <CiEdit size={20} />
+          </button>
+        </Tooltip>
+
+        {/* Delete Button */}
+        <button
+          onClick={() => handleDeleteTheVariant(item.variationId)}
+          className="cursor-pointer bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-all"
+        >
+          <CiTrash size={20} />
+        </button>
+      </div>
+    </td>
+  </tr>
+))}
               </tbody>
             </table>
           </div>

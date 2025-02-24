@@ -347,7 +347,7 @@ const EditProduct = () => {
       setTimeout(() => {
         setIsLoading(false);
         toast.success("Product updated successfully");
-      }, 4000);
+      }, 3000);
     }
   };
 
