@@ -31,7 +31,7 @@ const DashboardSidebarTwo = ({ className, setIsSidebarOpen }) => {
 
   return (
     <div
-      className={`w-[250px] z-10 bg-[#162447] duration-300 ${className} h-screen thin-scrollbar overflow-y-scroll text-[13px] text-[#E0E0E0]`}
+      className={`w-[250px] z-10 bg-[#121c34] duration-300 ${className} h-screen thin-scrollbar overflow-y-scroll text-[13px] text-[#E0E0E0]`}
     >
       <div className="pt-12">
         <div className="flex justify-end">
@@ -89,7 +89,7 @@ const DashboardSidebarTwo = ({ className, setIsSidebarOpen }) => {
                         }}
                         className={`pl-7 py-2 mr-4 mb-1 hover:pl-7 hover:py-2 hover:mr-4 hover:mb-1 hover:bg-[#323F5D] hover:rounded-r-full hover:ml-2 duration-500 ${
                           location.pathname === `/admin/${subItem.key}`
-                            ? "bg-[#323F5D] rounded-r-full"
+                            ? "bg-[#323F5D] rounded-full"
                             : ""
                         }`}
                       >
@@ -110,7 +110,7 @@ const DashboardSidebarTwo = ({ className, setIsSidebarOpen }) => {
                   }}
                   className={`px-4 py-3 hover:px-4 hover:py-3 hover:rounded-r-full hover:bg-[#323F5D] hover:mr-4 hover:mb-1 mr-4 mb-1 ${
                     location.pathname === `/admin/${item.key}`
-                      ? "bg-[#323F5D] rounded-r-full"
+                      ? "bg-[#1b3a9a] rounded-full"
                       : ""
                   }`}
                 >
