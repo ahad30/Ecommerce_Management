@@ -703,7 +703,7 @@ const EditProduct = () => {
                 onClick={() => handleAddPerSkuInSkus()}
                 style={{ backgroundColor: "#162447", color: "white" }}
               >
-                + Add Variant
+                + Add Variant    
               </Button>
             </div>
           </div>
