@@ -18,7 +18,7 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
   // Reset priceTiers and isImageRemoved when selectedVariant changes
   useEffect(() => {
     setPriceTiers(selectedVariant?.priceTiers || [{ minQty: "", maxQty: "", price: "" }]);
-    setIsImageRemoved(false); // Reset isImageRemoved when selectedVariant changes
+    // setIsImageRemoved(false); 
   }, [selectedVariant]);
 
   // Handle Price Tier Updates
@@ -79,18 +79,22 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
       // Update the skus array with the new variant data
       const updatedSkus = skus.map((item) =>
         item.variationId === selectedVariant.variationId
-          ? { ...item, ...updatedVariant }
+          ? { 
+            ...item,
+             ...updatedVariant }
           : item
       );
 
+           // Update selectedVariant with the new imageUrl
+           setSelectedVariant((prev) => ({
+            ...prev,
+            imageUrl,
+          }));
+    
+
       setSkus(updatedSkus);
 
-      // Update selectedVariant with the new imageUrl
-      setSelectedVariant((prev) => ({
-        ...prev,
-        imageUrl,
-      }));
-
+ 
       // Simulate a 3-second delay
       setTimeout(() => {
         setIsLoading(false);
@@ -129,7 +133,7 @@ const EditVariation = ({ selectedVariant, setSkus, skus, closeModal, setSelected
           name="price"
           label="Sale Price"
           placeholder="Enter Sale Price"
-          value={parseFloat(selectedVariant?.price).toFixed(2)}
+          value={parseFloat(selectedVariant?.price)}
         />
         <ZImageInput
           name="imageUrl"
