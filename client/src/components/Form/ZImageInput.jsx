@@ -14,7 +14,7 @@ const ZImageInput = ({
   setPriceQuantityImage,
   refresh,
 }) => {
-  console.log("Default Value in ZImageInput:", defaultValue);
+
   const [imageList, setImageList] = useState([]);
   const { control, resetField } = useFormContext();
   const { isAddModalOpen, isEditModalOpen, isVariantModalOpen } = useAppSelector(

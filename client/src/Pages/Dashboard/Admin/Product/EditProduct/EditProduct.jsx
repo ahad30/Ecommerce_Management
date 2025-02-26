@@ -88,7 +88,7 @@ const EditProduct = () => {
     },
   ] = useUpdateProductMutation();
 
-// console.log(productData)
+console.log(productData)
 
 
   useEffect(() => {
