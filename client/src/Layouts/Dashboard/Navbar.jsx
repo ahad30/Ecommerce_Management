@@ -8,7 +8,7 @@ const Navbar = ({
 }) => {
   return (
     <>
-      <div className="border-gray-200 px-4 lg:px-6 py-1 bg-[#162447]">
+      <div className="border-gray-200 px-4 lg:px-6 py-1 bg-[#121c34]">
         <div className="flex justify-between items-center lg:order-2 sticky z-40 top-0">
           <div>
             {isSidebarOpen === false && (

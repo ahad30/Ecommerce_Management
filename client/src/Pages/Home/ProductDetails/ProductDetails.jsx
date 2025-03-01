@@ -367,7 +367,7 @@ const ProductDetails = () => {
         {/* Tab Content */}
         <div className="mt-6">
           <p className="text-lg text-gray-500">{singleProduct?.description}</p>
-          <table className="mt-6 w-[50%] mx-auto border border-gray-300 text-left">
+          <table className="mt-6 w-full lg:w-[50%] mx-auto border border-gray-300 text-left">
             <thead>
               <tr>
                 <th className="px-4 py-2 border border-gray-300">Feature</th>

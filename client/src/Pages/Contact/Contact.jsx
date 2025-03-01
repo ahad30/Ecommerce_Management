@@ -29,7 +29,7 @@ const Contact = () => {
   return (
     <section className="">
       <DashboardTitle windowTitle={"Contact"} />
-      <div className="relative mb-16">
+      <div className="relative mb-16 hidden lg:block">
         <div
           className="absolute top-0 left-0 right-0 bottom-0 bg-cover bg-center bg-fixed"
           style={{

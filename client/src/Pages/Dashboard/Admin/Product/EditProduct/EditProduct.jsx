@@ -88,7 +88,7 @@ const EditProduct = () => {
     },
   ] = useUpdateProductMutation();
 
-
+console.log(productData)
 
 
   useEffect(() => {
@@ -433,14 +433,16 @@ const EditProduct = () => {
           <ZImageInput 
           name="ImageUrl"
           label="Thumbnail Image" 
-          defaultValue={updateProductData?.imageUrl ? [
+          defaultValue={
+            updateProductData?.imageUrl ? [
               {
-                uid: '-1',
+                uid: "-1",
                 name: 'Previous Image',
                 status: 'done',
                 url: updateProductData?.imageUrl,
-              },
-            ] : []}
+              }
+            ] : []
+            }
 
           />
 

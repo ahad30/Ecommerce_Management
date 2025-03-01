@@ -9,6 +9,7 @@ import moment from "moment";
 const ViewProduct = () => {
   const { id } = useParams();
   const { data, isLoading, error } = useGetProductsByIdQuery(id);
+  console.log(data)
 
   if (isLoading) {
     return (

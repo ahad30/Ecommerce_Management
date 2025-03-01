@@ -156,7 +156,7 @@ const ViewProduct = ({ selectedProduct }) => {
         (key) => normalizedVariantAttributes[key] === selectedAttributes[key]
       );
     });
-    console.log(selectedVariant)
+
 
     if (!selectedVariant) {
       toast.error("Invalid selection! No matching variant found.");
