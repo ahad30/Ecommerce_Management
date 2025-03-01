@@ -14,6 +14,7 @@ const ZImageInput = ({
   setPriceQuantityImage,
   refresh,
 }) => {
+
   const [imageList, setImageList] = useState([]);
   const { control, resetField } = useFormContext();
   const { isAddModalOpen, isEditModalOpen, isVariantModalOpen } = useAppSelector(
@@ -23,7 +24,7 @@ const ZImageInput = ({
   // Reset imageList when modal is closed
   useEffect(() => {
     if (!isAddModalOpen || !isEditModalOpen || !isVariantModalOpen) {
-      setImageList([]);
+      // setImageList([]);
       resetField(name);
     }
   }, [isAddModalOpen, isEditModalOpen, isVariantModalOpen]);

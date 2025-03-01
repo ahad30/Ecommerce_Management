@@ -82,7 +82,7 @@ const Checkout = () => {
       const result = await addOrder(orderData).unwrap();
   
       if (result?.data?.checkoutUrl) {
-        dispatch(clearCart()); // Clear the cart
+        // dispatch(clearCart()); 
         window.location.href = result.data.checkoutUrl;
       } else {
         toast.error("Order created, but payment URL not received!");
@@ -170,12 +170,15 @@ const Checkout = () => {
                             {renderSelectedAttributes(item.selectedAttributes)}
                           </div>
                         )}
+                       
                       </div>
                       <span className="text-sm lg:text-base me-5">${totalItemPrice}</span>
                     </div>
                   );
                 })}
               </div>
+              {cartItems.length === 0 ? <div className="text-sm text-center text-red-500 font-bold">No Item Found</div>
+                : null}
 
               <div className="pt-4 space-y-2">
                 <div className="flex justify-between border-t border-dashed py-2">

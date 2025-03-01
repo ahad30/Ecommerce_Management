@@ -11,6 +11,17 @@ import { useLocation } from "react-router-dom";
 export default function ProductImageSlider({ images }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const location = useLocation()
+
+  const newImages = images?.filter((image) => image !== "");
+  if (newImages.length === 0) {
+    return (
+      <section>
+        <div className="w-full h-96 bg-gray-200 flex items-center justify-center">
+          <h1 className="lg:text-2xl px-1 text-red-500 font-bold">No Images available at the moment</h1>
+        </div>
+      </section>
+    );
+  }
   return (
     <section>
       {/* Ant Design Preview Group for all images */}
@@ -26,7 +37,7 @@ export default function ProductImageSlider({ images }) {
           modules={[FreeMode, Navigation, Thumbs]}
           className="mySwiper2"
         >
-          {images?.map((image, index) => (
+          {newImages?.map((image, index) => (
             <SwiperSlide key={index}>
               <Image
                 src={image}
@@ -52,7 +63,7 @@ export default function ProductImageSlider({ images }) {
       modules={[FreeMode, Thumbs]}
       className="w-full mySwiper"
      >
-      {images?.map((image, index) => (
+      {newImages?.map((image, index) => (
         <SwiperSlide key={index}>
           <img
             src={image}

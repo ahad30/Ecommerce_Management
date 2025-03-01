@@ -121,8 +121,8 @@ enum OrderStatus {
 model Order {
   id              String        @id @default(auto()) @map("_id") @db.ObjectId
   userId          String        @db.ObjectId
-  email           String        @unique
-  phone           String?       @unique
+  email           String        
+  phone           String?       
   name            String
   orderTotal      Float
   paymentStatus   PaymentStatus

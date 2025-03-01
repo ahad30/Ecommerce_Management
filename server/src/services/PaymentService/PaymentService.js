@@ -64,7 +64,7 @@ class PaymentService extends OrderService{
             client_reference_id: transactionId,
             line_items: lineItems,
             mode: "payment",
-            success_url: `https://inkspire-server.vercel.app/api/v1/success?sessionId={CHECKOUT_SESSION_ID}&&transactionId=${transactionId}`,
+            success_url: `${process.env.SERVER_URL}/success?sessionId={CHECKOUT_SESSION_ID}&&transactionId=${transactionId}`,
             cancel_url: `${process.env.CLIENT_URL}/cancel`,
         });
 

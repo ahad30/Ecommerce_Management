@@ -13,7 +13,7 @@ const Cart = ({ visibleRight, setVisibleRight }) => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const cartLength = cartItems.length === 0;
-  console.log(cartItems)
+  // console.log(cartItems)
   useEffect(() => {
     if (location.pathname === "/checkout") {
       setVisibleRight(false);
@@ -61,37 +61,7 @@ const Cart = ({ visibleRight, setVisibleRight }) => {
   };
 
 
-  // const calculatePrice = (quantity, basePrice, priceTiers) => {
-  //   // If no price tiers are provided, return the base price
-  //   if (!priceTiers || priceTiers.length === 0) {
-  //     return basePrice;
-  //   }
-
-  //   // Find the applicable price tier
-  //   const applicableTier = priceTiers.find(
-  //     (tier) => quantity >= tier.minQty && quantity <= tier.maxQty
-  //   );
-
-  //   // If an applicable tier is found, return its price
-  //   if (applicableTier) {
-  //     return parseFloat(applicableTier.price); // Convert price to a number
-  //   }
-
-  //   // If quantity is >= 100, look for a tier with maxQty >= 100
-  //   if (quantity >= 100) {
-  //     const tierForLargeQuantity = priceTiers.find(
-  //       (tier) => tier.maxQty >= 100
-  //     );
-
-  //     // If a tier for large quantities exists, return its price
-  //     if (tierForLargeQuantity) {
-  //       return parseFloat(tierForLargeQuantity.price);
-  //     }
-  //   }
-
-  //   // If no applicable tier is found, return the base price
-  //   return basePrice;
-  // };
+  
 
   // Calculate total price with discounts
   const totalPrice = cartItems
@@ -131,11 +101,11 @@ const Cart = ({ visibleRight, setVisibleRight }) => {
         <table className="w-full">
           <thead>
             <tr className="border-b">
-              <th className="text-left py-2 text-[8px] lg:text-sm">Name</th>
-              <th className=" py-2 text-[8px] lg:text-sm text-center">Quantity</th>
-              <th className="text-left py-2 text-[8px] lg:text-sm">Price</th>
-              <th className="text-left py-2 text-[8px] lg:text-sm">Total</th>
-              <th className="text-left py-2 text-[8px] lg:text-sm">Action</th>
+              <th className="text-left py-2 text-[10px] lg:text-sm">Name</th>
+              <th className=" py-2 text-[10px] lg:text-sm text-center">Quantity</th>
+              <th className="lg:text-left py-2 text-[10px] lg:text-sm text-center">Price</th>
+              <th className="text-left py-2 text-[10px] lg:text-sm">Total</th>
+              <th className="text-left py-2 text-[10px] lg:text-sm">Action</th>
             </tr>
           </thead>
           <tbody>
