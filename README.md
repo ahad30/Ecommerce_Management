@@ -37,7 +37,6 @@ InkSpire is a powerful, fully responsive full-stack e-commerce web application b
 
 ---
 
----
 📧 Auto Email Integration
 ✅ Features
 User verification email sent after login
