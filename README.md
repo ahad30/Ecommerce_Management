@@ -1,5 +1,4 @@
 
-
 ---
 
 # 🛒 InkSpire – Full Stack E-commerce Platform
@@ -35,6 +34,19 @@ InkSpire is a powerful, fully responsive full-stack e-commerce web application b
 * 📨 Contact message and subscriber management
 * 📦 Order management (view, update status)
 * 🧾 Dynamic data handling with Ant Design tables & Material Tailwind components
+
+---
+
+---
+📧 Auto Email Integration
+✅ Features
+User verification email sent after login
+
+Order confirmation email sent after successful payment
+
+Uses Nodemailer with SMTP (e.g., Gmail, Mailtrap, or custom SMTP provider)
+
+Custom email templates
 
 ---
 
