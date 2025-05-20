@@ -6,7 +6,7 @@
 
 **Live Demo:** [https://inkspire-steel.vercel.app](https://inkspire-steel.vercel.app)
 
-InkSpire is a powerful, fully responsive full-stack e-commerce web application built using modern technologies. It includes a customer-facing storefront and a robust admin dashboard for managing products, users, orders, and more. This platform supports Stripe payment integration and follows scalable coding principles such as the MVC pattern on the backend.
+InkSpire is a powerful, fully responsive full-stack e-commerce web application built using modern technologies. It includes a customer-facing storefront and a robust admin dashboard for managing products, users, orders, and more. This platform supports Stripe payment integration and follows scalable coding principles such as the MVC pattern on the backend.  
 
 ---
 
