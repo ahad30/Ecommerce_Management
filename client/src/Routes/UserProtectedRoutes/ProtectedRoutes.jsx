@@ -1,31 +1,39 @@
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import {
   logout,
   useCurrentToken,
   useCurrentUser,
 } from "../../redux/Feature/auth/authSlice";
-import { useGetUsersQuery } from "../../redux/Feature/auth/authApi";
+import { useGetMeQuery } from "../../redux/Feature/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
 import LoadingPage from "../../components/LoadingPage";
 
 const ProtectedRoutes = ({ children, role }) => {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
   const user = useAppSelector(useCurrentUser);
   const token = useAppSelector(useCurrentToken);
-  const { data, isLoading, isFetching, refetch } = useGetUsersQuery();
+  // The token is the cache key so a result from a previous login is never reused.
+  const { currentData, isLoading, isFetching, isError } = useGetMeQuery(token, {
+    skip: !token,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const isAuthenticated = Boolean(token && user);
+  const isPending = isLoading || isFetching;
+  const isDenied =
+    isAuthenticated &&
+    !isPending &&
+    (isError || currentData?.data?.role !== role);
 
   useEffect(() => {
-    if (user && token) {
-      refetch();
-      setLoading(false);
+    if (isDenied) {
+      dispatch(logout());
     }
-  }, [user, token, refetch]);
+  }, [isDenied, dispatch]);
 
-  // Redirect to login if no token or user
-  if (!token || token == null || user == null) {
+  if (!isAuthenticated) {
     return (
       <Navigate
         to="/login"
@@ -35,21 +43,14 @@ const ProtectedRoutes = ({ children, role }) => {
     );
   }
 
-  // Show loading spinner while fetching data
-  if (isLoading || isFetching || loading) {
+  if (isPending) {
     return <LoadingPage />;
   }
 
-  // Find the logged-in user from the fetched data
-  const loggedInUser = data?.data?.find((u) => u.email === user.email);
-
-  // Logout and redirect if the user role doesn't match
-  if (!loggedInUser || loggedInUser.role !== role) {
-    dispatch(logout());
+  if (isDenied) {
     return <Navigate to="/login" replace />;
   }
 
-  // Render the protected component
   return children;
 };
 

@@ -7,18 +7,15 @@ class AuthService {
 
     async varifyUser(email, password) {
         try {
-            console.log(this.prisma);
-            
             const user = await this.prisma.user.findUnique(
                 {
                     where: {
                         email
-                    }
+                    },
+                    omit: { password: false }
                 }
             )
 
-            console.log(user);
-            
             if (!user) {
                 return null;
             }
@@ -26,10 +23,12 @@ class AuthService {
 
             if (!isPasswordValid) return null;
 
-            return user;
+            const { password: _password, verificationToken: _token, ...safeUser } = user;
+            return safeUser;
 
         } catch (error) {
-
+            console.error("Error verifying user:", error);
+            return null;
         }
     }
 }

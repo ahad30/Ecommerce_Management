@@ -1,13 +1,18 @@
+require('dotenv').config();
+
+if (!process.env.JWT_SECRET) {
+  console.error('JWT_SECRET is not set. Refusing to start.');
+  process.exit(1);
+}
+
 const express = require('express');
 const cors = require('cors');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('./src/db/prisma');
 const router = require('./src/routes');
 const swaggerSpec = require('./src/config/swaggerConfig');
 const app = express();
-require('dotenv').config();
 const swaggerUi = require('swagger-ui-express');
 const port = process.env.PORT || 5000;
-const prisma = new PrismaClient();
 
 
 const corsOptions = {

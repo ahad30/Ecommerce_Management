@@ -7,7 +7,7 @@ class UserService extends BcryptHasher {
     this.prisma = prismaClient;
   }
 
-  async createUser(data) {
+  async createUser(data, role = "user") {
     try {
       // Check if email already exists
       const existingEmailUser = await this.prisma.user.findUnique({
@@ -40,7 +40,7 @@ class UserService extends BcryptHasher {
           email: data.email,
           password: hashedPassword,
           phone: data.phone,
-          role: data.role,
+          role,
           name: data.name,
           verificationToken,
           tokenExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), 
@@ -71,6 +71,10 @@ class UserService extends BcryptHasher {
       console.error("Error fetching users:", error);
       throw new Error("Database error: Unable to fetch users");
     }
+  }
+
+  async findUserById(userId) {
+    return this.prisma.user.findUnique({ where: { id: userId } });
   }
 
   async getSingleUser(userId) {
