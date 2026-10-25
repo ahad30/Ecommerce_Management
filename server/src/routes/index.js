@@ -1,5 +1,6 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../db/prisma');
+const { authenticate, optionalAuth, requireAdmin, requireSelfOrAdmin } = require('../middleware/auth');
 const AdminService = require('../services/Admin/adminService');
 const AdminController = require('../controllers/adminController');
 const AuthService = require('../services/Authentication/AuthService');
@@ -26,7 +27,6 @@ const ContactController = require('../controllers/contactController');
 
 const router = express.Router();
 
-const prisma = new PrismaClient();
 const adminService = new AdminService(prisma);
 const adminController = new AdminController(adminService);
 const hasher = new BcryptHasher()
@@ -46,28 +46,31 @@ const contactService = new ContactService(prisma);
 const contactController = new ContactController(contactService);
 // user route
 // [route("/users/create")]
-router.post("/users/create", (req, res, next) => {
+router.post("/users/create", optionalAuth, (req, res, next) => {
     userController.createUser(req, res, next);
 })
-router.get('/users', (req, res, next) => {
+router.get('/users', authenticate, requireAdmin, (req, res, next) => {
     userController.getAllUsers(req, res, next);
 });
-router.get('/users/:id', (req, res, next) => {
+router.get('/users/me', authenticate, (req, res, next) => {
+    userController.getCurrentUser(req, res, next);
+});
+router.get('/users/:id', authenticate, requireSelfOrAdmin('id'), (req, res, next) => {
     userController.getSingleUser(req, res, next);
 });
 
 // Route to update a user by ID
-router.put('/users/:id', (req, res, next) => {
+router.put('/users/:id', authenticate, requireSelfOrAdmin('id'), (req, res, next) => {
     userController.updateUser(req, res, next);
 });
 
 // Route to update a user's password
-router.put("/users/password/:id", (req, res, next) => {
+router.put("/users/password/:id", authenticate, requireSelfOrAdmin('id'), (req, res, next) => {
   userController.updatePassword(req, res, next);
 });
 
 // Route to delete a user by ID
-router.delete('/users/:id', (req, res, next) => {
+router.delete('/users/:id', authenticate, requireAdmin, (req, res, next) => {
     userController.deleteUser(req, res, next);
 });
 
@@ -78,7 +81,7 @@ router.get('/users/verify/:token',(req,res,next)=>{
 
 
 // Define routes
-router.post('/admin/create', (req, res, next) => adminController.createAdmin(req, res, next));
+router.post('/admin/create', authenticate, requireAdmin, (req, res, next) => adminController.createAdmin(req, res, next));
 
 //authentication
 router.post('/login', (req, res, next) => {
@@ -88,7 +91,7 @@ router.post('/login', (req, res, next) => {
 
 
 //category route
-router.post("/category/create", (req, res, next) => {
+router.post("/category/create", authenticate, requireAdmin, (req, res, next) => {
     const categoryController = new CategoryController(categoryService)
     categoryController.createCategory(req, res, next)
 
@@ -102,18 +105,18 @@ router.get("/category/:id", (req, res, next) => {
     const categoryController = new CategoryController(categoryService)
     categoryController.getCategoryById(req, res, next)
 })
-router.put("/category/:id", (req, res, next) => {
+router.put("/category/:id", authenticate, requireAdmin, (req, res, next) => {
     const categoryController = new CategoryController(categoryService)
     categoryController.updateCategory(req, res, next)
 })
-router.delete("/category/:id", (req, res, next) => {
+router.delete("/category/:id", authenticate, requireAdmin, (req, res, next) => {
     const categoryController = new CategoryController(categoryService)
     categoryController.deleteCategory(req, res, next)
 })
 
 
 //[route("/product/create")]
-router.post("/product/create", (req, res, next) => {
+router.post("/product/create", authenticate, requireAdmin, (req, res, next) => {
     const productController = new ProductController(productService);
     productController.createProduct(req, res, next)
 
@@ -140,19 +143,19 @@ router.get("/relatedProducts/:id", (req, res, next) => {
 
 
 //[route("/product/{id}")]
-router.put("/product/:id", (req, res, next) => {
+router.put("/product/:id", authenticate, requireAdmin, (req, res, next) => {
     const productController = new ProductController(productService);
     productController.updateProduct(req, res, next);
 })
 
 //[route("/product/{id}")]
-router.delete("/product/:id", (req, res, next) => {
+router.delete("/product/:id", authenticate, requireAdmin, (req, res, next) => {
     const productController = new ProductController(productService);
     productController.deleteProduct(req, res, next)
 })
 
 //[route("/brand/create")]
-router.post("/brand/create", (req, res, next) => {
+router.post("/brand/create", authenticate, requireAdmin, (req, res, next) => {
     const brandController = new BrandController(brandService);
     brandController.create(req, res, next)
 })
@@ -167,12 +170,12 @@ router.get("/brand/:id", (req, res, next) => {
     brandController.getSingle(req, res, next)
 })
 //[route("/brand/{id}")]
-router.put("/brand/:id", (req, res, next) => {
+router.put("/brand/:id", authenticate, requireAdmin, (req, res, next) => {
     const brandController = new BrandController(brandService);
     brandController.update(req, res, next)
 })
 //[route("/brand/{id}")]
-router.delete("/brand/:id", (req, res, next) => {
+router.delete("/brand/:id", authenticate, requireAdmin, (req, res, next) => {
     const brandController = new BrandController(brandService);
     brandController.delete(req, res, next)
 })
@@ -180,7 +183,7 @@ router.delete("/brand/:id", (req, res, next) => {
 
 
 //[route("/attributes/create")]
-router.post("/attributes/create", (req, res, next) => {
+router.post("/attributes/create", authenticate, requireAdmin, (req, res, next) => {
     const attributesController = new AttributesController(attributeService);
     attributesController.createAttribute(req, res, next)
 })
@@ -195,12 +198,12 @@ router.get("/attributes/:id", (req, res, next) => {
     attributesController.getAttributeById(req, res, next)
 })
 //[route("/attributes/{id}")]
-router.put("/attributes/:id", (req, res, next) => {
+router.put("/attributes/:id", authenticate, requireAdmin, (req, res, next) => {
     const attributesController = new AttributesController(attributeService);
     attributesController.updateAttribute(req, res, next)
 })
 //[route("/attributes/{id}")]
-router.delete("/attributes/:id", (req, res, next) => {
+router.delete("/attributes/:id", authenticate, requireAdmin, (req, res, next) => {
     const attributesController = new AttributesController(attributeService);
     attributesController.deleteAttribute(req, res, next)
 })
@@ -209,30 +212,30 @@ router.delete("/attributes/:id", (req, res, next) => {
 
 
 //[route("/orders/create")]
-router.post("/orders/create", (req, res, next) => {
+router.post("/orders/create", authenticate, (req, res, next) => {
     const orderController = new OrderCOntroller(orderService);
     orderController.createOrder(req, res, next);
 })
-router.get("/orders", (req, res, next) => {
+router.get("/orders", authenticate, requireAdmin, (req, res, next) => {
     const orderController = new OrderCOntroller(orderService);
     orderController.getOrders(req, res, next);
 })
-router.get('/orders/:id', (req, res, next) => {
+router.get('/orders/:id', authenticate, (req, res, next) => {
   const orderController = new OrderCOntroller(orderService);
   orderController.getOrderById(req, res, next);
 });
 
-router.get('/orders/user/:userId', (req, res, next) => {
+router.get('/orders/user/:userId', authenticate, requireSelfOrAdmin('userId'), (req, res, next) => {
   const orderController = new OrderCOntroller(orderService);
   orderController.getOrdersByUserId(req, res, next);
 });
 
 
-router.put('/orders/:id', (req, res, next) => {
+router.put('/orders/:id', authenticate, requireAdmin, (req, res, next) => {
   const orderController = new OrderCOntroller(orderService);
   orderController.updateOrder(req, res, next);
 });
-router.delete('/orders/:id', (req, res, next) => {
+router.delete('/orders/:id', authenticate, requireAdmin, (req, res, next) => {
   const orderController = new OrderCOntroller(orderService);
   orderController.deleteOrder(req, res, next);
 });
@@ -252,7 +255,7 @@ router.get("/orders/trace/:trackingNumber",(req,res,next)=>{
 
 //slider routes
 //[route("/sliders/create")]
-router.post("/sliders/create", (req, res, next) => {
+router.post("/sliders/create", authenticate, requireAdmin, (req, res, next) => {
     const sliderController = new SliderController(sliderService);
     sliderController.createSlider(req, res, next)
 })
@@ -267,12 +270,12 @@ router.get("/sliders/:id", (req, res, next) => {
     sliderController.getSliderById(req, res, next)
 })
 //[route("/sliders/{id}")]
-router.put("/sliders/:id", (req, res, next) => {
+router.put("/sliders/:id", authenticate, requireAdmin, (req, res, next) => {
     const sliderController = new SliderController(sliderService);
     sliderController.updateSlider(req, res, next)
 })
 //[route("/sliders/{id}")]
-router.delete("/sliders/:id", (req, res, next) => {
+router.delete("/sliders/:id", authenticate, requireAdmin, (req, res, next) => {
     const sliderController = new SliderController(sliderService);
     sliderController.deleteSlider(req, res, next)
 })
@@ -289,12 +292,12 @@ router.post("/unsubscribe", (req, res, next) => {
     subscribeController.unsubscribe(req, res, next)
 })
 //[route("/subscriptions")]
-router.get("/subscriptions", (req, res, next) => {
+router.get("/subscriptions", authenticate, requireAdmin, (req, res, next) => {
     const subscribeController = new SubscribeController(subscribeService);
     subscribeController.getSubscriptions(req, res, next)
 })
 //[route("/subscriptions/{email}")]
-router.get("/subscriptions/:email", (req, res, next) => {
+router.get("/subscriptions/:email", authenticate, requireAdmin, (req, res, next) => {
     const subscribeController = new SubscribeController(subscribeService);
     subscribeController.getSubscriptionByEmail(req, res, next)
 })
@@ -304,19 +307,19 @@ router.post('/contact/create', (req, res, next) => {
     contactController.createContact(req, res, next);
 });
 
-router.get('/contact', (req, res, next) => {
+router.get('/contact', authenticate, requireAdmin, (req, res, next) => {
     contactController.getContacts(req, res, next);
 });
 
-router.get('/contact/:id', (req, res, next) => {
+router.get('/contact/:id', authenticate, requireAdmin, (req, res, next) => {
     contactController.getContactById(req, res, next);
 });
 
-router.put('/contact/:id', (req, res, next) => {
+router.put('/contact/:id', authenticate, requireAdmin, (req, res, next) => {
     contactController.updateContact(req, res, next);
 });
 
-router.delete('/contact/:id', (req, res, next) => {
+router.delete('/contact/:id', authenticate, requireAdmin, (req, res, next) => {
     contactController.deleteContact(req, res, next);
 });
 

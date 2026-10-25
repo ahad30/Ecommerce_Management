@@ -1,31 +1,25 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { ReactNode, useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   logout,
   useCurrentToken,
   useCurrentUser,
 } from "../../redux/Feature/auth/authSlice";
 import { Navigate } from "react-router-dom";
-import { useGetUsersQuery } from "../../redux/Feature/auth/authApi";
+import { useGetMeQuery } from "../../redux/Feature/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook/Hook";
 import LoadingPage from "../../components/LoadingPage";
 // import { PermissionContextProvider } from "../../contex/PermissionProvider";
 
 const AdminProtectedRoute = ({ children }) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(true);
   const user = useAppSelector(useCurrentUser);
   const token = useAppSelector(useCurrentToken);
-  const { data, isLoading, isFetching, refetch } =
-  useGetUsersQuery();
+  // The token is the cache key so a result from a previous login is never reused.
+  const { currentData, isLoading, isFetching, isError } = useGetMeQuery(token, {
+    skip: !token,
+    refetchOnMountOrArgChange: true,
+  });
   // const { setLoggedInUserPermissions } = useContext(PermissionContextProvider);
-  
-  useEffect(() => {
-    if (user && token) {
-      refetch();
-      setLoading(false);
-    }
-  }, [user, token, refetch]);
 
   // useEffect(() => {
   //   if (Array.isArray(data?.data?.role) && data?.data?.role?.length > 0) {
@@ -39,17 +33,28 @@ const AdminProtectedRoute = ({ children }) => {
   //   }
   // }, [data?.data?.role, data?.data]);
 
-  if (!token || token == null || user == null) {
+  const isAuthenticated = Boolean(token && user);
+  const isPending = isLoading || isFetching;
+  const isDenied =
+    isAuthenticated &&
+    !isPending &&
+    (isError || currentData?.data?.role !== "admin");
+
+  useEffect(() => {
+    if (isDenied) {
+      dispatch(logout());
+    }
+  }, [isDenied, dispatch]);
+
+  if (!isAuthenticated) {
     return <Navigate to={"/login"}></Navigate>;
   }
-  if (isLoading || isFetching || loading) {
+
+  if (isPending) {
     return <LoadingPage></LoadingPage>;
   }
-  const loggedInUser = data?.data?.find((u) => u.email === user.email);
-//  console.log(loggedInUser)
-  // Check if the logged-in user is an admin
-  if (!loggedInUser || loggedInUser.role !== "admin") {
-    dispatch(logout());
+
+  if (isDenied) {
     return <Navigate to={"/login"}></Navigate>;
   }
 

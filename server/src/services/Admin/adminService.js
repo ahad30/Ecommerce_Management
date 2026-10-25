@@ -9,8 +9,7 @@ class AdminService extends BcryptHasher {
   async createAdmin(data) {
     try {
       const hashedPassword = await this.hash(data.password,10)
-      console.log(hashedPassword);
-       
+
       return await this.prisma.user.create({
         data: {
           email: data.email,

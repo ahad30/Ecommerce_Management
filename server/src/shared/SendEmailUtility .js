@@ -3,12 +3,12 @@ const nodemailer = require("nodemailer");
 class SendEmailUtility {
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: "mail.ownfood.com.bd",
-      port: 587,
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
       secure: false,
       auth: {
-        user: "noreply@ownfood.com.bd",
-        pass: "HD@OWNFOOD4321",
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
       },
       tls: {
         rejectUnauthorized: false,
@@ -19,7 +19,7 @@ class SendEmailUtility {
   async sendEmail(emailTo, emailText, emailSubject) {
     try {
       const mailOptions = {
-        from: "OwnFood Account <noreply@ownfood.com.bd>",
+        from: process.env.MAIL_FROM,
         to: emailTo,
         subject: emailSubject,
         html: emailText,

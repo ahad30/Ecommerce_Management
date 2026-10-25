@@ -16,17 +16,14 @@ class AuthController {
             }
 
             const user = await this.authService.varifyUser(email, password)
-            
-            console.log(user);
-            
+
             if (!user) {
                 return res.status(401).json({ success: false, message: "Invalid credentials" });
             }
-            console.log(user)
             const token = jwt.sign(
                 { id: user.id, email: user.email, role: user.role },
-                "key123", // Use a secure secret stored in environment variables
-                { expiresIn: "1h" } 
+                process.env.JWT_SECRET,
+                { expiresIn: "1h" }
               );
               return res.status(200).json({
                 success: true,

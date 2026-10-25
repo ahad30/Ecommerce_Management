@@ -1,17 +1,26 @@
-const OrderService = require("../Order/OrderService");
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../../db/prisma");
 const stripe = require("stripe")(process.env.STRIPE_SECRETE_KEY);
 
-class PaymentService extends OrderService{
-    super(){
+const isSessionValidForOrder = (session, transactionId, order) =>
+    Boolean(
+        session &&
+        order &&
+        typeof transactionId === "string" &&
+        session.payment_status === "paid" &&
+        session.client_reference_id === transactionId &&
+        order.transactionId === transactionId &&
+        session.amount_total === Math.round(order.orderTotal * 100)
+    );
 
+class PaymentService {
+    constructor({ stripeClient = stripe, db = prisma } = {}) {
+        this.stripe = stripeClient;
+        this.prisma = db;
     }
+
     // Create payment intent for checkout session
     async createPaymentIntent(order, transactionId) {
     try {
-        console.log(order);
-
         // Map order items to line items
         const lineItems = order.orderItems.map(item => ({
             price_data: {
@@ -60,11 +69,11 @@ class PaymentService extends OrderService{
         }
 
         // Create Stripe Checkout Session
-        const session = await stripe.checkout.sessions.create({
+        const session = await this.stripe.checkout.sessions.create({
             client_reference_id: transactionId,
             line_items: lineItems,
             mode: "payment",
-            success_url: `${process.env.SERVER_URL}/success?sessionId={CHECKOUT_SESSION_ID}&&transactionId=${transactionId}`,
+            success_url: `${process.env.SERVER_URL}/success?sessionId={CHECKOUT_SESSION_ID}&transactionId=${transactionId}`,
             cancel_url: `${process.env.CLIENT_URL}/cancel`,
         });
 
@@ -76,67 +85,37 @@ class PaymentService extends OrderService{
 }
 
     async paymentSuccess(req, res) {
+        const cancelUrl = `${process.env.CLIENT_URL}/cancel`;
         try {
-            console.log("req.query", req.query);
-            
-            // Retrieve the session from Stripe using the sessionId
-            const session = await stripe.checkout.sessions.retrieve(req.query.sessionId);
-            
-            console.log("session", session, session.payment_status);
-            
-            // Check if the payment was successful
-            if (session.payment_status === "paid") {
-                const transactionId = req.query.transactionId;  // Extract transactionId from query
-                
-                if (!transactionId) {
-                    return res.status(400).send("Transaction ID is missing");
-                }
-    
-                // // Update the order status to "paid" using the transactionId
-                // const updatedOrder = await prisma.order.update({
-                //     where: {
-                //         transactionId: transactionId,  // Use transactionId to find the order
-                //     },
-                //     data: {
-                //         paymentStatus: "paid",  // Mark payment status as "paid"
-                //     },
-                // });
-                console.log(session.client_reference_id);
-                const orderData = await prisma.order.findUnique({
-                    where:{
-                        transactionId: transactionId,
-                    }
-                })
-                console.log(orderData,"orderData");
-                const updatedOrder = await prisma.order.update({
-                    where: {
-                        id: orderData.id,  
-                    },
-                    data: {
-                        paymentStatus: "paid",
-                    },
-                });
-    
-                console.log(updatedOrder);
-                
-    
-                return res.redirect(`${process.env.CLIENT_URL}/success`);
-                // return res.status(200).json({ success: true, message: "Payment successful" });
-            } else {
-   
-                return res.redirect(`${process.env.CLIENT_URL}/cancel`);
-                // return res.status(400).json({ success: false, message: "Payment failed" });
+            const { sessionId, transactionId } = req.query;
+            if (typeof sessionId !== "string" || !sessionId || typeof transactionId !== "string" || !transactionId) {
+                return res.redirect(cancelUrl);
             }
+
+            const session = await this.stripe.checkout.sessions.retrieve(sessionId);
+            const order = await this.prisma.order.findUnique({
+                where: { transactionId },
+            });
+
+            if (!isSessionValidForOrder(session, transactionId, order)) {
+                return res.redirect(cancelUrl);
+            }
+
+            await this.prisma.order.update({
+                where: { id: order.id },
+                data: { paymentStatus: "paid" },
+            });
+
+            return res.redirect(`${process.env.CLIENT_URL}/success`);
         } catch (error) {
-            console.error("Error processing payment success:", error);
-            return res.redirect(`${process.env.CLIENT_URL}/cancel`);
+            console.error("Error processing payment success:", error.message);
+            return res.redirect(cancelUrl);
         }
     }
     async paymentCancel(req, res) {
         return res.redirect(`${process.env.CLIENT_URL}/cancel`);
     }
-
-   
 }
 
 module.exports = PaymentService;
+module.exports.isSessionValidForOrder = isSessionValidForOrder;

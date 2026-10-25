@@ -1,29 +1,30 @@
 const PaymentService = require("../services/PaymentService/PaymentService");
 const ResponseHandler = require("../shared/response.handaler");
-const stripe = require("stripe")(process.env.STRIPE_SECRETE_KEY)
 const { v4: uuidv4 } = require("uuid");
 class OrderCOntroller {
     constructor(orderService) {
         this.orderService = orderService;
         this.paymentService = new PaymentService()
     }
-    async createOrder(req, res, next) {
-        const postBody = req.body;
+    async createOrder(req, res) {
+        if (!req.user) {
+            return ResponseHandler.error(res, "Authentication required", 401);
+        }
         try {
+            const orderData = await this.orderService.buildOrderFromCart(req.user.id, req.body);
             const transactionId = uuidv4();
             const order = await this.orderService.createOrder({
-                ...postBody,
+                ...orderData,
                 transactionId: transactionId,
             })
             const paymentIntent = await this.paymentService.createPaymentIntent(order,transactionId);
-            console.log(paymentIntent.url)
             ResponseHandler.success(res, "You Order is being placed.. and redirect to you to the payment page ", { order, checkoutUrl: paymentIntent.url }, 201);
-            // ResponseHandler.success(res, "order placed successfully", order, 201);
         } catch (error) {
-
+            if (error.status === 400) {
+                return ResponseHandler.error(res, error.message, 400, error);
+            }
+            console.error("Error placing order:", error.message);
             ResponseHandler.error(res, "order not placed", 500, error);
-            next(error)
-
         }
     }
     async getOrders(req, res, next) {
@@ -36,14 +37,22 @@ class OrderCOntroller {
         }
     }
 
-    async getOrderById(req, res, next) {
+    async getOrderById(req, res) {
+        if (!req.user) {
+            return ResponseHandler.error(res, "Authentication required", 401);
+        }
         try {
             const id = req.params.id;
             const order = await this.orderService.getOrderById(id);
+            if (!order) {
+                return ResponseHandler.error(res, "order not found", 404);
+            }
+            if (req.user.role !== "admin" && String(order.userId) !== String(req.user.id)) {
+                return ResponseHandler.error(res, "Not allowed to view this order", 403);
+            }
             ResponseHandler.success(res, "order fetched successfully", order, 200);
         } catch (error) {
             ResponseHandler.error(res, "order not fetched", 500, error);
-            next(error)
         }
     }
 
