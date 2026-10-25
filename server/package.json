@@ -9,7 +9,7 @@
     "vercel-build": "prisma generate",
     "postinstall": "prisma generate",
     "prisma:push": "prisma db push",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/auth.test.js && node tests/controllers.test.js && node tests/pricing.test.js"
   },
   "keywords": [],
   "author": "",
